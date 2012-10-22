@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Seadragon Sandbox</title>
+
+    <link rel="stylesheet" type="text/less" media="screen" href="less/main.less"/>
+    <script src="js/less-1.3.0.min.js"></script>
+    <script src="js/prefixfree.min.js"></script>
+    <script src="js/minified.js"></script>
+    <script src="js/seadragonCustom.js"></script>
+    <script>
+        $(document).ready(function () {
+            seadragonCustom({
+                containerSelector: '#seadragonContainer',
+                //animationTime: 0,
+                //debugTileBorders: true,
+                debugMode: true
+            });
+        });
+    </script>
+</head>
+
+<body>
+<div id="seadragonPreloader">
+    <div id="seadragonPreloaderTextcontainer">
+        <div id="seadragonPreloaderText">Ładowanie...</div>
+    </div>
+</div>
+
+<div id="seadragonContainerContainer" class="seadragonContainer">
+    <div id="seadragonContainer" class="seadragonContainer"></div>
+</div>
+
+<div id="buttonsBar">
+    <div id="animationsOff">Bez anim.</div>
+    <div id="picker">Picker</div>
+    <div id="magnifier">Lupa</div>
+    <div id="alignRow">Rząd</div>
+    <div id="alignColumn">Kolumna</div>
+    <div id="alignRows">Rzędy</div>
+    <div id="alignColumns">Kolumny</div>
+    <div id="fitImage3">Obraz 3</div>
+    <div id="fitImage17">Obraz 17</div>
+    <div id="constrainImage3">Tylko obr. 3</div>
+    <div id="constrainImage17">Tylko obr. 17</div>
+</div>
+</body>
+</html>
+

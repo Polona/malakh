@@ -1,0 +1,88 @@
+/*global Seadragon: false */
+
+//noinspection JSValidateJSDoc
+/**
+ * <p>Constructs a <code>Seadragon.Markers</code> instance.
+ *
+ * @class <p>Each marker is represented by a DOM object and a Seadragon.Rectangle instance
+ * to which it's scaled. The rectangle represents element's position in points, not pixels;
+ * thus it's updated when canvas moves.
+ *
+ * @param {jQuery object} $container A jQuery object representing the DOM element containing
+ *                                   all the HTML structure of Seadragon.
+ * @param {Seadragon.Viewport} viewport The viewport handling current Seadragon instance.
+ *
+ * @author <a href="mailto:szymon.nowicki@laboratorium.ee">Szymon Nowicki</a>
+ * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+ */
+Seadragon.Markers = function ($container, viewport) {
+    'use strict';
+
+    //An array of all kept markers.
+    var markers = [];
+    // An HTML overlay keeping all markers.
+    var $markerOverlay;
+
+    (function init() {
+        if ($container == null || !(viewport instanceof Seadragon.Viewport)) {
+            Seadragon.Debug.fatal('Can\'t create a Markers instance without a $container parameter!');
+            Seadragon.Debug.log('Received arguments: ');
+            Seadragon.Debug.log(arguments);
+            Seadragon.Debug.fatal('Incorrect paremeters given to Seadragon.Markers!\n' +
+                'Use Seadragon.Markers($container, viewport)');
+        }
+        $markerOverlay = $('<div class="markerOverlay" />');
+        $container.append($markerOverlay);
+        bindEvents();
+    })();
+
+    function addMarker(object, rectangle) {
+        markers.push({object: object, rectangle: rectangle});
+        $markerOverlay.append(object);
+        fixPositions();
+    }
+
+    /**
+     * Adds a single marker representing given object enclosed in a given rectangle. Rectangle is represented
+     * in Seadragon points, relative to the virtual canvas on which everything is drawn.
+     *
+     * @param {HTMLElement} object An HTML element being marked.
+     * @param {Seadragon.Rectangle} rectangle The rectangle representing object's position on the virtual canvas.
+     * @function
+     */
+    this.addMarker = addMarker;
+
+    function deleteMarkers() {
+        markers = [];
+        $markerOverlay.html('');
+    }
+
+    /**
+     * Clears markers array.
+     */
+    this.deleteMarkers = deleteMarkers;
+
+    /**
+     * Moves markers to fit canvas when moving.
+     * @private
+     */
+    function fixPositions() {
+        $.each(markers, function (_, pair) {
+            var pixelRectangle = viewport.pixelRectangleFromPointRectangle(pair.rectangle, true);
+            var object = pair.object;
+            object.css({
+                left: pixelRectangle.x,
+                top: pixelRectangle.y,
+                width: pixelRectangle.width,
+                height: pixelRectangle.height
+            });
+        });
+
+    }
+
+    function bindEvents() {
+        $container.on({
+            'seadragon.animation': fixPositions
+        });
+    }
+};
