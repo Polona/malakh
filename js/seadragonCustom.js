@@ -13,8 +13,7 @@ function seadragonCustom(options) {
     var magnifierOn = false;
     var animationsOff = false;
 
-    var constrainImage3 = false;
-    var constrainImage17 = false;
+    var constrainImage = false;
 
     var $container;
 
@@ -33,8 +32,6 @@ function seadragonCustom(options) {
 
     // Initialize the image (IT CAN BE EXECUTED ONLY ONCE!!!).
     function sdInit() {
-        var dziArray, i;
-
         // Seadragon options:
         if (typeof sdData.animationTime === 'number') {
             Seadragon.Config.animationTime = sdData.animationTime;
@@ -54,21 +51,7 @@ function seadragonCustom(options) {
         $container = $(sdData.containerSelector);
         sdData.controller = new Seadragon.Controller($container);
 
-        dziArray = [];
-        for (i = 0; i < dziNamesArray.length; i++) {
-            dziArray.push(sdData.tilesDir + dziNamesArray[i] + '.dzi');
-        }
-//        sdData.controller.openDzi(dziArray[0], 0, true);
-//        sdData.controller.openDzi(dziArray[1], 1);
-//        sdData.controller.openDzi(dziArray[2], 2, true);
-//        sdData.controller.viewport.constraintBounds = new Seadragon.Rectangle(0, 0, 2328, 2117);
-        sdData.controller.openDziArray(dziArray);
-        sdData.controller.alignRows(4920, 0, Infinity, true);
-
-        // Adjust -- not necessary, just removes the need to do it by ourselves.
-        sdData.controller.viewport.zoomTo(0.1, true);
-        sdData.controller.viewport.panTo(new Seadragon.Point(7000, 2500), true);
-
+        sdData.controller.openDzi(sdData.tilesDir + 'autoportrety_2c.dzi');
 
         // Buttons.
         $('#animationsOff').on({
@@ -118,85 +101,17 @@ function seadragonCustom(options) {
         });
 
 
-        $('#alignRow').on({
+        $('#fitImage').on({
             click: function (event) {
                 if (event.which !== 1) { // Only left-click is supported.
                     return false;
                 }
-                if (constrainImage3 || constrainImage17) {
-                    return false;
-                }
-                sdData.controller.alignRows(6000, 100, Infinity);
+                sdData.controller.viewport.fitImage();
                 return false;
             }
         });
 
-        $('#alignColumn').on({
-            click: function (event) {
-                if (event.which !== 1) { // Only left-click is supported.
-                    return false;
-                }
-                if (constrainImage3 || constrainImage17) {
-                    return false;
-                }
-                sdData.controller.alignColumns(6000, 100, Infinity);
-                return false;
-            }
-        });
-
-        $('#alignRows').on({
-            click: function (event) {
-                if (event.which !== 1) { // Only left-click is supported.
-                    return false;
-                }
-                if (constrainImage3 || constrainImage17) {
-                    return false;
-                }
-                sdData.controller.alignRows(6000, 100, 100000);
-                return false;
-            }
-        });
-
-        $('#alignColumns').on({
-            click: function (event) {
-                if (event.which !== 1) { // Only left-click is supported.
-                    return false;
-                }
-                if (constrainImage3 || constrainImage17) {
-                    return false;
-                }
-                sdData.controller.alignColumns(6000, 100, 100000);
-                return false;
-            }
-        });
-
-        $('#fitImage3').on({
-            click: function (event) {
-                if (event.which !== 1) { // Only left-click is supported.
-                    return false;
-                }
-                if (constrainImage17) {
-                    return false;
-                }
-                sdData.controller.fitImage(2);
-                return false;
-            }
-        });
-
-        $('#fitImage17').on({
-            click: function (event) {
-                if (event.which !== 1) { // Only left-click is supported.
-                    return false;
-                }
-                if (constrainImage3) {
-                    return false;
-                }
-                sdData.controller.fitImage(16);
-                return false;
-            }
-        });
-
-        $('#constrainImage3').on({
+        $('#constrainImage').on({
             click: function (event) {
                 if (event.which !== 1) { // Only left-click is supported.
                     return false;
@@ -204,37 +119,15 @@ function seadragonCustom(options) {
                 if (pickerOn) {
                     return false;
                 }
-                constrainImage3 = !constrainImage3;
-                $(this).css('background-color', buttonColors[constrainImage3]);
-                constrainImage17 = false;
-                $('#constrainImage17').css('background-color', buttonColors[false]);
-                Seadragon.Config.constraintViewport = constrainImage3;
-                sdData.controller.viewport.constraintBounds = new Seadragon.Rectangle(
-                    sdData.controller.dziImages[2].bounds.getRectangle());
+                constrainImage = !constrainImage;
+                $(this).css('background-color', buttonColors[constrainImage]);
+                Seadragon.Config.constraintViewport = constrainImage;
                 sdData.controller.viewport.applyConstraints();
                 return false;
             }
-        });
+        }).trigger($.Event('click', {which: 1}));
 
-        $('#constrainImage17').on({
-            click: function (event) {
-                if (event.which !== 1) { // Only left-click is supported.
-                    return false;
-                }
-                if (pickerOn) {
-                    return false;
-                }
-                constrainImage17 = !constrainImage17;
-                $(this).css('background-color', buttonColors[constrainImage17]);
-                constrainImage3 = false;
-                $('#constrainImage3').css('background-color', buttonColors[false]);
-                Seadragon.Config.constraintViewport = constrainImage17;
-                sdData.controller.viewport.constraintBounds = new Seadragon.Rectangle(
-                    sdData.controller.dziImages[16].bounds.getRectangle());
-                sdData.controller.viewport.applyConstraints();
-                return false;
-            }
-        });
+        sdData.controller.viewport.fitImage(true);
 
         $('#seadragonPreloader').remove();
     }

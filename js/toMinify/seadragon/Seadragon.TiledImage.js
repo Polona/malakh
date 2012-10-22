@@ -28,11 +28,8 @@
      * @param {number} options.height Sets <code>this.height</code>.
      * @param {number} options.tileSize Sets <code>this.tileSize</code>.
      * @param {number} [options.tileOverlap] Sets <code>this.tileOverlap</code>.
-     * @param {number} [options.bounds=new Seadragon.Rectangle(0, 0, options.width, options.height)]
-     *                 Sets <code>this.bounds</code>.
      * @param {number} [options.minLevel=Seadragon.Config.minLevelToDraw] Sets this.minLevel.
      * @param {number} [options.maxLevel=maximum image level] Sets this.maxLevel.
-     * @param {number} [options.shown=true] If true, an image is hidden.
      *
      * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
      */
@@ -43,7 +40,7 @@
             Seadragon.Debug.log(arguments);
             Seadragon.Debug.fatal('Seadragon.TiledImage needs a JSON parameter with at least the following fields: ' +
                 '$container, width, height, tileSize.\n' +
-                'Fields: tileOverlap, bounds, minLevel, maxLevel, shown are optional.');
+                'Fields: tileOverlap, minLevel, maxLevel are optional.');
         }
 
         /**
@@ -82,134 +79,10 @@
          * @type number
          */
         this.tileOverlap = options.tileOverlap ? options.tileOverlap : 1;
-
-        // Bounds are coordinates of a Seadragon Image on the virtual plane containing all the images.
-        if (!options.bounds) {
-            options.bounds = new Seadragon.Rectangle(0, 0, options.width, options.height);
-        }
-        /**
-         * Animated bounds of the image. They represent position and shape of the image on the virtual
-         * Seadragon plane.
-         * @type {Seadragon.AnimatedRectangle}
-         */
-        this.bounds = new Seadragon.AnimatedRectangle(options.$container, options.bounds);
-
-        // For hiding/showing an image with animation:
-        /**
-         * Is the image being blended in or out?
-         * @type boolean
-         */
-        this.blending = false;
-        /**
-         * Time of blending start.
-         * Relevant only when <code>this.blending</code> is true.
-         * @type number
-         */
-        this.blendStart = null;
-        /**
-         * Is the image being hiden?
-         * Relevant only when <code>this.blending</code> is true.
-         * @type {Boolean}
-         */
-        this.hiding = false;
-
-        if (options.shown == null) { // True by default.
-            options.shown = true;
-        }
-        /**
-         * Opacity of the image. Fully opaque by default.
-         * @type number
-         * @default 1
-         */
-        this.opacity = options.shown ? 1 : 0;
     };
 
-    //noinspection JSValidateJSDoc,JSValidateJSDoc
+    //noinspection JSValidateJSDoc
     Seadragon.TiledImage.prototype = {
-        /**
-         * Is the image fully shown? False during blending in/out.
-         *
-         * @return {boolean}
-         */
-        isShown: function () {
-            return !this.blending && this.opacity === 1;
-        },
-
-        /**
-         * Is the image fully hidden? False during blending in/out.
-         *
-         * @return {boolean}
-         */
-        isHidden: function () {
-            return !this.blending && this.opacity === 0;
-        },
-
-        /**
-         * Is the image in the process of being shown?
-         *
-         * @return {boolean}
-         */
-        isShowing: function () {
-            return this.blending && !this.hiding;
-        },
-
-        /**
-         * Is the image in the process of being hidden?
-         *
-         * @return {boolean}
-         */
-        isHiding: function () {
-            return this.blending && this.hiding;
-        },
-
-        /**
-         * Scales the "virtual" canvas level to the current DZI image one.
-         * This is important since DZIs can be scaled by changing their bounds
-         * (e.g. by using controller's aligning methods) and we want tile sizes to draw
-         * to match their size on canvas after scaling the whole image (e.g. if bounds
-         * for the image are its default parameters divided by 2 we want to load tiles
-         * one level lower so that they're not too small (and so that we don't load
-         * too many of them!)
-         *
-         * @param {number} level
-         * @param {boolean} current
-         * @return {number}
-         */
-        getAdjustedLevel: function (level, current) {
-            var boundsScale = this.getBoundsScale(current);
-            return level + Math.ceil(Math.log(Math.max(boundsScale.x, boundsScale.y)) / Math.log(2));
-        },
-
-        /**
-         * Reverses <code>this.getAdjustedLevel</code>.
-         *
-         * @see #getAdjustedLevel
-         *
-         * @param {number} level
-         * @param {boolean} current
-         * @return {number}
-         */
-        getUnadjustedLevel: function (level, current) {
-            var boundsScale = this.getBoundsScale(current);
-            return level - Math.ceil(Math.log(Math.max(boundsScale.x, boundsScale.y)) / Math.log(2));
-        },
-
-        /**
-         * Returns bounds width & height with regards to original image dimensions.
-         *
-         * @param {boolean} current
-         * @return {Seadragon.Point}
-         */
-        getBoundsScale: function (current) {
-            var bounds;
-            bounds = this.bounds.getRectangle(current);
-            return new Seadragon.Point(
-                bounds.width / this.width,
-                bounds.height / this.height
-            );
-        },
-
-
         /**
          * How many times smaller are images from the given level compared to original image dimensions?
          *
@@ -238,12 +111,10 @@
          * Returns bounds dimensions scaled (i.e. usually divided by some power of 2) to the given level.
          *
          * @param {number} level
-         * @param {boolean} current
          * @return {Seadragon.Point}
          */
-        getScaledDimensions: function (level, current) {
-            var bounds = this.bounds.getRectangle(current);
-            return new Seadragon.Point(bounds.width, bounds.height).multiply(this.getLevelScale(level));
+        getScaledDimensions: function (level) {
+            return new Seadragon.Point(this.width, this.height).multiply(this.getLevelScale(level));
         },
 
         /**
@@ -251,16 +122,9 @@
          *
          * @param {number} level
          * @param {Seadragon.Point} point
-         * @param {boolean} current
          * @return {Seadragon.Point}
          */
-        getTileAtPoint: function (level, point, current) {
-            var scale = this.getBoundsScale(current);
-            var bounds = this.bounds.getRectangle(current);
-
-            point = point.minus(new Seadragon.Point(bounds.x, bounds.y));
-            point.x /= scale.x;
-            point.y /= scale.y;
+        getTileAtPoint: function (level, point) {
             var pixel = point.multiply(this.getLevelScale(level));
 
             var tx = Math.floor(pixel.x / this.tileSize);
@@ -275,14 +139,10 @@
          * @param {number} level
          * @param {number} x
          * @param {number} y
-         * @param {boolean} current
          * @return {Seadragon.Rectangle}
          */
-        getTileBounds: function (level, x, y, current) {
-            var scale, bounds, px, py, sx, sy, levelScale;
-
-            scale = this.getBoundsScale(current);
-            bounds = this.bounds.getRectangle(current);
+        getTileBounds: function (level, x, y) {
+            var px, py, sx, sy, levelScale;
 
             // Find position, adjust for no overlap data on top and left edges.
             px = x === 0 ? 0 : this.tileSize * x - this.tileOverlap;
@@ -305,12 +165,6 @@
             sx = Math.min(sx, this.width - px);
             sy = Math.min(sy, this.height - py);
 
-            // Adjust to bounds.
-            px = bounds.x + px * scale.x;
-            py = bounds.y + py * scale.y;
-            sx *= scale.x;
-            sy *= scale.y;
-
             return new Seadragon.Rectangle(px, py, sx, sy);
         },
 
@@ -321,19 +175,9 @@
          * @param {number} y Tile's row number (starting from 0).
          * @return {string}
          */
-        getTileUrl: function (/* level, x, y */) {
+        getTileUrl: function (/*level, x, y*/) {
             Seadragon.Debug.error("Method not implemented.");
             return '';
-        },
-
-        /**
-         * @see Seadragon.AnimatedRectangle#fitBounds
-         *
-         * @param {Seadragon.Rectangle} bounds
-         * @param {boolean} immediately
-         */
-        fitBounds: function (bounds, immediately) {
-            this.bounds.fitBounds(bounds, immediately);
         }
     };
 })();

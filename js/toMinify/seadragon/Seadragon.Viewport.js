@@ -60,16 +60,6 @@
          * @type number
          */
         this.maxLevelScale = Infinity; // We'll change it later.
-        /**
-         * Viewport can be constrained in a particular rectangle so that a user can't pan or zoom
-         * beyond its visibility. It's done by setting <code>Seadragon.Config.constraintViewport</code>
-         * to true and then this parameter is used for constraining. If this parameter is not an instance
-         * of <code>Seadragon.Rectangle</code>, viewport is not constrained regardless of
-         * <code>Seadragon.Config.constraintViewport</code> setting.
-         *
-         * @type Seadragon.Rectangle
-         */
-        this.constraintBounds = undefined;
     };
 
     Seadragon.Viewport.prototype = Object.create(Seadragon.AnimatedRectangle.prototype);
@@ -161,20 +151,6 @@
             },
 
             /**
-             * Displays the whole image as large as possible so that it stills
-             * fits into the viewport and centers it.
-             *
-             * @param {boolean} immediately
-             */
-            fitConstraintBounds: function (immediately) {
-                if (!(this.constraintBounds instanceof Seadragon.Rectangle)) {
-                    Seadragon.Debug.error('Can\'t fit the viewport to constraintBounds because they\'re not set.');
-                    return;
-                }
-                this.fitBounds(this.constraintBounds, immediately);
-            },
-
-            /**
              * Invoked on window resize.
              *
              * @param {Seadragon.Point} newContainerSize Point: <code>(container width, container height)</code>.
@@ -203,19 +179,23 @@
              * @param {boolean} immediately
              * @param {Seadragon.Point} refPoint
              */
-            applyConstraints: function (immediately, refPoint) {
+            applyConstraints: function applyConstraints(immediately, refPoint) {
                 if (!Seadragon.Config.constraintViewport) {
                     return;
                 }
-                if (!(this.constraintBounds instanceof Seadragon.Rectangle)) {
-                    Seadragon.Debug.error('Can\'t apply constraints because constraintBounds is not set.');
+                if (!(this.constraints instanceof Seadragon.Point)) { // Image not loaded yet.
+                    var self = this;
+                    setTimeout(function () {
+                        self.applyConstraints(immediately, refPoint);
+                    }, 100);
                     return;
                 }
                 var scale;
                 var needToAdjust = false;
-                var whatToScale = 'height';
+                var whatToScaleStart = 'y';
+                var whatToScaleLength = 'height';
 
-                var cR = this.constraintBounds; // constraints rectangle
+                var cR = this.constraints; // constraints rectangle
                 var vR = this.getRectangle(); // viewport rectangle
 
                 var viewportRatio = vR.getAspectRatio();
@@ -223,18 +203,19 @@
 
                 if (viewportRatio < constraintsRatio) { // Empty borders on top and bottom.
                     // We will turn this case into the latter one.
-                    whatToScale = 'width';
+                    whatToScaleStart = 'x';
+                    whatToScaleLength = 'width';
                 }
 
                 /// ZOOMING PART
                 // Now we assume viewportRatio < constraintsRatio which means empty borders on sides.
-                if (vR[whatToScale] > cR[whatToScale]) { // Too small, we need to zoom in.
+                if (vR[whatToScaleLength] > cR[whatToScaleStart]) { // Too small, we need to zoom in.
                     needToAdjust = true;
-                    scale = vR[whatToScale] / cR[whatToScale];
+                    scale = vR[whatToScaleLength] / cR[whatToScaleStart];
                 } else {
                     // We use 'else' just in case the maxLevelScale parameter has a stupid value.
                     // Otherwise, it could case the image to flicker.
-                    var cRInPixels = this.deltaPixelsFromPoints(new Seadragon.Point(cR.width, cR.height));
+                    var cRInPixels = this.deltaPixelsFromPoints(new Seadragon.Point(cR.x, cR.y));
                     if (cRInPixels.x > this.maxLevelScale) { // We've zoomed in too much
                         needToAdjust = true;
                         scale = this.maxLevelScale / cRInPixels.x;
@@ -259,24 +240,24 @@
                     var start = pair.start;
                     var length = pair.length;
 
-                    if (vR[length] > cR[length]) {
+                    if (vR[length] > cR[start]) {
                         // If the image is zoomed out so that its height/width is
                         // smaller than constraints, center it.
                         needToAdjust = true;
-                        vR[start] = cR[start] + cR[length] / 2 - vR[length] / 2;
+                        vR[start] = cR[start] / 2 - vR[length] / 2;
                     }
-                    else if ((vR[start] < cR[start] && vR[start] + vR[length] < cR[start] + cR[length]) ||
-                        (vR[start] > cR[start] && vR[start] + vR[length] > cR[start] + cR[length])) {
+                    else if ((vR[start] < 0 && vR[start] + vR[length] < cR[start]) ||
+                        (vR[start] > 0 && vR[start] + vR[length] > cR[start])) {
                         // Too far on the left/top.
                         needToAdjust = true;
 
                         // We need to choose the smaller delta so that we don't make
                         // the image jump from side to side.
-                        var delta1 = Math.abs(cR[start] - vR[start]);
-                        var delta2 = Math.abs(cR[start] + cR[length] - vR[start] - vR[length]);
+                        var delta1 = Math.abs(vR[start]);
+                        var delta2 = Math.abs(cR[start] - vR[start] - vR[length]);
                         var delta = Math.min(delta1, delta2);
 
-                        if (vR[start] > cR[start]) { // Restoring correct sign of delta.
+                        if (vR[start] > 0) { // Restoring correct sign of delta.
                             delta = -delta;
                         }
                         vR[start] += delta;
@@ -286,6 +267,24 @@
                 if (needToAdjust) {
                     this.panTo(vR.getCenter(), immediately, true);
                 }
+            },
+
+            /**
+             * Fits the image so that it's as big as possible while not stretching outside of the viewport
+             * and centers it.
+             *
+             * @param {boolean} immediately
+             */
+            fitImage: function fitImage(immediately) {
+                var constraints = this.constraints;
+                if (!(constraints instanceof Seadragon.Point)) { // Image not loaded yet.
+                    var self = this;
+                    setTimeout(function () {
+                        self.fitImage(immediately);
+                    }, 100);
+                    return;
+                }
+                this.fitBounds(new Seadragon.Rectangle(0, 0, constraints.x, constraints.y), immediately);
             },
 
             // CONVERSION HELPERS

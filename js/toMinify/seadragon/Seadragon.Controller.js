@@ -24,7 +24,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     var $container, $canvas;
     var lastOpenStartTime, lastOpenEndTime;
     var animated;
-    var forceAlign, forceRedraw;
+    var forceRedraw;
     var dziImagesToHandle;
     var lastPosition;
     var containerSize;
@@ -37,7 +37,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
         if ($container.length === 0) {
             Seadragon.Debug.log('\nReceived containerSelectorOrElement: ');
             Seadragon.Debug.log(containerSelectorOrElement);
-            Seadragon.Debug.fatal('Can\'t create a Controller instance without a bounds parameter!');
+            Seadragon.Debug.fatal('Can\'t create a Controller instance without a container!');
         }
         $container.empty();
         $container.css({
@@ -49,7 +49,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
 
         lastOpenStartTime = lastOpenEndTime = 0;
 
-        self.dziImages = [];
+        self.dziImage = null;
 
         magnifierShown = pickerShown = false;
         lockOnUpdates = closing = false;
@@ -77,7 +77,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
 
         // Begin updating.
         animated = false;
-        forceAlign = forceRedraw = true;
+        forceRedraw = true;
         keepUpdating();
     })();
 
@@ -201,11 +201,6 @@ Seadragon.Controller = function (containerSelectorOrElement) {
         });
 
         $container.on({
-            'seadragon.forcealign': function () {
-                forceAlign = true;
-                forceUpdate();
-            },
-
             'seadragon.forceredraw': function () {
                 forceUpdate();
             }
@@ -277,47 +272,23 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     }
 
     /**
-     * Computes maximum level to be drawn on canvas. Note that it's not simply
-     * maximum of all dziImage.maxLevel - their levels all scaled so that
-     * they match "virtual" levels with regards to their representation on canvas.
-     *
-     * @see Seadragon.TiledImage.getAdjustedLevel
-     * @private
-     */
-    function recalculateMaxLevel() {
-        maxLevel = 0;
-        for (var i = 0; i < self.dziImages.length; i++) {
-            var dziImage = self.dziImages[i];
-            maxLevel = Math.max(maxLevel, dziImage.getUnadjustedLevel(dziImage.maxLevel));
-        }
-        self.viewport.maxLevelScale = Math.pow(2, maxLevel);
-        self.drawer.maxLevel = maxLevel;
-    }
-
-    /**
      * Registers a new open image.
      *
      * @param {Seadragon.DziImage} dziImage
-     * @param {number} [index] If specified, image is put at <code>this.dziImages[index]</code>; otherwise
-     *                         it's put at the end of the table.
      * @private
      */
-    function onOpen(dziImage, index) {
+    function onOpen(dziImage) {
         if (!dziImage) {
             Seadragon.Debug.error('No DZI Image given to Viewer\'s onOpen()!');
             return;
         }
 
         // Add an image.
-        if (typeof index !== 'number') {
-            index = self.dziImages.length;
-        }
-        self.dziImages[index] = dziImage;
-        self.drawer.addDziImage(dziImage, index);
+        self.dziImage = dziImage;
+        self.drawer.loadDziImage(dziImage);
 
-        maxLevel = Math.max(maxLevel, dziImage.maxLevel);
-        self.viewport.maxLevelScale = Math.pow(2, maxLevel);
-        self.drawer.maxLevel = maxLevel;
+        self.viewport.maxLevelScale = Math.pow(2, dziImage.maxLevel);
+        self.viewport.constraints = new Seadragon.Point(dziImage.width, dziImage.height);
 
         dziImagesToHandle--;
 
@@ -355,21 +326,14 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     this.forceUpdate = forceUpdate;
 
     /**
-     * Updates bounds of a Seadragon image; usually used during aligning (so not too often).
-     *
-     * @param {number} whichImage Image index in <code>this.dziImages</code> table.
-     * @private
-     */
-    function updateDziImageBounds(whichImage) {
-        forceAlign = self.dziImages[whichImage].bounds.update() || forceAlign;
-        forceUpdate();
-    }
-
-    /**
      * A single update process, delegating drawing to the Drawer on a change.
      * @private
      */
     function update() {
+        if (self.dziImage == null) { // DZI hasn't been loaded yet.
+            return;
+        }
+
         var newContainerSize = new Seadragon.Point(
             parseInt($container.css('width'), 10), parseInt($container.css('height'), 10));
 
@@ -381,20 +345,12 @@ Seadragon.Controller = function (containerSelectorOrElement) {
         }
 
         // animating => viewport moved, aligning images or loading/blending tiles.
-        var animating = self.viewport.update() || forceAlign || forceRedraw;
-        if (forceAlign) {
-            forceAlign = false;
-            setTimeout(function () { // Timeouts to make it more asynchronous.
-                for (var i = 0; i < self.dziImages.length; i++) {
-                    setTimeout(updateDziImageBounds, 17, i);
-                }
-            }, 17);
-        }
+        var animating = self.viewport.update() || forceRedraw;
 
         if (animating) {
             forceRedraw = self.drawer.update();
         } else {
-            lockOnUpdates = true;
+            lockOnUpdates = true; // TODO uncomment
         }
 
         // Triger proper events.
@@ -418,45 +374,19 @@ Seadragon.Controller = function (containerSelectorOrElement) {
      * Opens Deep Zoom Image (DZI).
      *
      * @param {string} dziUrl An URL/path to the DZI file.
-     * @param {number} index If specified, an image is loaded into <code>controller.dziImages[index]</code>.
-     *                       Otherwise it's put at the end of the table.
-     * @param {boolean} [shown=true] If false, image is not drawn. It can be made visible later.
-     * @param {Seadragon.Rectangle} [bounds] Bounds representing position and shape of the image on the virtual
-     *                                       Seadragon plane.
      */
-    this.openDzi = function (dziUrl, index, shown, bounds) {
+    this.openDzi = function (dziUrl) {
         dziImagesToHandle++;
         try {
             Seadragon.DziImage.createFromDzi({
                 dziUrl: dziUrl,
                 $container: $container,
-                bounds: bounds,
-                index: index,
-                shown: shown,
                 callback: onOpen
             });
         } catch (error) {
             // We try to keep working after a failed attempt to load a new DZI.
             Seadragon.Debug.error('DZI failed to load.');
             dziImagesToHandle--;
-        }
-    };
-
-    /**
-     * Opens many DZIs.
-     *
-     * @param {Array.<string>} dziUrlArray Array of URLs/paths to DZI files.
-     * @param {Array.<Seadragon.Rectangle>} [boundsArray] Array of bounds representing position and shape
-     *                                                    of the image on the virtual Seadragon plane.
-     */
-    this.openDziArray = function (dziUrlArray, boundsArray) {
-        var i;
-        if (boundsArray == null) {
-            boundsArray = [];
-        }
-
-        for (i = 0; i < dziUrlArray.length; i++) {
-            self.openDzi(dziUrlArray[i], i, true, boundsArray[i]);
         }
     };
 
@@ -484,170 +414,5 @@ Seadragon.Controller = function (containerSelectorOrElement) {
         });
         $container.off();
         $container.empty();
-    };
-
-    /**
-     * Organizes DZIs into a given layout.
-     *
-     * @param {boolean} [alingInRows=false] If true, align in rows; otherwise in columns.
-     * @param {number} heightOrWidth If <code>alignInRows</code>: height of rows; otherwise width of columns.
-     * @param {number} spaceBetweenImages
-     * @param {number} maxRowWidthOrColumnHeight If not infinite, the next row/column is started
-     *                                           upon reaching the limit.
-     * @param {boolean} immediately
-     * @private
-     */
-    function alignRowsOrColumns(alingInRows, heightOrWidth, spaceBetweenImages, maxRowWidthOrColumnHeight,
-                                immediately) {
-        var whichImage, width, height, dziImage, widthSum, heightSum, newBounds;
-
-        if (isLoading()) {
-            setTimeout(alignRowsOrColumns, 100,
-                alingInRows, heightOrWidth, spaceBetweenImages, maxRowWidthOrColumnHeight, immediately);
-            return;
-        }
-
-        widthSum = heightSum = 0;
-
-        if (!maxRowWidthOrColumnHeight) {
-            maxRowWidthOrColumnHeight = Infinity;
-        }
-
-        for (whichImage = 0; whichImage < self.dziImages.length; whichImage++) {
-            dziImage = self.dziImages[whichImage];
-
-            // Compute the current state.
-            if (alingInRows) {
-                width = dziImage.width * heightOrWidth / dziImage.height;
-                height = heightOrWidth;
-                if (widthSum + width > maxRowWidthOrColumnHeight) {
-                    // Row width is now too much!
-                    widthSum = 0;
-                    heightSum += height + spaceBetweenImages;
-                }
-            }
-            else { // Align in columns.
-                width = heightOrWidth;
-                height = dziImage.height * heightOrWidth / dziImage.width;
-                if (heightSum + height > maxRowWidthOrColumnHeight) {
-                    // Column height is now too much!
-                    heightSum = 0;
-                    widthSum += width + spaceBetweenImages;
-                }
-            }
-
-            // Set bounds.
-            newBounds = new Seadragon.Rectangle(widthSum, heightSum, width, height);
-
-            // Compute parameters after placing an image.
-            if (alingInRows) {
-                widthSum += width + spaceBetweenImages;
-            } else {
-                heightSum += height + spaceBetweenImages;
-            }
-
-            dziImage.fitBounds(newBounds, immediately);
-            updateDziImageBounds(whichImage);
-        }
-        recalculateMaxLevel();
-
-        forceUpdate();
-    }
-
-    /**
-     * Align images in rows.
-     *
-     * @param {number} height Height of a single row.
-     * @param {number} spaceBetweenImages Space between images in a row and between columns.
-     * @param {number} maxRowWidth Maximum row width. If the next image exceeded it, it's moved to the next row.
-     *                             If set to <code>Infinity</code>, only one row will be created.
-     * @param {boolean} immediately
-     */
-    this.alignRows = function (height, spaceBetweenImages, maxRowWidth, immediately) {
-        alignRowsOrColumns(true, height, spaceBetweenImages, maxRowWidth, immediately);
-    };
-
-    /**
-     * Align images in columns.
-     *
-     * @see #alignRows
-     *
-     * @param {number} width
-     * @param {number} spaceBetweenImages
-     * @param {number} maxColumnHeight
-     * @param {boolean} immediately
-     */
-    this.alignColumns = function (width, spaceBetweenImages, maxColumnHeight, immediately) {
-        alignRowsOrColumns(false, width, spaceBetweenImages, maxColumnHeight, immediately);
-    };
-
-    /**
-     * Moves the viewport so that the given image is centered and zoomed as much as possible
-     * while still being contained within the viewport.
-     *
-     * @param {number} whichImage We fit the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} current
-     */
-    this.fitImage = function (whichImage, current) {
-        var dziImage = self.dziImages[whichImage];
-        if (!dziImage) {
-            Seadragon.Debug.error('No image with number ' + whichImage);
-            return;
-        }
-
-        self.viewport.fitBounds(dziImage.bounds.getRectangle(current));
-    };
-
-
-    function dziImageBoundsInPoints(whichImage, current) {
-        return self.dziImages[whichImage].bounds.getRectangle(current);
-    }
-
-    /**
-     * Returns bounds of the given image in points.
-     *
-     * @param {number} whichImage We get bounds of the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} current
-     * @return {Seadragon.Rectangle}
-     * @function
-     */
-    this.dziImageBoundsInPoints = dziImageBoundsInPoints;
-
-    function dziImageBoundsInPixels(whichImage, current) {
-        var pointBounds = dziImageBoundsInPoints(whichImage, current);
-        return self.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
-    }
-
-    /**
-     * Returns bounds of the given image in pixels.
-     *
-     * @param {number} whichImage We get bounds of the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} current
-     * @return {Seadragon.Rectangle}
-     * @function
-     */
-    this.dziImageBoundsInPixels = dziImageBoundsInPixels;
-
-
-    /**
-     * Shows the given image.
-     *
-     * @param {number} whichImage We show the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} immediately
-     */
-    this.showDzi = function showDzi(whichImage, immediately) {
-        self.drawer.showDzi(whichImage, immediately);
-        forceUpdate();
-    };
-
-    /**
-     * Hides the given image.
-     *
-     * @param {number} whichImage We hide the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} immediately
-     */
-    this.hideDzi = function hideDzi(whichImage, immediately) {
-        self.drawer.hideDzi(whichImage, immediately);
-        forceUpdate();
     };
 };
