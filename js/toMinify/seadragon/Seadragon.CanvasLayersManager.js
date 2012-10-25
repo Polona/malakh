@@ -10,10 +10,14 @@
      * as its tiles have to be drawn after all usual ones. Layer 0 is responsible for usual tiles, layer 1
      * for magnifier ones. Layer 1 is not drawn if magnifier is not shown.
      *
+     * <ul>
+     *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+     *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+     * <ul>
+     *
      * @param {CanvasRenderingContext2D} context '2d' context of canvas on which we are drawing
      * @param {Seadragon.Magnifier} magnifier
-     *
-     * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
      */
     Seadragon.CanvasLayersManager = function (context, magnifier) {
         if (context == null) {
@@ -33,7 +37,6 @@
          * Magnifier is drawn only this field is true.
          * @type boolean
          */
-        this.drawMagnifier = false;
         /**
          * An array containing all tiles currently scheduled to draw
          * @type Array.<Array.<Seadragon.Tile>>

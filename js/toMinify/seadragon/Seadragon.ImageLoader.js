@@ -9,7 +9,11 @@
      * currently downloading and makes sure it doesn't exceed maximum set in
      * <code>Seadragon.Config.imageLoaderLimit</code>.
      *
-     * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     * <ul>
+     *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+     *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+     * <ul>
      */
     Seadragon.ImageLoader = function () {
         /**

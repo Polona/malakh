@@ -7,11 +7,15 @@
  * @class <p>Allows to mark rectangular areas on the virtual plane. These areas
  * can be later memorized using <code>Seadragon.Markers</code> instance.
  *
+ * <ul>
+ *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+ *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+ *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+ * <ul>
+ *
  * @param {jQuery object} $container A jQuery object representing the DOM element containing
  *                                   all the HTML structure of Seadragon.
  * @param {Seadragon.Viewport} viewport The viewport handling current Seadragon instance.
- *
- * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
  */
 Seadragon.Picker = function ($container, viewport) {
     'use strict';

@@ -8,6 +8,12 @@
      *
      * @class Represents a tiled image in the DZI format.
      *
+     * <ul>
+     *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+     *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+     * <ul>
+     *
      * @extends Seadragon.TiledImage
      *
      * @param {Object} options An object containing all given options.
@@ -23,8 +29,6 @@
      * @param {number} [options.minLevel] Sets this.minLevel.
      * @param {number} [options.maxLevel] Sets this.maxLevel.
      * @param {number} [options.shown=true] If true, an image is hidden.
-     *
-     * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
      */
     Seadragon.DziImage = function (options) {
         if (options == null || options.$container == null || options.width == null || options.height == null ||
