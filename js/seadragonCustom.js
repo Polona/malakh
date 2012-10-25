@@ -44,7 +44,6 @@ function seadragonCustom(options) {
 
         Seadragon.Config.zoomPerScroll = 1.2;
         Seadragon.Config.imageLoaderLimit = 50;
-//        Seadragon.Config.constraintViewport = true;
 
         // Debug options:
         Seadragon.Config.debugMode = sdData.debugMode;
@@ -58,10 +57,6 @@ function seadragonCustom(options) {
         for (i = 0; i < dziNamesArray.length; i++) {
             dziArray.push(sdData.tilesDir + dziNamesArray[i] + '.dzi');
         }
-//        sdData.controller.openDzi(dziArray[0], 0, true);
-//        sdData.controller.openDzi(dziArray[1], 1);
-//        sdData.controller.openDzi(dziArray[2], 2, true);
-//        sdData.controller.viewport.constraintBounds = new Seadragon.Rectangle(0, 0, 2328, 2117);
         sdData.controller.openDziArray(dziArray);
         sdData.controller.alignRows(4920, 0, Infinity, true);
 
