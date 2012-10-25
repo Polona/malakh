@@ -13,9 +13,13 @@
      * loading scenarios when we prefer tiles closer to the target point, not the current,
      * temporary one.
      *
-     * @param {number} [initialValue=0]
+     * <ul>
+     *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+     *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+     * <ul>
      *
-     * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     * @param {number} [initialValue=0]
      */
     Seadragon.Spring = function (initialValue) {
         /**

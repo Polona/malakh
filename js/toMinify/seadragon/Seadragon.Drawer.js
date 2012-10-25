@@ -9,6 +9,12 @@
  * <p> See <code>Seadragon.Viewport</code> description for information about conventions around parameter
  * named <code>current</code> and names <strong>point</strong> and <strong>pixel</strong>.
  *
+ * <ul>
+ *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+ *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+ *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+ * <ul>
+ *
  * @see Seadragon.Viewport
  *
  * @param {Object} options An object containing all given options.
@@ -16,8 +22,6 @@
  * @param {jQuery object} options.$container A jQuery object representing the DOM element containing
  *                                           all the HTML structure of Seadragon.
  * @param {Seadragon.Magnifier} options.magnifier
- *
- * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
  */
 Seadragon.Drawer = function (options) {
     'use strict';

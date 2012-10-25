@@ -19,6 +19,12 @@
      * <p>See <code>Seadragon.Viewport</code> description for information about conventions around parameter
      * named <code>current</code> and names <strong>point</strong> and <strong>pixel</strong>.
      *
+     * <ul>
+     *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+     *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+     * <ul>
+     *
      * @see Seadragon.Viewport
      *
      * @param {Object} options An object containing all given options.

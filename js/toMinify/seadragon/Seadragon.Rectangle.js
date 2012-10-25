@@ -14,7 +14,11 @@
      *
      * @class <p>Represents a rectangle on a 2-dimensional plane.
      *
-     * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     * <ul>
+     *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+     *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+     * <ul>
      */
     Seadragon.Rectangle = function () {
         var arguments0 = arguments[0];

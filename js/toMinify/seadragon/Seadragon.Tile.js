@@ -8,14 +8,18 @@
      * @class <p>Represents a single tile used by Seadragon. The tile knows about it's image path,
      * its position (i.e. it's column & row), the corresponding level and a few other parameters.
      *
+     * <ul>
+     *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+     *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+     * <ul>
+     *
      * @param {Object} options An object containing all given options.
      * @param {number} options.level Sets <code>this.level</code>.
      * @param {number} options.x Sets <code>this.x</code>.
      * @param {number} options.y Sets <code>this.y</code>.
      * @param {Seadragon.Rectangle} options.bounds Sets <code>this.bounds</code>.
      * @param {string} options.url Sets <code>this.url</code>.
-     *
-     * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
      */
     Seadragon.Tile = function (options) {
         if (options == null || options.level == null || options.x == null || options.y == null ||

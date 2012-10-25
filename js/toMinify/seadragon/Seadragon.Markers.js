@@ -8,12 +8,16 @@
  * to which it's scaled. The rectangle represents element's position in points, not pixels;
  * thus it's updated when canvas moves.
  *
+ * <ul>
+ *     <li>Author: <a href="mailto:szymon.nowicki@laboratorium.ee">Szymon Nowicki</a>
+ *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+ *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+ *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+ * <ul>
+ *
  * @param {jQuery object} $container A jQuery object representing the DOM element containing
  *                                   all the HTML structure of Seadragon.
  * @param {Seadragon.Viewport} viewport The viewport handling current Seadragon instance.
- *
- * @author <a href="mailto:szymon.nowicki@laboratorium.ee">Szymon Nowicki</a>
- * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
  */
 Seadragon.Markers = function ($container, viewport) {
     'use strict';

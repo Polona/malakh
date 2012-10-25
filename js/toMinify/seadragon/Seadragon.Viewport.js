@@ -26,12 +26,16 @@
      * pixel on the screen. E.g. when user zooms or drags the canvas <strong>pixels</strong> move but
      * <strong>points</strong> stay the same.
      *
+     * <ul>
+     *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+     *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+     * <ul>
+     *
      * @extends Seadragon.AnimatedRectangle
      *
      * @param {jQuery object} $container A jQuery object representing the DOM element containing
      *                                   all the HTML structure of Seadragon.
-     *
-     * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
      */
     Seadragon.Viewport = function ($container) {
         if ($container == null) {
