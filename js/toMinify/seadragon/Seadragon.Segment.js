@@ -7,12 +7,16 @@
      *
      * @class <p>Represents a Segment <code>[(x_1, y_1), (x_2, y_2)]</code> on a 2-dimensional plane.
      *
+     * <ul>
+     *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+     *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+     * <ul>
+     *
      * @param {number} [x1=0]
      * @param {number} [y1=0]
      * @param {number} [x2=0]
      * @param {number} [y2=0]
-     *
-     * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
      */
     Seadragon.Segment = function (x1, y1, x2, y2) {
         this.x1 = x1 || 0;

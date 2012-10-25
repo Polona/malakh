@@ -12,12 +12,16 @@
      * <p>All <code>AnimatedRectangle</code>'s methods follow the same conventions with respect
      * to <code>current</code> and <code>immediately</code> parameters as <code>Viewport</code>'s ones.
      *
+     * <ul>
+     *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
+     *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
+     *     <li>License: MIT (see the licence.txt file for copyright information)</li>
+     * <ul>
+     *
      * @see Seadragon.Viewport
      *
      * @param {jQuery object} $container Sets <code>this.$container</code>.
      * @param {Seadragon.Rectangle} bounds A rectangle representing the initial value of the animated rectangle.
-     *
-     * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
      */
     Seadragon.AnimatedRectangle = function ($container, bounds) {
         var self = this;
