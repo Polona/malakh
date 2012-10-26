@@ -82,7 +82,7 @@ Seadragon.Config = {
      * Maximum number of simultaneous AJAX image requests.
      * @type number
      */
-    imageLoaderLimit: 10,
+    imageLoaderLimit: 4,
     /**
      * Maximum waiting time for an image to load.
      * @type number
