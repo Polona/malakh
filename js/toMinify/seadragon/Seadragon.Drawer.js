@@ -272,7 +272,7 @@ Seadragon.Drawer = function (options) {
         tile.loading = false;
 
         if (midUpdate) {
-            Seadragon.Debug.error('Tile load callback in middle of drawing routine.');
+            Seadragon.Debug.error('Tile load callback in the middle of drawing routine.');
             return;
         } else if (!image) {
             Seadragon.Debug.error('Tile ' + tile + ' failed to load: ' + tile.url);
