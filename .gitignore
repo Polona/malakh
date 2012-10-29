@@ -4,5 +4,5 @@
 *.pyc
 seadragon_data
 doc
-js/minified.js
+js/minified/minified.js
 
