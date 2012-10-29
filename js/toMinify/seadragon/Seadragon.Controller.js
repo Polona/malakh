@@ -326,6 +326,9 @@ Seadragon.Controller = function (containerSelectorOrElement) {
         dziImagesToHandle--;
 
         $container.trigger('seadragon.loadeddzi');
+        if (dziImagesToHandle === 0) {
+            $container.trigger('seadragon.loadeddziarray');
+        }
         forceUpdate();
     }
 
@@ -428,8 +431,10 @@ Seadragon.Controller = function (containerSelectorOrElement) {
      * @param {Seadragon.Rectangle} [bounds] Bounds representing position and shape of the image on the virtual
      *                                       Seadragon plane.
      */
-    this.openDzi = function (dziUrl, index, shown, bounds) {
-        dziImagesToHandle++;
+    this.openDzi = function (dziUrl, index, shown, bounds, /* internal */ dontIncrementCounter) {
+        if (!dontIncrementCounter) {
+            dziImagesToHandle++;
+        }
         try {
             Seadragon.DziImage.createFromDzi({
                 dziUrl: dziUrl,
@@ -440,9 +445,9 @@ Seadragon.Controller = function (containerSelectorOrElement) {
                 callback: onOpen
             });
         } catch (error) {
-            // We try to keep working after a failed attempt to load a new DZI.
-            Seadragon.Debug.error('DZI failed to load.');
+            // We try to keep working even after a failed attempt to load a new DZI.
             dziImagesToHandle--;
+            Seadragon.Debug.error('DZI failed to load.');
         }
     };
 
@@ -453,14 +458,15 @@ Seadragon.Controller = function (containerSelectorOrElement) {
      * @param {Array.<Seadragon.Rectangle>} [boundsArray] Array of bounds representing position and shape
      *                                                    of the image on the virtual Seadragon plane.
      */
-    this.openDziArray = function (dziUrlArray, boundsArray) {
+    this.openDziArray = function (dziUrlArray, boundsArray, hideByDefault) {
         var i;
         if (boundsArray == null) {
             boundsArray = [];
         }
-
-        for (i = 0; i < dziUrlArray.length; i++) {
-            self.openDzi(dziUrlArray[i], i, true, boundsArray[i]);
+        var dziUrlArrayLength = dziUrlArray.length;
+        dziImagesToHandle += dziUrlArrayLength;
+        for (i = 0; i < dziUrlArrayLength; i++) {
+            self.openDzi(dziUrlArray[i], i, !hideByDefault, boundsArray[i], true);
         }
     };
 

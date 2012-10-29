@@ -31,7 +31,7 @@ Seadragon.Markers = function ($container, viewport) {
         if ($container == null || !(viewport instanceof Seadragon.Viewport)) {
             Seadragon.Debug.fatal('Can\'t create a Markers instance without a $container parameter!');
             Seadragon.Debug.log('Received arguments: ');
-            Seadragon.Debug.log(arguments);
+            Seadragon.Debug.log(Array.prototype.slice.apply(arguments));
             Seadragon.Debug.fatal('Incorrect paremeters given to Seadragon.Markers!\n' +
                 'Use Seadragon.Markers($container, viewport)');
         }
