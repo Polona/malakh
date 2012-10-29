@@ -388,9 +388,9 @@ Seadragon.Controller = function (containerSelectorOrElement) {
                 callback: onOpen
             });
         } catch (error) {
-            // We try to keep working after a failed attempt to load a new DZI.
-            Seadragon.Debug.error('DZI failed to load.');
+            // We try to keep working even after a failed attempt to load a new DZI.
             dziImagesToHandle--;
+            Seadragon.Debug.error('DZI failed to load.');
         }
     };
 
