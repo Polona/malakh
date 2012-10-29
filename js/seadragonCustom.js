@@ -33,7 +33,7 @@ function seadragonCustom(options) {
 
     // Initialize the image (IT CAN BE EXECUTED ONLY ONCE!!!).
     function sdInit() {
-        var dziArray, i;
+        var dziArray, boundsArray, i;
 
         // Seadragon options:
         if (typeof sdData.animationTime === 'number') {
@@ -54,10 +54,12 @@ function seadragonCustom(options) {
         sdData.controller = new Seadragon.Controller($container);
 
         dziArray = [];
+        boundsArray = [];
         for (i = 0; i < dziNamesArray.length; i++) {
             dziArray.push(sdData.tilesDir + dziNamesArray[i] + '.dzi');
+            boundsArray.push(new Seadragon.Rectangle(1000000, 1000000, 1000, 1000));
         }
-        sdData.controller.openDziArray(dziArray);
+        sdData.controller.openDziArray(dziArray, boundsArray);
         sdData.controller.alignRows(4920, 0, Infinity, true);
 
         // Adjust -- not necessary, just removes the need to do it by ourselves.

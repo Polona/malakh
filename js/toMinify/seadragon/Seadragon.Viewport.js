@@ -40,7 +40,7 @@
     Seadragon.Viewport = function ($container) {
         if ($container == null) {
             Seadragon.Debug.log('Received arguments: ');
-            Seadragon.Debug.log(arguments);
+            Seadragon.Debug.log(Array.prototype.slice.apply(arguments));
             Seadragon.Debug.fatal('Incorrect paremeter given to Seadragon.Viewport!\n' +
                 'Use Seadragon.Viewport($container)');
         }

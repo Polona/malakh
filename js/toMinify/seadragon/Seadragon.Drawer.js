@@ -111,6 +111,14 @@ Seadragon.Drawer = function (options) {
      * @param {number} index
      */
     this.addDziImage = function (dziImage, index) {
+        if (midUpdate) { // We don't want to add a new image during the update process, deferring.
+            Seadragon.Debug.log('Deferred adding a DZI to Drawer');
+            var self = this;
+            setTimeout(function () {
+                self.addDziImage(dziImage, index);
+            }, 100);
+            return;
+        }
         if (!dziImage) {
             Seadragon.Debug.error('No DZI Image given to Drawer\'s addDziImage method!');
             return;
@@ -535,6 +543,13 @@ Seadragon.Drawer = function (options) {
     function update() {
         var dziImage, tile, zeroDimensionMax, deltaTime, opacity;
         var i, j, whichImage, x, y, level; // indexes for loops
+
+        if (midUpdate) {
+            // We don't want to run two updates at the same time but we do want to indicate
+            // the update needs to re-run as there could have been some changes - making
+            // it necessary - done after the currently running update checked for them.
+            return true;
+        }
 
         //noinspection JSUnusedAssignment
         midUpdate = true;

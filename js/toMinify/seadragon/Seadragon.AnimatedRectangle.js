@@ -28,7 +28,7 @@
 
         if ($container == null || !(bounds instanceof Seadragon.Rectangle)) {
             Seadragon.Debug.log('Received arguments: ');
-            Seadragon.Debug.log(arguments);
+            Seadragon.Debug.log(Array.prototype.slice.apply(arguments));
             Seadragon.Debug.fatal('Incorrect paremeters given to Seadragon.AnimatedRectangle!\n' +
                 'Use Seadragon.AnimatedRectangle($container, bounds)');
         }
@@ -205,25 +205,10 @@
         fitBounds: function (bounds, immediately) {
             this.isAnimating = true;
 
-            var aspect = this.getAspectRatio();
-            var center = bounds.getCenter();
-
-            // Resize bounds to match viewport's aspect ratio, maintaining center.
-            var newBounds = new Seadragon.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-            if (newBounds.getAspectRatio() >= aspect) {
-                // Width is bigger relative to viewport, resize height.
-                newBounds.height = bounds.width / aspect;
-                newBounds.y = center.y - newBounds.height / 2;
-            } else {
-                // Height is bigger relative to viewport, resize width.
-                newBounds.width = bounds.height * aspect;
-                newBounds.x = center.x - newBounds.width / 2;
-            }
-
-            this.springs.x.springTo(newBounds.x, immediately);
-            this.springs.y.springTo(newBounds.y, immediately);
-            this.springs.width.springTo(newBounds.width, immediately);
-            this.springs.height.springTo(newBounds.height, immediately);
+            this.springs.x.springTo(bounds.x, immediately);
+            this.springs.y.springTo(bounds.y, immediately);
+            this.springs.width.springTo(bounds.width, immediately);
+            this.springs.height.springTo(bounds.height, immediately);
 
             this.$container.trigger('seadragon.forcealign');
         }

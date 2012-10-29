@@ -11,16 +11,10 @@
         };
     }
 
-    function ensureFunction(alreadySupported) {
-        if (alreadySupported) {
-            return;
-        }
+    if (this) { // => strict mode not supported so we catch IE <=10.
         window.setTimeout = correctSetTimeoutOrInterval(window.setTimeout);
         window.setInterval = correctSetTimeoutOrInterval(window.setInterval);
     }
-
-    window.setTimeout(ensureFunction, 1, true);
-
 
     // Avoid console errors in browsers that lack a console. (Credits: HTML5 Boilerplate)
     if (!(window.console && console.log)) {
