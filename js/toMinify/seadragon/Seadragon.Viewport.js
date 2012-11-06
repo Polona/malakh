@@ -165,7 +165,7 @@
             },
 
             /**
-             * Displays the whole rectangle as large as possible so that it stills
+             * Displays the whole rectangle as large as possible so that it still
              * fits into the viewport and centers it.
              *
              * Note: this method it's a little different from it's equivalent in
@@ -198,7 +198,7 @@
             },
 
             /**
-             * Zooms out as much as possible while preserving
+             * Zooms out as much as possible while preserving constraints.
              *
              * @param {boolean} immediately
              */
