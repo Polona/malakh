@@ -470,16 +470,18 @@ Seadragon.Controller = function (containerSelectorOrElement) {
         }
     };
 
+    function isLoading() {
+        return dziImagesToHandle > 0;
+    }
+
     /**
      * Checks if controller is in progress of loading/processing new DZIs. Some actions are halted
      * for these short periods.
      *
      * @return {boolean}
-     * @private
+     * @function
      */
-    function isLoading() {
-        return dziImagesToHandle > 0;
-    }
+    this.isLoading = isLoading;
 
     /**
      * Closes the Seadragon module, de-registers events and clears Seadragon HTML container.
