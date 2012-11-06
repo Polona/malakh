@@ -165,8 +165,40 @@
             },
 
             /**
-             * Displays the whole image as large as possible so that it stills
+             * Displays the whole rectangle as large as possible so that it stills
              * fits into the viewport and centers it.
+             *
+             * Note: this method it's a little different from it's equivalent in
+             * <code>Seadragon.AnimatedRectangle</code> as we can't change the viewport's aspect ratio.
+             *
+             * @see Seadragon.AnimatedRectangle#fitBounds
+             *
+             * @param {Seadragon.Rectangle} bounds
+             * @param {boolean} immediately
+             */
+            fitBounds: function (bounds, immediately) {
+                var aspect = this.getAspectRatio();
+                var center = bounds.getCenter();
+
+                // Resize bounds to match viewport's aspect ratio, maintaining center.
+                var newBounds = new Seadragon.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+                if (newBounds.getAspectRatio() >= aspect) {
+                    // Width is bigger relative to viewport, resize height.
+                    newBounds.height = bounds.width / aspect;
+                    newBounds.y = center.y - newBounds.height / 2;
+                } else {
+                    // Height is bigger relative to viewport, resize width.
+                    newBounds.width = bounds.height * aspect;
+                    newBounds.x = center.x - newBounds.width / 2;
+                }
+
+                Seadragon.AnimatedRectangle.prototype.fitBounds.call(this, newBounds, immediately);
+
+                this.$container.trigger('seadragon.forcealign');
+            },
+
+            /**
+             * Zooms out as much as possible while preserving
              *
              * @param {boolean} immediately
              */
@@ -181,7 +213,7 @@
             /**
              * Invoked on window resize.
              *
-             * @param {Seadragon.Point} newContainerSize Point: <code>(container width, container height)</code>.
+             * @param {Seadragon.Point} newContainerSize point: <code>(container width, container height)</code>.
              */
             resize: function (newContainerSize) {
                 var zoom = this.getZoom();

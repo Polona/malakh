@@ -196,8 +196,7 @@
         },
 
         /**
-         * Fits a given <code>bounds</code> rectangle so that it's as big as possible while
-         * not stretching outside of the viewport and centers it.
+         * Animates a rectangle to a new one.
          *
          * @param {Seadragon.Rectangle} bounds
          * @param {boolean} immediately
@@ -209,8 +208,6 @@
             this.springs.y.springTo(bounds.y, immediately);
             this.springs.width.springTo(bounds.width, immediately);
             this.springs.height.springTo(bounds.height, immediately);
-
-            this.$container.trigger('seadragon.forcealign');
         }
     };
 })();

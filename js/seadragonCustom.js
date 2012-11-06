@@ -208,6 +208,7 @@ function seadragonCustom(options) {
                 Seadragon.Config.constraintViewport = constrainImage3;
                 sdData.controller.viewport.constraintBounds = new Seadragon.Rectangle(
                     sdData.controller.dziImages[2].bounds.getRectangle());
+                sdData.controller.viewport.fitConstraintBounds();
                 sdData.controller.viewport.applyConstraints();
                 return false;
             }
@@ -228,6 +229,7 @@ function seadragonCustom(options) {
                 Seadragon.Config.constraintViewport = constrainImage17;
                 sdData.controller.viewport.constraintBounds = new Seadragon.Rectangle(
                     sdData.controller.dziImages[16].bounds.getRectangle());
+                sdData.controller.viewport.fitConstraintBounds();
                 sdData.controller.viewport.applyConstraints();
                 return false;
             }
