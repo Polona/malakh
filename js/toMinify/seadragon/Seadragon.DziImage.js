@@ -166,7 +166,11 @@
                 options.data = data;
                 options.callback(processDzi(options));
             },
-            error: function (error) {
+            error: function (_, statusText) {
+                var error = {
+                    name: 'error',
+                    message: statusText
+                };
                 Seadragon.Debug.fatal('Unable to retrieve the given DZI file, does it really exist?', error);
             }
         });

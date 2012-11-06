@@ -199,7 +199,7 @@
                 var whatToScaleStart = 'y';
                 var whatToScaleLength = 'height';
 
-                var cR = this.constraints; // constraints rectangle
+                var cR = this.constraints; // constraints vector
                 var vR = this.getRectangle(); // viewport rectangle
 
                 var viewportRatio = vR.getAspectRatio();

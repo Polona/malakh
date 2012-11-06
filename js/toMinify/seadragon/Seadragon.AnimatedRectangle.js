@@ -208,8 +208,6 @@
             this.springs.y.springTo(bounds.y, immediately);
             this.springs.width.springTo(bounds.width, immediately);
             this.springs.height.springTo(bounds.height, immediately);
-
-            this.$container.trigger('seadragon.forcealign');
         }
     };
 })();
