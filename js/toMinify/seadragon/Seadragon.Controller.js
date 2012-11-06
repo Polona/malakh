@@ -563,7 +563,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
         }
         recalculateMaxLevel();
 
-        forceUpdate();
+        $container.trigger('seadragon.forcealign');
     }
 
     /**
