@@ -43,7 +43,7 @@
         if (options == null || options.$container == null || options.width == null || options.height == null ||
             options.tileSize == null || options.tileOverlap == null) {
             Seadragon.Debug.log('Received arguments: ');
-            Seadragon.Debug.log(arguments);
+            Seadragon.Debug.log(Array.prototype.slice.apply(arguments));
             Seadragon.Debug.fatal('Seadragon.TiledImage needs a JSON parameter with at least the following fields: ' +
                 '$container, width, height, tileSize.\n' +
                 'Fields: tileOverlap, minLevel, maxLevel are optional.');

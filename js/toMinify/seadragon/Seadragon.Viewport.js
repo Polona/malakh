@@ -40,7 +40,7 @@
     Seadragon.Viewport = function ($container) {
         if ($container == null) {
             Seadragon.Debug.log('Received arguments: ');
-            Seadragon.Debug.log(arguments);
+            Seadragon.Debug.log(Array.prototype.slice.apply(arguments));
             Seadragon.Debug.fatal('Incorrect paremeter given to Seadragon.Viewport!\n' +
                 'Use Seadragon.Viewport($container)');
         }
@@ -274,21 +274,36 @@
             },
 
             /**
-             * Fits the image so that it's as big as possible while not stretching outside of the viewport
-             * and centers it.
+             * Zooms out as much as possible while preserving constraints.
              *
              * @param {boolean} immediately
              */
-            fitImage: function fitImage(immediately) {
-                var constraints = this.constraints;
-                if (!(constraints instanceof Seadragon.Point)) { // Image not loaded yet.
+            fitConstraintBounds: function (immediately) {
+                if (!(this.constraints instanceof Seadragon.Point)) { // Image not loaded yet.
                     var self = this;
                     setTimeout(function () {
-                        self.fitImage(immediately);
+                        self.fitConstraintBounds(immediately);
                     }, 100);
                     return;
                 }
-                this.fitBounds(new Seadragon.Rectangle(0, 0, constraints.x, constraints.y), immediately);
+                var aspect = this.getAspectRatio();
+                var center = new Seadragon.Point(this.constraints.x / 2, this.constraints.y / 2);
+
+                // Resize bounds to match viewport's aspect ratio, maintaining center.
+                var newBounds = new Seadragon.Rectangle(0, 0, this.constraints.x, this.constraints.y);
+                if (newBounds.getAspectRatio() >= aspect) {
+                    // Width is bigger relative to viewport, resize height.
+                    newBounds.height = this.constraints.x / aspect;
+                    newBounds.y = center.y - newBounds.height / 2;
+                } else {
+                    // Height is bigger relative to viewport, resize width.
+                    newBounds.width = this.constraints.y * aspect;
+                    newBounds.x = center.x - newBounds.width / 2;
+                }
+
+                Seadragon.AnimatedRectangle.prototype.fitBounds.call(this, newBounds, immediately);
+
+                this.$container.trigger('seadragon.forcealign');
             },
 
             // CONVERSION HELPERS

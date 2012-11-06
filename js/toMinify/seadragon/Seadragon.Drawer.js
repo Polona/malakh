@@ -169,6 +169,7 @@ Seadragon.Drawer = function (options) {
      * Returns a tile given by parameters.
      * Results are cached.
      *
+     * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
      * @param {number} level Tile's level.
      * @param {number} x Tile's column.
      * @param {number} y Tile's row.
@@ -243,7 +244,7 @@ Seadragon.Drawer = function (options) {
         tile.loading = false;
 
         if (midUpdate) {
-            Seadragon.Debug.error('Tile load callback in middle of drawing routine.');
+            Seadragon.Debug.error('Tile load callback in the middle of drawing routine.');
             return;
         } else if (!image) {
             Seadragon.Debug.error('Tile ' + tile + ' failed to load: ' + tile.url);
@@ -417,7 +418,7 @@ Seadragon.Drawer = function (options) {
      * @param {Seadragon.Tile} tile A tile that "tries" to be better than <code>prevBestTile</code>.
      * @param {Seadragon.Point} [interestingPoint] The point near which we prefer to draw tiles. Usually
      *                                             either the middle of the viewport or current mouse position.
-     * @return {Seadragon.Tile}
+     * @return {Seadragon.Tile} The "better" tile.
      * @private
      */
     function compareTiles(prevBestTile, tile, interestingPoint) {

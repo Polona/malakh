@@ -106,7 +106,7 @@ function seadragonCustom(options) {
                 if (event.which !== 1) { // Only left-click is supported.
                     return false;
                 }
-                sdData.controller.viewport.fitImage();
+                sdData.controller.viewport.fitConstraintBounds();
                 return false;
             }
         });
@@ -127,7 +127,7 @@ function seadragonCustom(options) {
             }
         }).trigger($.Event('click', {which: 1}));
 
-        sdData.controller.viewport.fitImage(true);
+        sdData.controller.viewport.fitConstraintBounds(true);
 
         $('#seadragonPreloader').remove();
     }

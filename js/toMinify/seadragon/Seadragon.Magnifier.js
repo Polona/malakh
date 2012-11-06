@@ -20,7 +20,7 @@
     Seadragon.Magnifier = function (center, radius) {
         if (!(center instanceof Seadragon.Point) || !radius) {
             Seadragon.Debug.log('Received arguments: ');
-            Seadragon.Debug.log(arguments);
+            Seadragon.Debug.log(Array.prototype.slice.apply(arguments));
             Seadragon.Debug.fatal('Incorrect paremeters given to Seadragon.Magnifier!\n' +
                 'Use Seadragon.Magnifier(center, radius). Radius has to be a positive number.');
         }

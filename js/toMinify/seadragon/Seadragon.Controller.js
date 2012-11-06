@@ -354,7 +354,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
         if (animating) {
             forceRedraw = self.drawer.update();
         } else {
-            lockOnUpdates = true; // TODO uncomment
+            lockOnUpdates = true;
         }
 
         // Triger proper events.
