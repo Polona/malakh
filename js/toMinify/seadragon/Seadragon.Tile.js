@@ -21,7 +21,7 @@
      * @param {Seadragon.Rectangle} options.bounds Sets <code>this.bounds</code>.
      * @param {string} options.url Sets <code>this.url</code>.
      */
-    Seadragon.Tile = function (options) {
+    Seadragon.Tile = function Tile(options) {
         if (options == null || options.level == null || options.x == null || options.y == null ||
             options.bounds == null || options.url == null) {
             Seadragon.Debug.log('\nReceived options: ');
@@ -138,21 +138,6 @@
 
     Seadragon.Tile.prototype = {
         /**
-         * Returns the string representation of the tile.
-         * @return {string}
-         */
-        toString: function () {
-            return this.level + '/' + this.x + '_' + this.y;
-        },
-
-        /**
-         * Updates tile's version to the current time.
-         */
-        updateVersion: function () {
-            this.version = Date.now();
-        },
-
-        /**
          * Draws the tile on canvas. Optionally applies zoom needed for magnifier support
          * and in that case makes it so both the usual and enlarged tile is identical
          * around <code>mousePosition</code>.
@@ -161,7 +146,7 @@
          * @param {number} [zoom=1]
          * @param {Seadragon.Point} [mousePosition]
          */
-        drawCanvas: function (context, zoom, mousePosition) {
+        drawCanvas: function drawCanvas(context, zoom, mousePosition) {
             if (!this.loaded) {
                 Seadragon.Debug.error('Attempting to draw tile ' + this.toString() + ' when it\'s not yet loaded.');
                 return;
@@ -190,10 +175,18 @@
         /**
          * Resets the tile and removes the reference to the image it contained.
          */
-        unload: function () {
+        unload: function unload() {
             this.image = null;
             this.loaded = false;
             this.loading = false;
+        },
+
+        /**
+         * Returns the string representation of the tile.
+         * @return {string}
+         */
+        toString: function toString() {
+            return this.level + '/' + this.x + '_' + this.y;
         }
     };
 })();

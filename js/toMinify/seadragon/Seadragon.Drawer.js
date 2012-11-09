@@ -23,7 +23,7 @@
  *                                           all the HTML structure of Seadragon.
  * @param {Seadragon.Magnifier} options.magnifier
  */
-Seadragon.Drawer = function (options) {
+Seadragon.Drawer = function Drawer(options) {
     'use strict';
 
     var self = this;
@@ -100,7 +100,7 @@ Seadragon.Drawer = function (options) {
      *
      * @param {Seadragon.DziImage} newDziImage
      */
-    this.loadDziImage = function (newDziImage) {
+    this.loadDziImage = function loadDziImage(newDziImage) {
         if (!newDziImage) {
             Seadragon.Debug.error('No DZI Image given to Drawer\'s loadDziImage method!');
             return;

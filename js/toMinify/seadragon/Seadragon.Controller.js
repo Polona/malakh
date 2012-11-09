@@ -20,7 +20,7 @@
  *
  * @param {string|jQuery object} containerSelectorOrElement
  */
-Seadragon.Controller = function (containerSelectorOrElement) {
+Seadragon.Controller = function Controller(containerSelectorOrElement) {
     'use strict';
 
     var self = this;
@@ -88,7 +88,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Shows the magnifier.
      */
-    this.showMagnifier = function () {
+    this.showMagnifier = function showMagnifier() {
         $(document).mouseup(); // To stop canvas dragging etc.
 
         magnifierShown = true;
@@ -102,7 +102,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Hides the magnifier.
      */
-    this.hideMagnifier = function () {
+    this.hideMagnifier = function hideMagnifier() {
         $canvas.off('mousemove', moveMagnifier);
 
         self.drawer.canvasLayersManager.drawMagnifier = false;
@@ -115,7 +115,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Toggles magnifier's state - shows it if it was hidden; hides it otherwise.
      */
-    this.toggleMagnifier = function () {
+    this.toggleMagnifier = function toggleMagnifier() {
         if (magnifierShown) {
             self.hideMagnifier();
         } else {
@@ -126,7 +126,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Shows the picker.
      */
-    this.showPicker = function () {
+    this.showPicker = function showPicker() {
         pickerShown = true;
         self.picker.show();
     };
@@ -134,7 +134,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Hides the picker.
      */
-    this.hidePicker = function () {
+    this.hidePicker = function hidePicker() {
         pickerShown = false;
         self.picker.hide();
     };
@@ -142,7 +142,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Toggles picker's state - shows it if it was hidden; hides it otherwise.
      */
-    this.togglePicker = function () {
+    this.togglePicker = function togglePicker() {
         if (pickerShown) {
             self.hidePicker();
         } else {
@@ -379,7 +379,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
      *
      * @param {string} dziUrl An URL/path to the DZI file.
      */
-    this.openDzi = function (dziUrl) {
+    this.openDzi = function openDzi(dziUrl) {
         dziImagesToHandle++;
         try {
             Seadragon.DziImage.createFromDzi({
@@ -408,7 +408,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Closes the Seadragon module, de-registers events and clears Seadragon HTML container.
      */
-    this.close = function () {
+    this.close = function close() {
         $(window).off({
             resize: forceUpdate
         });

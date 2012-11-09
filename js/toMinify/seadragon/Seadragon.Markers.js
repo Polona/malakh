@@ -19,7 +19,7 @@
  *                                   all the HTML structure of Seadragon.
  * @param {Seadragon.Viewport} viewport The viewport handling current Seadragon instance.
  */
-Seadragon.Markers = function ($container, viewport) {
+Seadragon.Markers = function Markers($container, viewport) {
     'use strict';
 
     //An array of all kept markers.

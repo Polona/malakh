@@ -37,7 +37,7 @@
      * @param {jQuery object} $container A jQuery object representing the DOM element containing
      *                                   all the HTML structure of Seadragon.
      */
-    Seadragon.Viewport = function ($container) {
+    Seadragon.Viewport = function Viewport($container) {
         if ($container == null) {
             Seadragon.Debug.log('Received arguments: ');
             Seadragon.Debug.log(Array.prototype.slice.apply(arguments));
@@ -80,7 +80,7 @@
              * @param {boolean} current
              * @return {number}
              */
-            getZoom: function (current) {
+            getZoom: function getZoom(current) {
                 return this.containerSize.x / this.springs.width.get(current);
             },
 
@@ -91,7 +91,7 @@
              * @param {boolean} immediately
              * @param {Seadragon.Point} refPoint
              */
-            zoomTo: function (zoom, immediately, refPoint, /* internal */ dontApplyConstraints) {
+            zoomTo: function zoomTo(zoom, immediately, refPoint, /* internal */ dontApplyConstraints) {
                 if (!(refPoint instanceof Seadragon.Point)) {
                     refPoint = this.getCenter();
                 }
@@ -126,7 +126,7 @@
              * @param {boolean} immediately
              * @param {Seadragon.Point} refPoint
              */
-            zoomBy: function (factor, immediately, refPoint, /* internal */ dontApplyConstraints) {
+            zoomBy: function zoomBy(factor, immediately, refPoint, /* internal */ dontApplyConstraints) {
                 this.zoomTo(this.getZoom() * factor, immediately, refPoint, dontApplyConstraints);
             },
 
@@ -136,7 +136,7 @@
              * @param {Seadragon.Point} center
              * @param {boolean} immediately
              */
-            panTo: function (center, immediately, /* internal */ dontApplyConstraints) {
+            panTo: function panTo(center, immediately, /* internal */ dontApplyConstraints) {
                 Seadragon.AnimatedRectangle.prototype.panTo.call(this, center, immediately);
                 if (!dontApplyConstraints) {
                     this.applyConstraints(false);
@@ -150,7 +150,7 @@
              * @param {Seadragon.Point} delta A vector by which we pan the viewport.
              * @param {boolean} immediately
              */
-            panBy: function (delta, immediately, /* internal */ dontApplyConstraints) {
+            panBy: function panBy(delta, immediately, /* internal */ dontApplyConstraints) {
                 this.panTo(this.getCenter().plus(delta), immediately, dontApplyConstraints);
             },
 
@@ -159,7 +159,7 @@
              *
              * @param {Seadragon.Point} newContainerSize Point: <code>(container width, container height)</code>.
              */
-            resize: function (newContainerSize) {
+            resize: function resize(newContainerSize) {
                 var zoom = this.getZoom();
                 // Update container size, but make a copy first.
                 this.containerSize = new Seadragon.Point(newContainerSize.x, newContainerSize.y);
@@ -278,7 +278,7 @@
              *
              * @param {boolean} immediately
              */
-            fitConstraintBounds: function (immediately) {
+            fitConstraintBounds: function fitConstraintBounds(immediately) {
                 if (!(this.constraints instanceof Seadragon.Point)) { // Image not loaded yet.
                     var self = this;
                     setTimeout(function () {
@@ -315,7 +315,7 @@
              * @param {boolean} current
              * @return {Seadragon.Point}
              */
-            deltaPixelsFromPoints: function (deltaPoints, current) {
+            deltaPixelsFromPoints: function deltaPixelsFromPoints(deltaPoints, current) {
                 return deltaPoints.multiply(this.getZoom(current));
             },
 
@@ -328,7 +328,7 @@
              * @param {boolean} current
              * @return {Seadragon.Point}
              */
-            deltaPointsFromPixels: function (deltaPixels, current) {
+            deltaPointsFromPixels: function deltaPointsFromPixels(deltaPixels, current) {
                 return deltaPixels.divide(this.getZoom(current));
             },
 
@@ -340,7 +340,7 @@
              * @param {boolean} current
              * @return {Seadragon.Point}
              */
-            pixelFromPoint: function (point, current) {
+            pixelFromPoint: function pixelFromPoint(point, current) {
                 var bounds, zoom;
                 bounds = this.getRectangle(current);
                 zoom = this.getZoom(current);
@@ -354,7 +354,7 @@
              * @param {boolean} current
              * @return {Seadragon.Point}
              */
-            pointFromPixel: function (pixel, current) {
+            pointFromPixel: function pointFromPixel(pixel, current) {
                 var bounds = this.getRectangle(current);
                 var zoom = this.getZoom(current);
                 return pixel.divide(zoom).plus(bounds.getTopLeft());
@@ -368,7 +368,7 @@
              * @param {boolean} current
              * @return {Seadragon.Rectangle}
              */
-            pointRectangleFromPixelRectangle: function (rectangle, current) {
+            pointRectangleFromPixelRectangle: function pointRectangleFromPixelRectangle(rectangle, current) {
                 var topLeft = rectangle.getTopLeft();
                 var size = rectangle.getSize();
 
@@ -387,7 +387,7 @@
              * @param {boolean} current
              * @return {Seadragon.Rectangle}
              */
-            pixelRectangleFromPointRectangle: function (rectangle, current) {
+            pixelRectangleFromPointRectangle: function pixelRectangleFromPointRectangle(rectangle, current) {
                 var topLeft = rectangle.getTopLeft();
                 var size = rectangle.getSize();
 

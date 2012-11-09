@@ -18,7 +18,7 @@
      *     <li>License: MIT (see the licence.txt file for copyright information)</li>
      * <ul>
      */
-    Seadragon.Point = function () {
+    Seadragon.Point = function Point() {
         var arguments0 = arguments[0];
         if (arguments0 == null) {
             /**
@@ -49,7 +49,7 @@
          * @param {Seadragon.Point} point
          * @return {Seadragon.Point}
          */
-        plus: function (point) {
+        plus: function plus(point) {
             return new Seadragon.Point(this.x + point.x, this.y + point.y);
         },
 
@@ -59,7 +59,7 @@
          * @param {Seadragon.Point} point
          * @return {Seadragon.Point}
          */
-        minus: function (point) {
+        minus: function minus(point) {
             return new Seadragon.Point(this.x - point.x, this.y - point.y);
         },
 
@@ -69,7 +69,7 @@
          * @param {number} factor
          * @return {Seadragon.Point}
          */
-        multiply: function (factor) {
+        multiply: function multiply(factor) {
             return new Seadragon.Point(this.x * factor, this.y * factor);
         },
 
@@ -79,7 +79,7 @@
          * @param {number} factor
          * @return {Seadragon.Point}
          */
-        divide: function (factor) {
+        divide: function divide(factor) {
             return new Seadragon.Point(this.x / factor, this.y / factor);
         },
 
@@ -88,7 +88,7 @@
          *
          * @return {Seadragon.Point}
          */
-        negate: function () {
+        negate: function negate() {
             return new Seadragon.Point(-this.x, -this.y);
         },
 
@@ -97,7 +97,7 @@
          *
          * @return {Seadragon.Point}
          */
-        invert: function () {
+        invert: function invert() {
             return new Seadragon.Point(1 / this.x, 1 / this.y);
         },
 
@@ -107,7 +107,7 @@
          * @param {Seadragon.Point} point
          * @return {number}
          */
-        distanceTo: function (point) {
+        distanceTo: function distanceTo(point) {
             return Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
         },
 
@@ -117,7 +117,7 @@
          * @param {function} func
          * @return {Seadragon.Point}
          */
-        apply: function (func) {
+        apply: function apply(func) {
             return new Seadragon.Point(func(this.x), func(this.y));
         },
 
@@ -126,7 +126,7 @@
          *
          * @return {Seadragon.Point}
          */
-        round: function () {
+        round: function round() {
             return new Seadragon.Point(Math.round(this.x), Math.round(this.y));
         },
 
@@ -136,7 +136,7 @@
          * @param {Seadragon.Point} point
          * @return {boolean}
          */
-        equals: function (point) {
+        equals: function equals(point) {
             return (point instanceof Seadragon.Point) && (this.x === point.x) && (this.y === point.y);
         },
 
@@ -145,8 +145,8 @@
          *
          * @return {string}
          */
-        toString: function () {
-            return "(" + this.x + ", " + this.y + ")";
+        toString: function toString() {
+            return '(' + this.x + ', ' + this.y + ')';
         }
     };
 })();

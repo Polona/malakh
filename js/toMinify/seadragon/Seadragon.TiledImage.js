@@ -39,7 +39,7 @@
      *
      * @author <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
      */
-    Seadragon.TiledImage = function (options) {
+    Seadragon.TiledImage = function TiledImage(options) {
         if (options == null || options.$container == null || options.width == null || options.height == null ||
             options.tileSize == null || options.tileOverlap == null) {
             Seadragon.Debug.log('Received arguments: ');
@@ -95,7 +95,7 @@
          * @param {number} level
          * @return {number}
          */
-        getLevelScale: function (level) {
+        getLevelScale: function getLevelScale(level) {
             return Math.pow(0.5, this.maxLevel - level);
         },
 
@@ -105,7 +105,7 @@
          * @param {number} level
          * @return {Seadragon.Point}
          */
-        getNumTiles: function (level) {
+        getNumTiles: function getNumTiles(level) {
             var scale = this.getLevelScale(level);
             var x = Math.ceil(scale * this.width / this.tileSize);
             var y = Math.ceil(scale * this.height / this.tileSize);
@@ -119,7 +119,7 @@
          * @param {number} level
          * @return {Seadragon.Point}
          */
-        getScaledDimensions: function (level) {
+        getScaledDimensions: function getScaledDimensions(level) {
             return new Seadragon.Point(this.width, this.height).multiply(this.getLevelScale(level));
         },
 
@@ -130,7 +130,7 @@
          * @param {Seadragon.Point} point
          * @return {Seadragon.Point}
          */
-        getTileAtPoint: function (level, point) {
+        getTileAtPoint: function getTileAtPoint(level, point) {
             var pixel = point.multiply(this.getLevelScale(level));
 
             var tx = Math.floor(pixel.x / this.tileSize);
@@ -147,7 +147,7 @@
          * @param {number} y
          * @return {Seadragon.Rectangle}
          */
-        getTileBounds: function (level, x, y) {
+        getTileBounds: function getTileBounds(level, x, y) {
             var px, py, sx, sy, levelScale;
 
             // Find position, adjust for no overlap data on top and left edges.
@@ -181,7 +181,7 @@
          * @param {number} y Tile's row number (starting from 0).
          * @return {string}
          */
-        getTileUrl: function (/*level, x, y*/) {
+        getTileUrl: function getTileUrl(/*level, x, y*/) {
             Seadragon.Debug.error("Method not implemented.");
             return '';
         }
