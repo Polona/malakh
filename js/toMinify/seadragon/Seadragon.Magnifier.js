@@ -17,7 +17,7 @@
      * @param {Seadragon.Point} center
      * @param {number} radius
      */
-    Seadragon.Magnifier = function (center, radius) {
+    Seadragon.Magnifier = function Magnifier(center, radius) {
         if (!(center instanceof Seadragon.Point) || !radius) {
             Seadragon.Debug.log('Received arguments: ');
             Seadragon.Debug.log(Array.prototype.slice.apply(arguments));
@@ -34,7 +34,7 @@
          *
          * @param {Seadragon.Point} delta
          */
-        panBy: function (delta) {
+        panBy: function panBy(delta) {
             this.center.x += delta.x;
             this.center.y += delta.y;
         },
@@ -44,12 +44,12 @@
          *
          * @param {Seadragon.Point} newCenter New center point of the magnifier
          */
-        panTo: function (newCenter) {
+        panTo: function panTo(newCenter) {
             this.center.x = newCenter.x;
             this.center.y = newCenter.y;
         },
 
-        contains: function (point) {
+        contains: function contains(point) {
             return this.center.distanceTo(point) <= this.radius;
         },
 
@@ -62,7 +62,7 @@
          * @param {Seadragon.Rectangle} rectangle
          * @return {boolean}
          */
-        intersectsRectangle: function (rectangle) {
+        intersectsRectangle: function intersectsRectangle(rectangle) {
             return rectangle.intersectsRectangle(new Seadragon.Rectangle(
                 this.center.x - this.radius / Seadragon.Config.magnifierZoom,
                 this.center.y - this.radius / Seadragon.Config.magnifierZoom,
@@ -76,7 +76,7 @@
          *
          * @param {CanvasRenderingContext2D} context '2d' context of canvas on which we are drawing
          */
-        drawPath: function (context) {
+        drawPath: function drawPath(context) {
             context.lineWidth = 5;
             context.strokeStyle = '#00d5ef';
 
@@ -102,7 +102,7 @@
          *
          * @param {CanvasRenderingContext2D} context '2d' context of canvas on which we are drawing
          */
-        drawOnFinish: function (context) {
+        drawOnFinish: function drawOnFinish(context) {
             context.lineWidth = 5;
             context.strokeStyle = '#00d5ef';
             context.stroke();
@@ -113,7 +113,7 @@
          *
          * @return {string}
          */
-        toString: function () {
+        toString: function toString() {
             return 'Magnifier((' + this.center.x + ', ' + this.center.y + '), ' + this.radius + ')';
         }
     };

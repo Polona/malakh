@@ -23,7 +23,7 @@
      * @param {jQuery object} $container Sets <code>this.$container</code>.
      * @param {Seadragon.Rectangle} bounds A rectangle representing the initial value of the animated rectangle.
      */
-    Seadragon.AnimatedRectangle = function ($container, bounds) {
+    Seadragon.AnimatedRectangle = function AnimatedRectangle($container, bounds) {
         var self = this;
 
         if ($container == null || !(bounds instanceof Seadragon.Rectangle)) {
@@ -95,7 +95,7 @@
          * @param {boolean} current
          * @return {Seadragon.Rectangle}
          */
-        getRectangle: function (current) {
+        getRectangle: function getRectangle(current) {
             return new Seadragon.Rectangle(
                 this.springs.x.get(current),
                 this.springs.y.get(current),
@@ -110,7 +110,7 @@
          * @param {boolean} current
          * @return {number}
          */
-        getAspectRatio: function (current) {
+        getAspectRatio: function getAspectRatio(current) {
             return this.getRectangle(current).getAspectRatio();
         },
 
@@ -118,7 +118,7 @@
          * @param {boolean} current
          * @return {Seadragon.Point}
          */
-        getTopLeft: function (current) {
+        getTopLeft: function getTopLeft(current) {
             return this.getRectangle(current).getTopLeft();
         },
 
@@ -126,7 +126,7 @@
          * @param {boolean} current
          * @return {Seadragon.Point}
          */
-        getBottomRight: function (current) {
+        getBottomRight: function getBottomRight(current) {
             return this.getRectangle(current).getBottomRight();
         },
 
@@ -136,7 +136,7 @@
          * @param {boolean} current
          * @return {Seadragon.Point}
          */
-        getSize: function (current) {
+        getSize: function getSize(current) {
             return this.getRectangle(current).getSize();
         },
 
@@ -154,7 +154,7 @@
          * @param {Seadragon.Point} center
          * @param {boolean} immediately
          */
-        panTo: function (center, immediately) {
+        panTo: function panTo(center, immediately) {
             this.springs.x.springTo(center.x - this.springs.width.targetValue / 2, immediately);
             this.springs.y.springTo(center.y - this.springs.height.targetValue / 2, immediately);
 
@@ -167,7 +167,7 @@
          * @param {Seadragon.Point} delta
          * @param {boolean} immediately
          */
-        panBy: function (delta, immediately) {
+        panBy: function panBy(delta, immediately) {
             this.panTo(this.getCenter().plus(delta), immediately);
         },
 
@@ -177,7 +177,7 @@
          *
          * @return {boolean} Did anything change?
          */
-        update: function () {
+        update: function update() {
             var bounds = this.getRectangle(true);
 
             this.springs.x.update();
@@ -201,7 +201,7 @@
          * @param {Seadragon.Rectangle} bounds
          * @param {boolean} immediately
          */
-        fitBounds: function (bounds, immediately) {
+        fitBounds: function fitBounds(bounds, immediately) {
             this.isAnimating = true;
 
             this.springs.x.springTo(bounds.x, immediately);

@@ -21,7 +21,7 @@
      *
      * @param {number} [initialValue=0]
      */
-    Seadragon.Spring = function (initialValue) {
+    Seadragon.Spring = function Spring(initialValue) {
         /**
          * Current value of the spring, should be between <code>startValue</code> and <code>targetValue</code>.
          * @type number
@@ -73,7 +73,7 @@
          * @return {number}
          * @private
          */
-        transform: function (x) {
+        transform: function transform(x) {
             var s = Seadragon.Config.springStiffness;
             return (1.0 - Math.exp(-x * s)) / (1.0 - Math.exp(-s));
         },
@@ -85,7 +85,7 @@
          * @param {boolean} [current=false] Do we want the current value to be returned?
          * @return {boolean}
          */
-        get: function (current) {
+        get: function get(current) {
             if (current) {
                 return this.currentValue;
             } else {
@@ -100,7 +100,7 @@
          * @param {boolean} [immediately=false] If true, we immediately change
          * <code>currentValue</code> to the target one.
          */
-        springTo: function (target, immediately) {
+        springTo: function springTo(target, immediately) {
             this.cacheIsAnimating = true;
             this.startValue = this.currentValue;
             this.startTime = Date.now();
@@ -117,7 +117,7 @@
          *
          * @param {number} target
          */
-        resetTo: function (target) {
+        resetTo: function resetTo(target) {
             this.springTo(target, true);
         },
 
@@ -129,7 +129,7 @@
          * @return {boolean}
          * @private
          */
-        isAnimating: function () {
+        isAnimating: function isAnimating() {
             if (!this.cacheIsAnimating) {
                 return false;
             }
@@ -141,7 +141,7 @@
          * Updates the current value of the spring based on current time and start and target values.
          * This method has to be invoked manually which is done by Seadragon.Drawer.
          */
-        update: function () {
+        update: function update() {
             var currentTime = Date.now();
             this.currentValue = currentTime >= this.targetTime ?
                 this.targetValue :

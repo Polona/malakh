@@ -23,7 +23,7 @@
  *                                           all the HTML structure of Seadragon.
  * @param {Seadragon.Magnifier} options.magnifier
  */
-Seadragon.Drawer = function (options) {
+Seadragon.Drawer = function Drawer(options) {
     'use strict';
 
     var self = this;
@@ -110,7 +110,7 @@ Seadragon.Drawer = function (options) {
      * @param {Seadragon.DziImage} dziImage
      * @param {number} index
      */
-    this.addDziImage = function (dziImage, index) {
+    this.addDziImage = function addDziImage(dziImage, index) {
         if (midUpdate) { // We don't want to add a new image during the update process, deferring.
             Seadragon.Debug.log('Deferred adding a DZI to Drawer');
             var self = this;

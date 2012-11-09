@@ -17,7 +17,7 @@
  *                                   all the HTML structure of Seadragon.
  * @param {Seadragon.Viewport} viewport The viewport handling current Seadragon instance.
  */
-Seadragon.Picker = function ($container, viewport) {
+Seadragon.Picker = function Picker($container, viewport) {
     'use strict';
 
     var $pickerOverlay, $pickerArea;
