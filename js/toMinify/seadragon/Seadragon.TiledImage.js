@@ -40,7 +40,7 @@
      * @param {number} [options.maxLevel=maximum image level] Sets this.maxLevel.
      * @param {number} [options.shown=true] If true, an image is hidden.
      */
-    Seadragon.TiledImage = function (options) {
+    Seadragon.TiledImage = function TiledImage(options) {
         if (options == null || options.$container == null || options.width == null || options.height == null ||
             options.tileSize == null || options.tileOverlap == null) {
             Seadragon.Debug.log('Received arguments: ');
@@ -135,7 +135,7 @@
          *
          * @return {boolean}
          */
-        isShown: function () {
+        isShown: function isShown() {
             return !this.blending && this.opacity === 1;
         },
 
@@ -144,7 +144,7 @@
          *
          * @return {boolean}
          */
-        isHidden: function () {
+        isHidden: function isHidden() {
             return !this.blending && this.opacity === 0;
         },
 
@@ -153,7 +153,7 @@
          *
          * @return {boolean}
          */
-        isShowing: function () {
+        isShowing: function isShowing() {
             return this.blending && !this.hiding;
         },
 
@@ -162,7 +162,7 @@
          *
          * @return {boolean}
          */
-        isHiding: function () {
+        isHiding: function isHiding() {
             return this.blending && this.hiding;
         },
 
@@ -179,7 +179,7 @@
          * @param {boolean} current
          * @return {number}
          */
-        getAdjustedLevel: function (level, current) {
+        getAdjustedLevel: function getAdjustedLevel(level, current) {
             var boundsScale = this.getBoundsScale(current);
             return level + Math.ceil(Math.log(Math.max(boundsScale.x, boundsScale.y)) / Math.log(2));
         },
@@ -193,7 +193,7 @@
          * @param {boolean} current
          * @return {number}
          */
-        getUnadjustedLevel: function (level, current) {
+        getUnadjustedLevel: function getUnadjustedLevel(level, current) {
             var boundsScale = this.getBoundsScale(current);
             return level - Math.ceil(Math.log(Math.max(boundsScale.x, boundsScale.y)) / Math.log(2));
         },
@@ -204,7 +204,7 @@
          * @param {boolean} current
          * @return {Seadragon.Point}
          */
-        getBoundsScale: function (current) {
+        getBoundsScale: function getBoundsScale(current) {
             var bounds;
             bounds = this.bounds.getRectangle(current);
             return new Seadragon.Point(
@@ -220,7 +220,7 @@
          * @param {number} level
          * @return {number}
          */
-        getLevelScale: function (level) {
+        getLevelScale: function getLevelScale(level) {
             return Math.pow(0.5, this.maxLevel - level);
         },
 
@@ -230,7 +230,7 @@
          * @param {number} level
          * @return {Seadragon.Point}
          */
-        getNumTiles: function (level) {
+        getNumTiles: function getNumTiles(level) {
             var scale = this.getLevelScale(level);
             var x = Math.ceil(scale * this.width / this.tileSize);
             var y = Math.ceil(scale * this.height / this.tileSize);
@@ -245,7 +245,7 @@
          * @param {boolean} current
          * @return {Seadragon.Point}
          */
-        getScaledDimensions: function (level, current) {
+        getScaledDimensions: function getScaledDimensions(level, current) {
             var bounds = this.bounds.getRectangle(current);
             return new Seadragon.Point(bounds.width, bounds.height).multiply(this.getLevelScale(level));
         },
@@ -258,7 +258,7 @@
          * @param {boolean} current
          * @return {Seadragon.Point}
          */
-        getTileAtPoint: function (level, point, current) {
+        getTileAtPoint: function getTileAtPoint(level, point, current) {
             var scale = this.getBoundsScale(current);
             var bounds = this.bounds.getRectangle(current);
 
@@ -282,7 +282,7 @@
          * @param {boolean} current
          * @return {Seadragon.Rectangle}
          */
-        getTileBounds: function (level, x, y, current) {
+        getTileBounds: function getTileBounds(level, x, y, current) {
             var scale, bounds, px, py, sx, sy, levelScale;
 
             scale = this.getBoundsScale(current);
@@ -325,7 +325,7 @@
          * @param {number} y Tile's row number (starting from 0).
          * @return {string}
          */
-        getTileUrl: function (/* level, x, y */) {
+        getTileUrl: function getTileUrl(/* level, x, y */) {
             Seadragon.Debug.error("Method not implemented.");
             return '';
         },
@@ -336,7 +336,7 @@
          * @param {Seadragon.Rectangle} bounds
          * @param {boolean} immediately
          */
-        fitBounds: function (bounds, immediately) {
+        fitBounds: function fitBounds(bounds, immediately) {
             this.bounds.fitBounds(bounds, immediately);
         }
     };

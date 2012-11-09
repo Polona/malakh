@@ -20,7 +20,7 @@
      *     <li>License: MIT (see the licence.txt file for copyright information)</li>
      * <ul>
      */
-    Seadragon.Rectangle = function () {
+    Seadragon.Rectangle = function Rectangle() {
         var arguments0 = arguments[0];
         if (arguments0 == null) {
             /**
@@ -66,7 +66,7 @@
          *
          * @return {number}
          */
-        getAspectRatio: function () {
+        getAspectRatio: function getAspectRatio() {
             return this.width / this.height;
         },
 
@@ -75,7 +75,7 @@
          *
          * @return {Seadragon.Point}
          */
-        getTopLeft: function () {
+        getTopLeft: function getTopLeft() {
             return new Seadragon.Point(this.x, this.y);
         },
 
@@ -84,7 +84,7 @@
          *
          * @return {Seadragon.Point}
          */
-        getBottomRight: function () {
+        getBottomRight: function getBottomRight() {
             return new Seadragon.Point(this.x + this.width, this.y + this.height);
         },
 
@@ -93,7 +93,7 @@
          *
          * @return {Seadragon.Point}
          */
-        getCenter: function () {
+        getCenter: function getCenter() {
             return new Seadragon.Point(this.x + this.width / 2, this.y + this.height / 2);
         },
 
@@ -102,7 +102,7 @@
          *
          * @return {Seadragon.Point}
          */
-        getSize: function () {
+        getSize: function getSize() {
             return new Seadragon.Point(this.width, this.height);
         },
 
@@ -112,7 +112,7 @@
          * @param {Seadragon.Rectangle} rectangle
          * @return {boolean}
          */
-        equals: function (rectangle) {
+        equals: function equals(rectangle) {
             return rectangle instanceof Seadragon.Rectangle &&
                 this.x === rectangle.x && this.y === rectangle.y &&
                 this.width === rectangle.width && this.height === rectangle.height;
@@ -123,7 +123,7 @@
          *
          * @param {Seadragon.Point} delta
          */
-        panBy: function (delta) {
+        panBy: function panBy(delta) {
             var oldCenter = this.getCenter();
             this.panTo(oldCenter.plus(delta));
         },
@@ -133,7 +133,7 @@
          *
          * @param {Seadragon.Point} center
          */
-        panTo: function (center) {
+        panTo: function panTo(center) {
             this.x = center.x - this.width / 2;
             this.y = center.y - this.height / 2;
         },
@@ -144,7 +144,7 @@
          * @param {Seadragon.Point} point
          * @return {boolean}
          */
-        containsPoint: function (point) {
+        containsPoint: function containsPoint(point) {
             return this.x <= point.x && point.x <= this.x + this.width &&
                 this.y <= point.y && point.y <= this.y + this.height;
         },
@@ -157,7 +157,7 @@
          * @param {boolean} horizontal Do we check for a horizontal intersection?
          * @return {boolean}
          */
-        intersectsSegment: function (segment, horizontal) {
+        intersectsSegment: function intersectsSegment(segment, horizontal) {
             // ('x', 'y', 'height', 'width') or ('y', 'x', 'width', 'height')
             var par1, par2, length1, length2;
             // Parameters of projections of both segment and rectangle to the more
@@ -201,7 +201,7 @@
          * @param {Seadragon.Rectangle} rectangle
          * @return {boolean}
          */
-        intersectsRectangle: function (rectangle) {
+        intersectsRectangle: function intersectsRectangle(rectangle) {
             var left = rectangle.x;
             var right = rectangle.x + rectangle.width;
             var top = rectangle.y;
@@ -221,8 +221,8 @@
          *
          * @return {string}
          */
-        toString: function () {
-            return "[" + this.x + ", " + this.y + ", " + this.width + " x " + this.height + "]";
+        toString: function toString() {
+            return '[' + this.x + ', ' + this.y + ', ' + this.width + ' x ' + this.height + ']';
         }
     };
 })();

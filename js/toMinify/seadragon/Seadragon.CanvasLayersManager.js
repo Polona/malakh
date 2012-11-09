@@ -19,7 +19,7 @@
      * @param {CanvasRenderingContext2D} context '2d' context of canvas on which we are drawing
      * @param {Seadragon.Magnifier} magnifier
      */
-    Seadragon.CanvasLayersManager = function (context, magnifier) {
+    Seadragon.CanvasLayersManager = function CanvasLayersManager(context, magnifier) {
         if (context == null) {
             Seadragon.Debug.fatal('Can\'t create a CanvasLayersManager instance without a context parameter!');
         }
@@ -55,7 +55,7 @@
          * @param {number} layerNum
          * @param {Seadragon.Tile} tile
          */
-        addToLayer: function (layerNum, tile) {
+        addToLayer: function addToLayer(layerNum, tile) {
             this.tiles[layerNum].push(tile);
         },
 
@@ -64,7 +64,7 @@
          *
          * @param {number} layerNum
          */
-        drawLayer: function (layerNum) {
+        drawLayer: function drawLayer(layerNum) {
             var i, tilesOnLayer, drawLayer1, tile, zoom;
             tilesOnLayer = this.tiles[layerNum];
             drawLayer1 = layerNum === 1 && this.drawMagnifier;
@@ -91,7 +91,7 @@
         /**
          * Draws both canvas layers.
          */
-        drawCanvas: function () {
+        drawCanvas: function drawCanvas() {
             this.drawLayer(0);
             this.drawLayer(1);
         },
@@ -99,7 +99,7 @@
         /**
          * Clears the set of tiles to draw.
          */
-        clear: function () {
+        clear: function clear() {
             this.tiles = [
                 [],
                 []

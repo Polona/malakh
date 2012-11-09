@@ -20,7 +20,7 @@
  *
  * @param {string|jQuery object} containerSelectorOrElement
  */
-Seadragon.Controller = function (containerSelectorOrElement) {
+Seadragon.Controller = function Controller(containerSelectorOrElement) {
     'use strict';
 
     var self = this;
@@ -88,7 +88,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Shows the magnifier.
      */
-    this.showMagnifier = function () {
+    this.showMagnifier = function showMagnifier() {
         $(document).mouseup(); // To stop canvas dragging etc.
 
         magnifierShown = true;
@@ -102,7 +102,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Hides the magnifier.
      */
-    this.hideMagnifier = function () {
+    this.hideMagnifier = function hideMagnifier() {
         $canvas.off('mousemove', moveMagnifier);
 
         self.drawer.canvasLayersManager.drawMagnifier = false;
@@ -115,7 +115,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Toggles magnifier's state - shows it if it was hidden; hides it otherwise.
      */
-    this.toggleMagnifier = function () {
+    this.toggleMagnifier = function toggleMagnifier() {
         if (magnifierShown) {
             self.hideMagnifier();
         } else {
@@ -126,7 +126,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Shows the picker.
      */
-    this.showPicker = function () {
+    this.showPicker = function showPicker() {
         pickerShown = true;
         self.picker.show();
     };
@@ -134,7 +134,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Hides the picker.
      */
-    this.hidePicker = function () {
+    this.hidePicker = function hidePicker() {
         pickerShown = false;
         self.picker.hide();
     };
@@ -142,7 +142,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Toggles picker's state - shows it if it was hidden; hides it otherwise.
      */
-    this.togglePicker = function () {
+    this.togglePicker = function togglePicker() {
         if (pickerShown) {
             self.hidePicker();
         } else {
@@ -431,7 +431,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
      * @param {Seadragon.Rectangle} [bounds] Bounds representing position and shape of the image on the virtual
      *                                       Seadragon plane.
      */
-    this.openDzi = function (dziUrl, index, shown, bounds, /* internal */ dontIncrementCounter) {
+    this.openDzi = function openDzi(dziUrl, index, shown, bounds, /* internal */ dontIncrementCounter) {
         if (!dontIncrementCounter) {
             dziImagesToHandle++;
         }
@@ -458,7 +458,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
      * @param {Array.<Seadragon.Rectangle>} [boundsArray] Array of bounds representing position and shape
      *                                                    of the image on the virtual Seadragon plane.
      */
-    this.openDziArray = function (dziUrlArray, boundsArray, hideByDefault) {
+    this.openDziArray = function openDziArray(dziUrlArray, boundsArray, hideByDefault) {
         var i;
         if (boundsArray == null) {
             boundsArray = [];
@@ -486,7 +486,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
     /**
      * Closes the Seadragon module, de-registers events and clears Seadragon HTML container.
      */
-    this.close = function () {
+    this.close = function close() {
         $(window).off({
             resize: forceUpdate
         });
@@ -575,7 +575,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
      *                             If set to <code>Infinity</code>, only one row will be created.
      * @param {boolean} immediately
      */
-    this.alignRows = function (height, spaceBetweenImages, maxRowWidth, immediately) {
+    this.alignRows = function alignRows(height, spaceBetweenImages, maxRowWidth, immediately) {
         alignRowsOrColumns(true, height, spaceBetweenImages, maxRowWidth, immediately);
     };
 
@@ -589,7 +589,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
      * @param {number} maxColumnHeight
      * @param {boolean} immediately
      */
-    this.alignColumns = function (width, spaceBetweenImages, maxColumnHeight, immediately) {
+    this.alignColumns = function alignColumns(width, spaceBetweenImages, maxColumnHeight, immediately) {
         alignRowsOrColumns(false, width, spaceBetweenImages, maxColumnHeight, immediately);
     };
 
@@ -600,7 +600,7 @@ Seadragon.Controller = function (containerSelectorOrElement) {
      * @param {number} whichImage We fit the <code>this.dziImages[whichImage]</code> image
      * @param {boolean} current
      */
-    this.fitImage = function (whichImage, current) {
+    this.fitImage = function fitImage(whichImage, current) {
         var dziImage = self.dziImages[whichImage];
         if (!dziImage) {
             Seadragon.Debug.error('No image with number ' + whichImage);

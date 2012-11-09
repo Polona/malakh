@@ -18,7 +18,7 @@
      * @param {number} [x2=0]
      * @param {number} [y2=0]
      */
-    Seadragon.Segment = function (x1, y1, x2, y2) {
+    Seadragon.Segment = function Segment(x1, y1, x2, y2) {
         this.x1 = x1 || 0;
         this.y1 = y1 || 0;
         this.x2 = x2 || 0;
@@ -32,7 +32,7 @@
          * @param {Seadragon.Segment} segment
          * @return {boolean}
          */
-        equals: function (segment) {
+        equals: function equals(segment) {
             return segment instanceof Seadragon.Segment &&
                 this.x1 === segment.x1 && segment.y1 === segment.y1 &&
                 this.x2 === segment.x2 && segment.y2 === segment.y2;
@@ -43,8 +43,8 @@
          *
          * @return {string}
          */
-        toString: function () {
-            return "[(" + this.x1 + ", " + this.y1 + "), " + "(" + this.x2 + ", " + this.y2 + ")]";
+        toString: function toString() {
+            return '[(' + this.x1 + ', ' + this.y1 + '), ' + '(' + this.x2 + ', ' + this.y2 + ')]';
         }
     };
 })();

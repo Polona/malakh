@@ -30,7 +30,7 @@
      * @param {number} [options.maxLevel] Sets this.maxLevel.
      * @param {number} [options.shown=true] If true, an image is hidden.
      */
-    Seadragon.DziImage = function (options) {
+    Seadragon.DziImage = function DziImage(options) {
         if (options == null || options.$container == null || options.width == null || options.height == null ||
             options.tileSize == null || options.tilesUrl == null || options.fileFormat == null) {
             Seadragon.Debug.log('\nReceived options: ');
@@ -71,7 +71,7 @@
              * @param {number} y Tile's row number (starting from 0).
              * @return {string}
              */
-            getTileUrl: function (level, x, y) {
+            getTileUrl: function getTileUrl(level, x, y) {
                 return this.tilesUrl + '_files/' + level + '/' + x + '_' + y + '.' + this.fileFormat;
             }
         }
@@ -165,7 +165,7 @@
      *                         Otherwise it's put at the end of the table.
      * @param {boolean} [options.shown=true] If false, image is not drawn. It can be made visible later.
      */
-    Seadragon.DziImage.createFromDzi = function (options) {
+    Seadragon.DziImage.createFromDzi = function createFromDzi(options) {
         if (options == null || options.dziUrl == null || options.$container == null || options.callback == null) {
             Seadragon.Debug.log('\nReceived options: ');
             Seadragon.Debug.log(options);

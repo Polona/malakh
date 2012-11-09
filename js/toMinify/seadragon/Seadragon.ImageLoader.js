@@ -15,7 +15,7 @@
      *     <li>License: MIT (see the licence.txt file for copyright information)</li>
      * <ul>
      */
-    Seadragon.ImageLoader = function () {
+    Seadragon.ImageLoader = function ImageLoader() {
         /**
          * Number of images currently downloaded.
          * @type number
@@ -32,7 +32,7 @@
          * @param {function} [callback] Callback function to be executed after image is loaded
          * @return {boolean} Was loading successful?
          */
-        loadImage: function (src, callback) {
+        loadImage: function loadImage(src, callback) {
             if (this.downloading >= Seadragon.Config.imageLoaderLimit) {
                 return false;
             }
