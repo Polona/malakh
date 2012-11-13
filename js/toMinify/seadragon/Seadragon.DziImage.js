@@ -124,8 +124,9 @@
         });
     }
 
-    // extract tile url
     function getTilesPath(dziUrl) {
+        // Extract tiles url.
+
         var urlParts = dziUrl.split('/');
         var filename = urlParts[urlParts.length - 1];
         var lastDot = filename.lastIndexOf('.');
