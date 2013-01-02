@@ -229,14 +229,14 @@ Seadragon.Picker = function Picker($container, viewport) {
                     pickerAreaMode.toBottom = mousePosition.y >= top;
                     if (pickerAreaMode.toBottom) {
                         $pickerArea.css({
-                            top: top + 'px',
-                            height: (mousePosition.y - top) + 'px'
+                            top: top,
+                            height: mousePosition.y - top
                         });
                         cursorType += 's';
                     } else {
                         $pickerArea.css({
-                            top: mousePosition.y + 'px',
-                            height: (top - mousePosition.y) + 'px'
+                            top: mousePosition.y,
+                            height: top - mousePosition.y
                         });
                         cursorType += 'n';
                     }
@@ -246,14 +246,14 @@ Seadragon.Picker = function Picker($container, viewport) {
                     pickerAreaMode.toRight = mousePosition.x >= left;
                     if (pickerAreaMode.toRight) {
                         $pickerArea.css({
-                            left: left + 'px',
-                            width: (mousePosition.x - left) + 'px'
+                            left: left,
+                            width: mousePosition.x - left
                         });
                         cursorType += 'e';
                     } else {
                         $pickerArea.css({
-                            left: mousePosition.x + 'px',
-                            width: (left - mousePosition.x) + 'px'
+                            left: mousePosition.x,
+                            width: left - mousePosition.x
                         });
                         cursorType += 'w';
                     }
@@ -263,6 +263,17 @@ Seadragon.Picker = function Picker($container, viewport) {
                 $pickerOverlay.css('cursor', cursorType);
             }
         });
+    }
+
+
+    function getPickerAreaRectangle() {
+        var pickerAreaCss = $pickerArea.css(['left', 'top', 'width', 'height']);
+        return new Seadragon.Rectangle(
+            parseInt(pickerAreaCss.left, 10),
+            parseInt(pickerAreaCss.top, 10),
+            parseInt(pickerAreaCss.width, 10),
+            parseInt(pickerAreaCss.height, 10)
+        );
     }
 
 
@@ -283,12 +294,7 @@ Seadragon.Picker = function Picker($container, viewport) {
 
                 var cursorType;
                 if ($pickerArea.is(':visible')) {
-                    cursorType = overBorder(new Seadragon.Rectangle(
-                        parseInt($pickerArea.css('left'), 10),
-                        parseInt($pickerArea.css('top'), 10),
-                        parseInt($pickerArea.css('width'), 10),
-                        parseInt($pickerArea.css('height'), 10)
-                    ), mousePosition.x, mousePosition.y);
+                    cursorType = overBorder(getPickerAreaRectangle(), mousePosition.x, mousePosition.y);
                 } else { // we haven't marked anything yet
                     cursorType = 'default';
                 }
@@ -303,13 +309,7 @@ Seadragon.Picker = function Picker($container, viewport) {
             $pickerOverlay.off('mousemove');
             bindPickerMouseMove();
 
-            var areaBounds = viewport.pointRectangleFromPixelRectangle(
-                new Seadragon.Rectangle(
-                    parseInt($pickerArea.css('left'), 10),
-                    parseInt($pickerArea.css('top'), 10),
-                    parseInt($pickerArea.css('width'), 10),
-                    parseInt($pickerArea.css('height'), 10)
-                ));
+            var areaBounds = viewport.pointRectangleFromPixelRectangle(getPickerAreaRectangle());
 
             Seadragon.Debug.log('areaBounds: [' + areaBounds.x + ', ' + areaBounds.y +
                 ', ' + areaBounds.width + ', ' + areaBounds.height +
@@ -342,16 +342,17 @@ Seadragon.Picker = function Picker($container, viewport) {
                 drawingArea = true;
                 var mousePosition = getMousePosition(event);
 
-                var pickerCSS = {
-                    x: parseInt($pickerArea.css('left'), 10),
-                    y: parseInt($pickerArea.css('top'), 10),
-                    width: parseInt($pickerArea.css('width'), 10),
-                    height: parseInt($pickerArea.css('height'), 10)
+                var pickerAreaCss = $pickerArea.css(['left', 'top', 'width', 'height']);
+                var pickerAreaCssNormalized = {
+                    x: parseInt(pickerAreaCss.left, 10),
+                    y: parseInt(pickerAreaCss.top, 10),
+                    width: parseInt(pickerAreaCss.width, 10),
+                    height: parseInt(pickerAreaCss.height, 10)
                 };
 
                 var cursorType;
                 if ($pickerArea.is(':visible')) {
-                    cursorType = overBorder(pickerCSS, mousePosition.x, mousePosition.y);
+                    cursorType = overBorder(pickerAreaCssNormalized, mousePosition.x, mousePosition.y);
                 } else { // we haven't marked anything yet
                     cursorType = 'default';
                 }
@@ -363,8 +364,8 @@ Seadragon.Picker = function Picker($container, viewport) {
                         var left = mousePosition.x;
                         var top = mousePosition.y;
                         $pickerArea.css({
-                            left: left + 'px',
-                            top: top + 'px',
+                            left: left,
+                            top: top,
                             width: 0,
                             height: 0
                         });
@@ -373,35 +374,35 @@ Seadragon.Picker = function Picker($container, viewport) {
                         break;
 
                     case 'n-resize':
-                        keepAdjustingArea(null, pickerCSS.y + pickerCSS.height, false, true);
+                        keepAdjustingArea(null, pickerAreaCssNormalized.y + pickerAreaCssNormalized.height, false, true);
                         break;
 
                     case 'w-resize':
-                        keepAdjustingArea(pickerCSS.x + pickerCSS.width, null, true, false);
+                        keepAdjustingArea(pickerAreaCssNormalized.x + pickerAreaCssNormalized.width, null, true, false);
                         break;
 
                     case 's-resize':
-                        keepAdjustingArea(null, pickerCSS.y, false, true);
+                        keepAdjustingArea(null, pickerAreaCssNormalized.y, false, true);
                         break;
 
                     case 'e-resize':
-                        keepAdjustingArea(pickerCSS.x, null, true, false);
+                        keepAdjustingArea(pickerAreaCssNormalized.x, null, true, false);
                         break;
 
                     case 'nw-resize':
-                        keepAdjustingArea(pickerCSS.x + pickerCSS.width, pickerCSS.y + pickerCSS.height);
+                        keepAdjustingArea(pickerAreaCssNormalized.x + pickerAreaCssNormalized.width, pickerAreaCssNormalized.y + pickerAreaCssNormalized.height);
                         break;
 
                     case 'sw-resize':
-                        keepAdjustingArea(pickerCSS.x + pickerCSS.width, pickerCSS.y);
+                        keepAdjustingArea(pickerAreaCssNormalized.x + pickerAreaCssNormalized.width, pickerAreaCssNormalized.y);
                         break;
 
                     case 'se-resize':
-                        keepAdjustingArea(pickerCSS.x, pickerCSS.y);
+                        keepAdjustingArea(pickerAreaCssNormalized.x, pickerAreaCssNormalized.y);
                         break;
 
                     case 'ne-resize':
-                        keepAdjustingArea(pickerCSS.x, pickerCSS.y + pickerCSS.height);
+                        keepAdjustingArea(pickerAreaCssNormalized.x, pickerAreaCssNormalized.y + pickerAreaCssNormalized.height);
                         break;
                 }
 
