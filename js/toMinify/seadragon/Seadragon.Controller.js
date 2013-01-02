@@ -41,7 +41,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         if ($container.length === 0) {
             Seadragon.Debug.log('\nReceived containerSelectorOrElement: ');
             Seadragon.Debug.log(containerSelectorOrElement);
-            Seadragon.Debug.fatal('Can\'t create a Controller instance without a bounds parameter!');
+            Seadragon.Debug.fatal('Can\'t create a Controller instance without a container!');
         }
         $container.empty();
         $container.css({
