@@ -1,6 +1,6 @@
-(function () {
-    'use strict';
+/*jshint strict: false */
 
+(function () {
     // Accepting setTimeout/setInterval with >2 parameters
     function correctSetTimeoutOrInterval(setTimeoutOrInterval) {
         return function (fun, timeout) {
@@ -11,10 +11,8 @@
         };
     }
 
-    if (this) { // => strict mode not supported so we catch IE <=10.
-        window.setTimeout = correctSetTimeoutOrInterval(window.setTimeout);
-        window.setInterval = correctSetTimeoutOrInterval(window.setInterval);
-    }
+    window.setTimeout = correctSetTimeoutOrInterval(window.setTimeout);
+    window.setInterval = correctSetTimeoutOrInterval(window.setInterval);
 
     // Avoid console errors in browsers that lack a console. (Credits: HTML5 Boilerplate)
     if (!(window.console && console.log)) {
