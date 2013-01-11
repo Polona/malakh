@@ -195,11 +195,11 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
                 return false;
             },
 
-            mousewheel: function (event, delta) {
-                if (magnifierShown || !delta) {
+            wheel: function (event) {
+                if (magnifierShown || !event.deltaY) {
                     return false;
                 }
-                zoomCanvas(event, delta);
+                zoomCanvas(event);
                 forceUpdate();
                 return false;
             }
@@ -250,16 +250,15 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     /**
      * Handler executed when zooming using mouse wheel.
      *
-     * @param {jQuery.Event} event Mouse event.
-     * @param {Seadragon.Point} delta Mouse wheel delta; determines if we're zooming in or out.
+     * @param {jQuery.Event} event Mouse 'wheel' event.
      * @private
      */
-    function zoomCanvas(event, delta) {
+    function zoomCanvas(event) {
         if (Seadragon.Config.blockZoom) {
             return;
         }
         var factor = Seadragon.Config.zoomPerScroll;
-        if (delta < 0) { // zooming out
+        if (event.deltaY > 0) { // zooming out
             factor = 1 / factor;
         }
         self.viewport.zoomBy(

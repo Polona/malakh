@@ -16,7 +16,7 @@
          * <code>console.log</code> wrapper.
          * @param {string} message
          */
-        log: function (message) {
+        log: function log(message) {
             if (Seadragon.Config.debugMode && window.console) {
                 console.log(message);
             }
@@ -28,7 +28,7 @@
          * @param {string} message
          * @param {Error} [error]
          */
-        error: function (message, error) {
+        error: function error(message, error) {
             if (window.console) { // Errors should be printed not only in debug mode.
                 if (error == null) {
                     console.error('Seadragon error: ' + message);
@@ -45,7 +45,7 @@
          * @param {Error} [error]
          * @throws {Error}
          */
-        fatal: function (message, error) {
+        fatal: function fatal(message, error) {
             if (error == null) { // Errors should be thrown not only in debug mode.
                 throw new Error('Seadragon error: ' + message);
             } else {
