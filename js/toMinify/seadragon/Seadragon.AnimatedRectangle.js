@@ -144,7 +144,7 @@
          * @param current
          * @return {Seadragon.Point}
          */
-        getCenter: function (current) {
+        getCenter: function getCenter(current) {
             return this.getRectangle(current).getCenter();
         },
 
