@@ -81,35 +81,45 @@ function seadragonCustom(options) {
         }
     });
 
-    $('#magnifier').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+    var $magnifier = $('#magnifier');
+    if (Seadragon.Magnifier) {
+        $magnifier.on({
+            click: function (event) {
+                if (event.which !== 1) { // Only left-click is supported.
+                    return false;
+                }
+                if (pickerOn) {
+                    $('#picker').trigger(event); // turn off the picker
+                }
+                sdData.controller.toggleMagnifier();
+                magnifierOn = !magnifierOn;
+                $(this).css('background-color', buttonColors[magnifierOn]);
                 return false;
             }
-            if (pickerOn) {
-                $('#picker').trigger(event); // turn off the picker
-            }
-            sdData.controller.toggleMagnifier();
-            magnifierOn = !magnifierOn;
-            $(this).css('background-color', buttonColors[magnifierOn]);
-            return false;
-        }
-    });
+        });
+    } else {
+        $magnifier.remove();
+    }
 
-    $('#picker').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+    var $picker = $('#picker');
+    if (Seadragon.Picker) {
+        $picker.on({
+            click: function (event) {
+                if (event.which !== 1) { // Only left-click is supported.
+                    return false;
+                }
+                if (magnifierOn) {
+                    $('#magnifier').trigger(event); // turn off the magnifier
+                }
+                sdData.controller.togglePicker();
+                pickerOn = !pickerOn;
+                $(this).css('background-color', buttonColors[pickerOn]);
                 return false;
             }
-            if (magnifierOn) {
-                $('#magnifier').trigger(event); // turn off the magnifier
-            }
-            sdData.controller.togglePicker();
-            pickerOn = !pickerOn;
-            $(this).css('background-color', buttonColors[pickerOn]);
-            return false;
-        }
-    });
+        });
+    } else {
+        $picker.remove();
+    }
 
 
     $('#alignRow').on({

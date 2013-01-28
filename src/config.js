@@ -7,6 +7,7 @@
  *         <a href="http://laboratorium.ee/">Laboratorium EE</a>
  * @license MIT (see the license.txt file for copyright information)
  */
+// TODO change it into a constructor
 Seadragon.Config = {
     /**
      * Prints more info to the console etc.

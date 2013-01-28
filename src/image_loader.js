@@ -32,14 +32,14 @@ Seadragon.ImageLoader.prototype = {
         if (this.downloading >= Seadragon.Config.imageLoaderLimit) {
             return false;
         }
-        var self = this;
+        var that = this;
 
         this.downloading++;
         var timeout;
         var image = new Image();
 
         function catchedCallback() {
-            self.downloading--;
+            that.downloading--;
             if (typeof callback === 'function') {
                 try {
                     callback(image);

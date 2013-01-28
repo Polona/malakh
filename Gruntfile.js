@@ -37,7 +37,6 @@ module.exports = function (grunt) {
                     'src/tiled_image.js',
                     'src/animated_rectangle.js',
                     {flag: 'magnifier', src: 'src/magnifier.js'},
-                    'src/magnifier.js',
                     'src/dzi_image.js',
                     'src/viewport.js',
                     {flag: 'picker', src: 'src/picker.js'},
@@ -79,8 +78,37 @@ module.exports = function (grunt) {
         }
     });
 
-    // Special concat/build task to handle various jQuery build requirements
-    //
+    // Special 'alias' task to make custom build creation less grawlix-y
+    grunt.registerTask('custom', function () {
+        var done = this.async(),
+            args = [].slice.call(arguments),
+            modules = args.length ? args[0].replace(/,/g, ':') : '';
+
+        // Translation example
+        //
+        //   grunt custom:+ajax,-dimensions,-effects,-offset
+        //
+        // Becomes:
+        //
+        //   grunt build:*:*:+ajax:-dimensions:-effects:-offset
+
+        grunt.log.writeln('Creating custom build...\n');
+
+        grunt.util.spawn({
+            cmd: 'grunt',
+            args: ['build:*:*:' + modules, 'uglify', 'dist']
+        }, function (err, result) {
+            if (err) {
+                grunt.verbose.error();
+                done(err);
+                return;
+            }
+            grunt.log.writeln(result.stdout.replace('Done, without errors.', ''));
+            done();
+        });
+    });
+
+    // Special concat/build task to handle various jQuery build requirements.
     grunt.registerMultiTask(
         'build',
         'Concatenate source (include/exclude modules with +/- flags), embed date/version',
@@ -124,7 +152,7 @@ module.exports = function (grunt) {
 
             // append commit id to version
             if (process.env.COMMIT) {
-                version += '_' + process.env.COMMIT;
+                version += ' ' + process.env.COMMIT;
             }
 
             // figure out which files to exclude based on these rules in this order:
