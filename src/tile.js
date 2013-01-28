@@ -20,8 +20,7 @@
 Seadragon.Tile = function Tile(options) {
     if (options == null || options.level == null || options.x == null || options.y == null ||
         options.bounds == null || options.url == null) {
-        console.log('\nReceived options: ');
-        console.log(options);
+        console.log('\nReceived options: ', options);
         throw new Error('Seadragon.Tile needs a JSON parameter with at least the following fields: ' +
             'level, x, y, bounds, exists, url.');
     }

@@ -18,8 +18,9 @@
  *
  * @param {string|jQuery object} containerSelectorOrElement
  */
+// TODO document controller fields
 Seadragon.Controller = function Controller(containerSelectorOrElement) {
-    var self = this;
+    var that = this;
 
     var $container, $canvas;
     var lastOpenStartTime, lastOpenEndTime;
@@ -35,8 +36,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     (function init() {
         $container = $(containerSelectorOrElement);
         if ($container.length === 0) {
-            console.log('\nReceived containerSelectorOrElement: ');
-            console.log(containerSelectorOrElement);
+            console.log('\nReceived containerSelectorOrElement: ', containerSelectorOrElement);
             throw new Error('Can\'t create a Controller instance without a container!');
         }
         $container.empty();
@@ -49,7 +49,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
         lastOpenStartTime = lastOpenEndTime = 0;
 
-        self.dziImages = [];
+        that.dziImages = [];
 
         magnifierShown = pickerShown = false;
         lockOnUpdates = closing = false;
@@ -66,14 +66,20 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             parseInt(containerCss.width, 10), parseInt(containerCss.height, 10));
 
         // Restart other fields.
-        self.viewport = new Seadragon.Viewport($container);
-        self.magnifier = new Seadragon.Magnifier(new Seadragon.Point(0, 0), Seadragon.Config.magnifierRadius);
-        self.picker = new Seadragon.Picker($container, self.viewport);
-        self.markers = new Seadragon.Markers($container, self.viewport);
-        self.drawer = new Seadragon.Drawer({
-            viewport: self.viewport,
+        that.viewport = new Seadragon.Viewport($container);
+        if (Seadragon.Magnifier) {
+            that.magnifier = new Seadragon.Magnifier(new Seadragon.Point(0, 0), Seadragon.Config.magnifierRadius);
+        }
+        if (Seadragon.Picker) {
+            that.picker = new Seadragon.Picker($container, that.viewport);
+        }
+        if (Seadragon.Markers) {
+            that.markers = new Seadragon.Markers($container, that.viewport);
+        }
+        that.drawer = new Seadragon.Drawer({
+            viewport: that.viewport,
             $container: $container,
-            magnifier: self.magnifier
+            magnifier: that.magnifier
         });
 
         // Begin updating.
@@ -82,70 +88,74 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         keepUpdating();
     })();
 
-    /**
-     * Shows the magnifier.
-     */
-    this.showMagnifier = function showMagnifier() {
-        $(document).mouseup(); // To stop canvas dragging etc.
+    if (Seadragon.Magnifier) {
+        /**
+         * Shows the magnifier.
+         */
+        this.showMagnifier = function showMagnifier() {
+            $(document).mouseup(); // To stop canvas dragging etc.
 
-        magnifierShown = true;
-        self.drawer.setMagnifier(true);
-        self.drawer.canvasLayersManager.drawMagnifier = true;
+            magnifierShown = true;
+            that.drawer.setMagnifier(true);
+            that.drawer.canvasLayersManager.drawMagnifier = true;
 
-        $canvas.on('mousemove', moveMagnifier);
-        $canvas.trigger('mousemove');
-    };
+            $canvas.on('mousemove', moveMagnifier);
+            $canvas.trigger('mousemove');
+        };
 
-    /**
-     * Hides the magnifier.
-     */
-    this.hideMagnifier = function hideMagnifier() {
-        $canvas.off('mousemove', moveMagnifier);
+        /**
+         * Hides the magnifier.
+         */
+        this.hideMagnifier = function hideMagnifier() {
+            $canvas.off('mousemove', moveMagnifier);
 
-        self.drawer.canvasLayersManager.drawMagnifier = false;
-        self.drawer.setMagnifier(false);
-        magnifierShown = false;
+            that.drawer.canvasLayersManager.drawMagnifier = false;
+            that.drawer.setMagnifier(false);
+            magnifierShown = false;
 
-        forceRedraw = true;
-    };
+            forceRedraw = true;
+        };
 
-    /**
-     * Toggles magnifier's state - shows it if it was hidden; hides it otherwise.
-     */
-    this.toggleMagnifier = function toggleMagnifier() {
-        if (magnifierShown) {
-            self.hideMagnifier();
-        } else {
-            self.showMagnifier();
-        }
-    };
+        /**
+         * Toggles magnifier's state - shows it if it was hidden; hides it otherwise.
+         */
+        this.toggleMagnifier = function toggleMagnifier() {
+            if (magnifierShown) {
+                that.hideMagnifier();
+            } else {
+                that.showMagnifier();
+            }
+        };
+    }
 
-    /**
-     * Shows the picker.
-     */
-    this.showPicker = function showPicker() {
-        pickerShown = true;
-        self.picker.show();
-    };
+    if (Seadragon.Picker) {
+        /**
+         * Shows the picker.
+         */
+        this.showPicker = function showPicker() {
+            pickerShown = true;
+            that.picker.show();
+        };
 
-    /**
-     * Hides the picker.
-     */
-    this.hidePicker = function hidePicker() {
-        pickerShown = false;
-        self.picker.hide();
-    };
+        /**
+         * Hides the picker.
+         */
+        this.hidePicker = function hidePicker() {
+            pickerShown = false;
+            that.picker.hide();
+        };
 
-    /**
-     * Toggles picker's state - shows it if it was hidden; hides it otherwise.
-     */
-    this.togglePicker = function togglePicker() {
-        if (pickerShown) {
-            self.hidePicker();
-        } else {
-            self.showPicker();
-        }
-    };
+        /**
+         * Toggles picker's state - shows it if it was hidden; hides it otherwise.
+         */
+        this.togglePicker = function togglePicker() {
+            if (pickerShown) {
+                that.hidePicker();
+            } else {
+                that.showPicker();
+            }
+        };
+    }
 
     function getMousePosition(event) {
         var offset = $container.offset();
@@ -170,14 +180,14 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         $canvas.on({
             mouseenter: function () {
                 if (magnifierShown) {
-                    self.drawer.canvasLayersManager.drawMagnifier = true;
+                    that.drawer.canvasLayersManager.drawMagnifier = true;
                     forceUpdate();
                 }
             },
 
             mouseleave: function () {
                 if (magnifierShown) { // We have to redraw to hide magnifier.
-                    self.drawer.canvasLayersManager.drawMagnifier = false;
+                    that.drawer.canvasLayersManager.drawMagnifier = false;
                     forceUpdate();
                 }
             },
@@ -238,7 +248,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         if (blockMovement.vertical) {
             delta.y = 0;
         }
-        self.viewport.panBy(self.viewport.deltaPointsFromPixels(delta.negate()));
+        that.viewport.panBy(that.viewport.deltaPointsFromPixels(delta.negate()));
 
         lastPosition = position;
     }
@@ -257,10 +267,10 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         if (event.deltaY > 0) { // zooming out
             factor = 1 / factor;
         }
-        self.viewport.zoomBy(
+        that.viewport.zoomBy(
             factor,
             false,
-            self.viewport.pointFromPixel(getMousePosition(event), true));
+            that.viewport.pointFromPixel(getMousePosition(event), true));
     }
 
 
@@ -272,7 +282,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      */
     function moveMagnifier(event) {
         var position = getMousePosition(event);
-        self.magnifier.panTo(position);
+        that.magnifier.panTo(position);
         forceUpdate();
     }
 
@@ -286,12 +296,12 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      */
     function recalculateMaxLevel() {
         maxLevel = 0;
-        for (var i = 0; i < self.dziImages.length; i++) {
-            var dziImage = self.dziImages[i];
+        for (var i = 0; i < that.dziImages.length; i++) {
+            var dziImage = that.dziImages[i];
             maxLevel = Math.max(maxLevel, dziImage.getUnadjustedLevel(dziImage.maxLevel));
         }
-        self.viewport.maxLevelScale = Math.pow(2, maxLevel);
-        self.drawer.maxLevel = maxLevel;
+        that.viewport.maxLevelScale = Math.pow(2, maxLevel);
+        that.drawer.maxLevel = maxLevel;
     }
 
     /**
@@ -310,14 +320,14 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
         // Add an image.
         if (typeof index !== 'number') {
-            index = self.dziImages.length;
+            index = that.dziImages.length;
         }
-        self.dziImages[index] = dziImage;
-        self.drawer.addDziImage(dziImage, index);
+        that.dziImages[index] = dziImage;
+        that.drawer.addDziImage(dziImage, index);
 
         maxLevel = Math.max(maxLevel, dziImage.maxLevel);
-        self.viewport.maxLevelScale = Math.pow(2, maxLevel);
-        self.drawer.maxLevel = maxLevel;
+        that.viewport.maxLevelScale = Math.pow(2, maxLevel);
+        that.drawer.maxLevel = maxLevel;
 
         dziImagesToHandle--;
 
@@ -364,7 +374,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @private
      */
     function updateDziImageBounds(whichImage) {
-        forceAlign = self.dziImages[whichImage].bounds.update() || forceAlign;
+        forceAlign = that.dziImages[whichImage].bounds.update() || forceAlign;
         forceUpdate();
     }
 
@@ -381,22 +391,22 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             // Maintain image position:
             forceRedraw = true; // canvas needs it
             containerSize = newContainerSize;
-            self.viewport.resize(newContainerSize);
+            that.viewport.resize(newContainerSize);
         }
 
         // animating => viewport moved, aligning images or loading/blending tiles.
-        var animating = self.viewport.update() || forceAlign || forceRedraw;
+        var animating = that.viewport.update() || forceAlign || forceRedraw;
         if (forceAlign) {
             forceAlign = false;
             setTimeout(function () { // Timeouts to make it more asynchronous.
-                for (var i = 0; i < self.dziImages.length; i++) {
+                for (var i = 0; i < that.dziImages.length; i++) {
                     setTimeout(updateDziImageBounds, 17, i);
                 }
             }, 17);
         }
 
         if (animating) {
-            forceRedraw = self.drawer.update();
+            forceRedraw = that.drawer.update();
         } else {
             lockOnUpdates = true;
         }
@@ -463,7 +473,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         var dziUrlArrayLength = dziUrlArray.length;
         dziImagesToHandle += dziUrlArrayLength;
         for (i = 0; i < dziUrlArrayLength; i++) {
-            self.openDzi(dziUrlArray[i], i, !hideByDefault, boundsArray[i], true);
+            that.openDzi(dziUrlArray[i], i, !hideByDefault, boundsArray[i], true);
         }
     };
 
@@ -522,8 +532,8 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             maxRowWidthOrColumnHeight = Infinity;
         }
 
-        for (whichImage = 0; whichImage < self.dziImages.length; whichImage++) {
-            dziImage = self.dziImages[whichImage];
+        for (whichImage = 0; whichImage < that.dziImages.length; whichImage++) {
+            dziImage = that.dziImages[whichImage];
 
             // Compute the current state.
             if (alingInRows) {
@@ -598,18 +608,18 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @param {boolean} current
      */
     this.fitImage = function fitImage(whichImage, current) {
-        var dziImage = self.dziImages[whichImage];
+        var dziImage = that.dziImages[whichImage];
         if (!dziImage) {
             console.error('No image with number ' + whichImage);
             return;
         }
 
-        self.viewport.fitBounds(dziImage.bounds.getRectangle(current));
+        that.viewport.fitBounds(dziImage.bounds.getRectangle(current));
     };
 
 
     function dziImageBoundsInPoints(whichImage, current) {
-        return self.dziImages[whichImage].bounds.getRectangle(current);
+        return that.dziImages[whichImage].bounds.getRectangle(current);
     }
 
     /**
@@ -624,7 +634,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
     function dziImageBoundsInPixels(whichImage, current) {
         var pointBounds = dziImageBoundsInPoints(whichImage, current);
-        return self.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
+        return that.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
     }
 
     /**
@@ -645,7 +655,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @param {boolean} immediately
      */
     this.showDzi = function showDzi(whichImage, immediately) {
-        self.drawer.showDzi(whichImage, immediately);
+        that.drawer.showDzi(whichImage, immediately);
         forceUpdate();
     };
 
@@ -656,7 +666,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @param {boolean} immediately
      */
     this.hideDzi = function hideDzi(whichImage, immediately) {
-        self.drawer.hideDzi(whichImage, immediately);
+        that.drawer.hideDzi(whichImage, immediately);
         forceUpdate();
     };
 };

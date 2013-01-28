@@ -12,14 +12,20 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {CanvasRenderingContext2D} context '2d' context of canvas on which we are drawing
- * @param {Seadragon.Magnifier} magnifier
+ * @param {CanvasRenderingContext2D} viewport  Sets <code>this.viewport</code>.
+ * @param {CanvasRenderingContext2D} context Sets <code>this.context</code>.
+ * @param {Seadragon.Magnifier} [magnifier]
  */
-Seadragon.CanvasLayersManager = function CanvasLayersManager(context, magnifier) {
+Seadragon.CanvasLayersManager = function CanvasLayersManager(viewport, context, magnifier) {
     if (context == null) {
         throw new Error('Can\'t create a CanvasLayersManager instance without a context parameter!');
     }
     this.clear();
+    /**
+     * The viewport handling current Seadragon instance.
+     * @type Seadragon.Viewport
+     */
+    this.viewport = viewport;
     /**
      * '2d' context of canvas on which we are drawing.
      * @type CanvasRenderingContext2D
@@ -28,7 +34,9 @@ Seadragon.CanvasLayersManager = function CanvasLayersManager(context, magnifier)
     /**
      * @type Seadragon.Magnifier
      */
-    this.magnifier = magnifier;
+    if (magnifier) {
+        this.magnifier = magnifier;
+    }
     /**
      * Magnifier is drawn only this field is true.
      * @type boolean
@@ -63,7 +71,7 @@ Seadragon.CanvasLayersManager.prototype = {
     drawLayer: function drawLayer(layerNum) {
         var i, tilesOnLayer, drawLayer1, tile, zoom;
         tilesOnLayer = this.tiles[layerNum];
-        drawLayer1 = layerNum === 1 && this.drawMagnifier;
+        drawLayer1 = layerNum === 1 && this.drawMagnifier && this.magnifier;
 
         if (drawLayer1) { // magnifier level
             this.context.save();
@@ -76,7 +84,11 @@ Seadragon.CanvasLayersManager.prototype = {
             } else {
                 zoom = 1;
             }
-            tile.drawCanvas(this.context, zoom, this.magnifier.center);
+            if (drawLayer1) {
+                tile.drawCanvas(this.context, zoom, this.magnifier.center);
+            } else {
+                tile.drawCanvas(this.context, zoom, this.viewport.getCenter());
+            }
         }
         if (drawLayer1) { // magnifier level
             this.magnifier.drawOnFinish(this.context);

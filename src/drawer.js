@@ -19,10 +19,10 @@
  * @param {Seadragon.Viewport} options.viewport
  * @param {jQuery object} options.$container A jQuery object representing the DOM element containing
  *                                           all the HTML structure of Seadragon.
- * @param {Seadragon.Magnifier} options.magnifier
+ * @param {Seadragon.Magnifier} [options.magnifier]
  */
 Seadragon.Drawer = function Drawer(options) {
-    var self = this;
+    var that = this;
 
     var dziImages, viewport, magnifier;
     var $container, canvas, context;
@@ -54,8 +54,7 @@ Seadragon.Drawer = function Drawer(options) {
 
     (function init() {
         if (options == null || options.viewport == null || options.$container == null) {
-            console.log('\nReceived options: ');
-            console.log(options);
+            console.log('\nReceived options: ', options);
             throw new Error('Seadragon.Drawer needs a JSON parameter with at least the following fields: ' +
                 'viewport, $container.\n' +
                 'Parameter magnifier is optional.');
@@ -69,9 +68,9 @@ Seadragon.Drawer = function Drawer(options) {
         canvas = $container.find('canvas').get(0);
         context = canvas.getContext('2d');
         // One layer for a magnifier:
-        self.canvasLayersManager = new Seadragon.CanvasLayersManager(context, magnifier);
+        that.canvasLayersManager = new Seadragon.CanvasLayersManager(viewport, context, magnifier);
 
-        self.element = $container;
+        that.element = $container;
         $container.append($(canvas));
 
         imageLoader = new Seadragon.ImageLoader(Seadragon.Config.imageLoaderLimit);
@@ -93,7 +92,7 @@ Seadragon.Drawer = function Drawer(options) {
         viewportTL = [];
         viewportBR = [];
 
-        self.maxLevel = 0; // It needs to be passed by controller.
+        that.maxLevel = 0; // It needs to be passed by controller.
 
         currentTime = Date.now();
         lastResetTime = 0;
@@ -109,9 +108,9 @@ Seadragon.Drawer = function Drawer(options) {
     this.addDziImage = function addDziImage(dziImage, index) {
         if (midUpdate) { // We don't want to add a new image during the update process, deferring.
             console.log('Deferred adding a DZI to Drawer');
-            var self = this;
+            var that = this;
             setTimeout(function () {
-                self.addDziImage(dziImage, index);
+                that.addDziImage(dziImage, index);
             }, 100);
             return;
         }
@@ -568,7 +567,7 @@ Seadragon.Drawer = function Drawer(options) {
         canvas.width = viewportSize.x;
         canvas.height = viewportSize.y;
 
-        self.canvasLayersManager.clear();
+        that.canvasLayersManager.clear();
 
         var viewportBounds = viewport.getRectangle(true);
         var viewportTL = viewportBounds.getTopLeft();
@@ -642,7 +641,7 @@ Seadragon.Drawer = function Drawer(options) {
         }
 
 
-        for (level = self.maxLevel; level >= 0; level--) {
+        for (level = that.maxLevel; level >= 0; level--) {
             for (i = 0; i < drawnImageNumbers.length; i++) {
                 whichImage = drawnImageNumbers[i];
 
@@ -810,11 +809,11 @@ Seadragon.Drawer = function Drawer(options) {
         for (i = tilesDrawnLastFrame.length - 1; i >= 0; i--) {
             tile = tilesDrawnLastFrame[i];
             for (j = 0; j <= tilesDrawnLastFrameLayers[i]; j++) {
-                self.canvasLayersManager.addToLayer(j, tile);
+                that.canvasLayersManager.addToLayer(j, tile);
             }
             tile.beingDrawn = true;
         }
-        self.canvasLayersManager.drawCanvas();
+        that.canvasLayersManager.drawCanvas();
 
         midUpdate = false;
 

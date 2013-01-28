@@ -20,7 +20,7 @@
  * @param {Seadragon.Rectangle} bounds A rectangle representing the initial value of the animated rectangle.
  */
 Seadragon.AnimatedRectangle = function AnimatedRectangle($container, bounds) {
-    var self = this;
+    var that = this;
 
     if ($container == null || !(bounds instanceof Seadragon.Rectangle)) {
         console.log('Received arguments: ');
@@ -49,9 +49,9 @@ Seadragon.AnimatedRectangle = function AnimatedRectangle($container, bounds) {
          */
         version: {
             get: function () {
-                if (self.isAnimating) { // We cache it otherwise for performance reasons.
-                    self.isAnimating = self.springs.x.isAnimating() || self.springs.y.isAnimating() ||
-                        self.springs.width.isAnimating() || self.springs.height.isAnimating();
+                if (that.isAnimating) { // We cache it otherwise for performance reasons.
+                    that.isAnimating = that.springs.x.isAnimating() || that.springs.y.isAnimating() ||
+                        that.springs.width.isAnimating() || that.springs.height.isAnimating();
                     version = Date.now(); // We want an update at least one more time.
                 }
                 return version;

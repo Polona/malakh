@@ -12,8 +12,13 @@ body, #seadragonPreloader {
 }
 
 * {
-    user-select: none;
+    -webkit-user-select: none;
     -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+    -webkit-user-drag: none;
     user-drag: none;
 }
 
@@ -102,5 +107,6 @@ body, #seadragonPreloader {
 }
 
 .pickerOverlay {
-    background: url("blank.png"); // IE9 fix
+    background: url("blank.png");
+/ / IE9 fix
 }
