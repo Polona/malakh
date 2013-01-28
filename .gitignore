@@ -2,6 +2,7 @@
 .*~
 .idea
 *.pyc
-seadragon_data
-doc
 node_modules
+dist
+doc
+seadragon_data
