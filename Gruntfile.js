@@ -124,7 +124,7 @@ module.exports = function (grunt) {
 
             // append commit id to version
             if (process.env.COMMIT) {
-                version += ' ' + process.env.COMMIT;
+                version += '_' + process.env.COMMIT;
             }
 
             // figure out which files to exclude based on these rules in this order:
