@@ -62,9 +62,7 @@ Seadragon.Picker = function Picker($container, viewport) {
 
     function show() {
         $container.append($pickerOverlay);
-        $(document).on({
-            mouseup: onMouseUp
-        });
+        $(document).on('mouseup.seadragon', onMouseUp);
     }
 
     /**
@@ -75,7 +73,7 @@ Seadragon.Picker = function Picker($container, viewport) {
 
     function hide() {
         $(document).off({
-            mouseup: onMouseUp
+            'mouseup.seadragon': onMouseUp
         });
         $pickerArea.hide();
         $pickerOverlay.detach();
@@ -214,7 +212,7 @@ Seadragon.Picker = function Picker($container, viewport) {
         }
 
         $pickerOverlay.on({
-            mousemove: function (event) {
+            'mousemove.seadragon': function (event) {
                 var mousePosition = getMousePosition(event);
                 var cursorType = '';
 
@@ -279,7 +277,7 @@ Seadragon.Picker = function Picker($container, viewport) {
      */
     function bindPickerMouseMove() {
         $pickerOverlay.on({
-            mousemove: function (event) {
+            'mousemove.seadragon': function (event) {
                 var mousePosition = getMousePosition(event);
                 if (drawingArea) {
                     return;
@@ -301,7 +299,7 @@ Seadragon.Picker = function Picker($container, viewport) {
 
     function onMouseUp(event) {
         if (drawingArea) {
-            $pickerOverlay.off('mousemove');
+            $pickerOverlay.off('mousemove.seadragon');
             bindPickerMouseMove();
 
             var areaBounds = viewport.pointRectangleFromPixelRectangle(getPickerAreaRectangle());
@@ -318,7 +316,7 @@ Seadragon.Picker = function Picker($container, viewport) {
                 $pickerArea.hide();
             }
 
-            var mouseMoveEvent = $.Event('mousemove');
+            var mouseMoveEvent = $.Event('mousemove.seadragon');
             mouseMoveEvent.pageX = event.pageX;
             mouseMoveEvent.pageY = event.pageY;
             $pickerOverlay.trigger(mouseMoveEvent);
@@ -330,7 +328,7 @@ Seadragon.Picker = function Picker($container, viewport) {
         bindPickerMouseMove();
 
         $pickerOverlay.on({
-            mousedown: function (event) {
+            'mousedown.seadragon': function (event) {
                 if (event.which !== 1) { // Only left-click is supported.
                     return false;
                 }

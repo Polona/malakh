@@ -326,7 +326,7 @@ Seadragon.Drawer = function Drawer(options) {
         }
 
         tilesLoaded[insertionIndex] = tile;
-        $container.trigger('seadragon.forceredraw');
+        $container.trigger('seadragon:forceredraw.seadragon');
     }
 
     function clearTiles() {
@@ -832,12 +832,12 @@ Seadragon.Drawer = function Drawer(options) {
     function reset() {
         clearTiles();
         lastResetTime = Date.now();
-        $container.trigger('seadragon.forceredraw');
+        $container.trigger('seadragon:forceredraw.seadragon');
     }
 
     /**
      * Resets drawer state: clears all tiles, sets <code>lastResetTime</code> to now and
-     * triggers the <code>seadragon.forceredraw</code> event.
+     * triggers the <code>seadragon:forceredraw.seadragon</code> event.
      *
      * @function
      */

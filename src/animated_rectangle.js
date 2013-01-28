@@ -154,7 +154,7 @@ Seadragon.AnimatedRectangle.prototype = {
         this.springs.y.springTo(center.y - this.springs.height.targetValue / 2, immediately);
 
         this.isAnimating = true;
-        this.$container.trigger('seadragon.forceredraw');
+        this.$container.trigger('seadragon:forceredraw.seadragon');
     },
 
     /**
@@ -168,7 +168,7 @@ Seadragon.AnimatedRectangle.prototype = {
 
     /**
      * Updates the state of all rectangle springs. In case of a change, triggers
-     * a <code>seadragon.forceredraw</code> event on the container.
+     * a <code>seadragon:forceredraw.seadragon</code> event on the container.
      *
      * @return {boolean} Did anything change?
      */
@@ -185,7 +185,7 @@ Seadragon.AnimatedRectangle.prototype = {
             this.springs.width.currentValue !== bounds.width ||
             this.springs.height.currentValue !== bounds.height;
         if (anythingChanged) {
-            this.$container.trigger('seadragon.forceredraw');
+            this.$container.trigger('seadragon:forceredraw.seadragon');
         }
         return anythingChanged;
     },
