@@ -120,7 +120,7 @@ $.extend(Seadragon.Viewport.prototype,
             if (!dontApplyConstraints) {
                 this.applyConstraints(false, refPoint);
             }
-            this.$container.trigger('seadragon.forceredraw');
+            this.$container.trigger('seadragon:forceredraw.seadragon');
         },
 
         /**
@@ -147,7 +147,7 @@ $.extend(Seadragon.Viewport.prototype,
             if (!dontApplyConstraints) {
                 this.applyConstraints(false);
             }
-            this.$container.trigger('seadragon.forceredraw');
+            this.$container.trigger('seadragon:forceredraw.seadragon');
         },
 
         /**
@@ -190,7 +190,7 @@ $.extend(Seadragon.Viewport.prototype,
 
             Seadragon.AnimatedRectangle.prototype.fitBounds.call(this, newBounds, immediately);
 
-            this.$container.trigger('seadragon.forcealign');
+            this.$container.trigger('seadragon:forcealign.seadragon');
         },
 
         /**

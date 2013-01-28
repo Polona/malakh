@@ -80,8 +80,6 @@ Seadragon.Markers = function Markers($container, viewport) {
     }
 
     function bindEvents() {
-        $container.on({
-            'seadragon.animation': fixPositions
-        });
+        $container.on('seadragon:animation.seadragon', fixPositions);
     }
 };

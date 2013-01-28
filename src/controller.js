@@ -99,15 +99,15 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             that.drawer.setMagnifier(true);
             that.drawer.canvasLayersManager.drawMagnifier = true;
 
-            $canvas.on('mousemove', moveMagnifier);
-            $canvas.trigger('mousemove');
+            $canvas.on('mousemove.seadragon', moveMagnifier);
+            $canvas.trigger('mousemove.seadragon');
         };
 
         /**
          * Hides the magnifier.
          */
         this.hideMagnifier = function hideMagnifier() {
-            $canvas.off('mousemove', moveMagnifier);
+            $canvas.off('mousemove.seadragon', moveMagnifier);
 
             that.drawer.canvasLayersManager.drawMagnifier = false;
             that.drawer.setMagnifier(false);
@@ -172,36 +172,36 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     this.getMousePosition = getMousePosition;
 
     function onDocumentMouseUp() {
-        $(document).off('mousemove', dragCanvas);
+        $(document).off('mousemove.seadragon', dragCanvas);
         forceUpdate();
     }
 
     function bindEvents() {
         $canvas.on({
-            mouseenter: function () {
+            'mouseenter.seadragon': function () {
                 if (magnifierShown) {
                     that.drawer.canvasLayersManager.drawMagnifier = true;
                     forceUpdate();
                 }
             },
 
-            mouseleave: function () {
+            'mouseleave.seadragon': function () {
                 if (magnifierShown) { // We have to redraw to hide magnifier.
                     that.drawer.canvasLayersManager.drawMagnifier = false;
                     forceUpdate();
                 }
             },
 
-            mousedown: function (event) {
+            'mousedown.seadragon': function (event) {
                 if (event.which !== 1 || magnifierShown) { // Only left-click is supported.
                     return false;
                 }
                 lastPosition = getMousePosition(event);
-                $(document).on('mousemove', dragCanvas);
+                $(document).on('mousemove.seadragon', dragCanvas);
                 return false;
             },
 
-            wheel: function (event) {
+            'wheel.seadragon': function (event) {
                 if (magnifierShown || !event.deltaY) {
                     return false;
                 }
@@ -212,23 +212,18 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         });
 
         $container.on({
-            'seadragon.forcealign': function () {
+            'seadragon:forcealign.seadragon': function () {
                 forceAlign = true;
                 forceUpdate();
             },
 
-            'seadragon.forceredraw': function () {
+            'seadragon:forceredraw.seadragon': function () {
                 forceUpdate();
             }
         });
 
-        $(document).on({
-            mouseup: onDocumentMouseUp
-        });
-
-        $(window).on({
-            resize: forceUpdate
-        });
+        $(document).on('mouseup.seadragon', onDocumentMouseUp);
+        $(window).on('resize.seadragon', forceUpdate);
     }
 
     /**
@@ -331,9 +326,9 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
         dziImagesToHandle--;
 
-        $container.trigger('seadragon.loadeddzi');
+        $container.trigger('seadragon:loadeddzi.seadragon');
         if (dziImagesToHandle === 0) {
-            $container.trigger('seadragon.loadeddziarray');
+            $container.trigger('seadragon:loadeddziarray.seadragon');
         }
         forceUpdate();
     }
@@ -414,14 +409,14 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         // Triger proper events.
         if (!animated && animating) {
             // We weren't animating, and now we did ==> animation start.
-            $container.trigger('seadragon.animationstart');
-            $container.trigger('seadragon.animation');
+            $container.trigger('seadragon:animationstart.seadragon');
+            $container.trigger('seadragon:animation.seadragon');
         } else if (animating) {
             // We're in the middle of animating.
-            $container.trigger('seadragon.animation');
+            $container.trigger('seadragon:animation.seadragon');
         } else if (animated) {
             // We were animating, and now we're not anymore ==> animation finish.
-            $container.trigger('seadragon.animationfinish');
+            $container.trigger('seadragon:animationend.seadragon');
         }
 
         // For the next update check.
@@ -494,14 +489,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * Closes the Seadragon module, de-registers events and clears Seadragon HTML container.
      */
     this.close = function close() {
-        $(window).off({
-            resize: forceUpdate
-        });
-        $(document).off({
-            mouseup: onDocumentMouseUp,
-            mousemove: dragCanvas
-        });
-        $container.off();
+        $(window, document, $container).off('.seadragon');
         $container.empty();
     };
 
@@ -570,7 +558,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         }
         recalculateMaxLevel();
 
-        $container.trigger('seadragon.forcealign');
+        $container.trigger('seadragon:forcealign.seadragon');
     }
 
     /**
