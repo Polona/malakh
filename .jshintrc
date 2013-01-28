@@ -1,0 +1,19 @@
+{
+    "curly": true,
+    "quotmark": "single",
+    "strict": true,
+    "trailing": true,
+    "undef": true,
+    "unused": true,
+    "maxerr": 100,
+
+    "eqnull": true,
+
+    "browser": true,
+    "jquery": true,
+    "es5": true,
+    "devel": true,
+
+    "predef": [
+    ]
+}

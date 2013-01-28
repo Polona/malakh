@@ -2,7 +2,7 @@
 .*~
 .idea
 *.pyc
-seadragon_data
+node_modules
+dist
 doc
-js/minified/minified.js
-
+seadragon_data

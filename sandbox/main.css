@@ -1,0 +1,106 @@
+* {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.classDisplaynone {
+    display: none;
+}
+
+body, #seadragonPreloader {
+    background-color: #2d2a2b;
+}
+
+* {
+    user-select: none;
+    -moz-user-select: -moz-none;
+    user-drag: none;
+}
+
+#seadragonPreloader {
+    position: fixed;
+    display: table;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 50;
+}
+
+#seadragonPreloaderTextcontainer {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#seadragonPreloaderText {
+    position: absolute;
+    font-family: Arial, sans-serif;
+    font-size: 25px;
+    text-align: center;
+    width: 100%;
+    height: 1em;
+    color: white;
+}
+
+.seadragonContainer {
+    overflow: hidden;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#seadragonContainerContainer {
+    position: fixed;
+    padding-left: 130px;
+}
+
+#seadragonContainer {
+    position: relative;
+}
+
+#buttonsBar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 130px;
+    height: 100%;
+    background-color: #2d2a2b;
+    border-right: 1px solid black;
+    z-index: 10;
+    cursor: auto;
+}
+
+#buttonsBar > * {
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-size: 12px;
+    line-height: 30px;
+    left: 10px;
+    width: 100px;
+    height: 36px;
+    margin-top: 5px;
+    border: 3px black solid;
+    border-radius: 9999px;
+    cursor: pointer;
+    background-color: #cd5c5c;
+}
+
+#buttonsBar > *:nth-child(n+4) {
+    background-color: #5f9ea0;
+}
+
+#buttonsBar > *:nth-child(n+6) {
+    background-color: #63308b;
+}
+
+#buttonsBar > *:nth-child(n+10) {
+    background-color: #cd5c5c;
+}
+
+.pickerOverlay {
+    background: url("blank.png"); // IE9 fix
+}
