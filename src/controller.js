@@ -157,9 +157,9 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         };
     }
 
-    function getMousePosition(event) {
+    function getMousePosition(evt) {
         var offset = $container.offset();
-        return new Seadragon.Point(event.pageX - offset.left, event.pageY - offset.top);
+        return new Seadragon.Point(evt.pageX - offset.left, evt.pageY - offset.top);
     }
 
     /**
@@ -192,20 +192,20 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
                 }
             },
 
-            'mousedown.seadragon': function (event) {
-                if (event.which !== 1 || magnifierShown) { // Only left-click is supported.
+            'mousedown.seadragon': function (evt) {
+                if (evt.which !== 1 || magnifierShown) { // Only left-click is supported.
                     return false;
                 }
-                lastPosition = getMousePosition(event);
+                lastPosition = getMousePosition(evt);
                 $(document).on('mousemove.seadragon', dragCanvas);
                 return false;
             },
 
-            'wheel.seadragon': function (event) {
-                if (magnifierShown || !event.deltaY) {
+            'wheel.seadragon': function (evt) {
+                if (magnifierShown || !evt.deltaY) {
                     return false;
                 }
-                zoomCanvas(event);
+                zoomCanvas(evt);
                 forceUpdate();
                 return false;
             }
@@ -229,11 +229,11 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     /**
      * Handler executed when user drags the canvas using their mouse.
      *
-     * @param {jQuery.Event} event Mouse event.
+     * @param {jQuery.Event} evt Mouse event.
      * @private
      */
-    function dragCanvas(event) {
-        var position = getMousePosition(event);
+    function dragCanvas(evt) {
+        var position = getMousePosition(evt);
         var delta = position.minus(lastPosition);
 
         var blockMovement = Seadragon.Config.blockMovement;
@@ -251,32 +251,32 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     /**
      * Handler executed when zooming using mouse wheel.
      *
-     * @param {jQuery.Event} event Mouse 'wheel' event.
+     * @param {jQuery.Event} evt Mouse 'wheel' event.
      * @private
      */
-    function zoomCanvas(event) {
+    function zoomCanvas(evt) {
         if (Seadragon.Config.blockZoom) {
             return;
         }
         var factor = Seadragon.Config.zoomPerScroll;
-        if (event.deltaY > 0) { // zooming out
+        if (evt.deltaY > 0) { // zooming out
             factor = 1 / factor;
         }
         that.viewport.zoomBy(
             factor,
             false,
-            that.viewport.pointFromPixel(getMousePosition(event), true));
+            that.viewport.pointFromPixel(getMousePosition(evt), true));
     }
 
 
     /**
      * Moves the magnifier to mouse position determined by <code>event</code>.
      *
-     * @param {jQuery.Event} event Mouse event.
+     * @param {jQuery.Event} evt Mouse event.
      * @private
      */
-    function moveMagnifier(event) {
-        var position = getMousePosition(event);
+    function moveMagnifier(evt) {
+        var position = getMousePosition(evt);
         that.magnifier.panTo(position);
         forceUpdate();
     }
