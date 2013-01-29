@@ -283,8 +283,6 @@ Seadragon.Picker = function Picker($container, viewport) {
                     return;
                 }
 
-                var $this = $(this);
-
                 var cursorType;
                 if ($pickerArea.is(':visible')) {
                     cursorType = overBorder(getPickerAreaRectangle(), mousePosition.x, mousePosition.y);
@@ -292,7 +290,7 @@ Seadragon.Picker = function Picker($container, viewport) {
                     cursorType = 'default';
                 }
 
-                $this.css('cursor', cursorType);
+                $(this).css('cursor', cursorType);
             }
         });
     }
