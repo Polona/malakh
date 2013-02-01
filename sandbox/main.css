@@ -107,6 +107,5 @@ body, #seadragonPreloader {
 }
 
 .pickerOverlay {
-    background: url("blank.png");
-/ / IE9 fix
+    background: url("blank.png"); /* IE9 fix */
 }
