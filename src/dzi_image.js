@@ -26,6 +26,7 @@
  * @param {number} [options.maxLevel] Sets this.maxLevel.
  * @param {number} [options.shown=true] If true, an image is hidden.
  */
+// TODO document fields
 Seadragon.DziImage = function DziImage(options) {
     if (options == null || options.$container == null || options.width == null || options.height == null ||
         options.tileSize == null || options.tilesUrl == null || options.fileFormat == null) {
@@ -67,7 +68,7 @@ $.extend(Seadragon.DziImage.prototype,
          * @return {string}
          */
         getTileUrl: function getTileUrl(level, x, y) {
-            return this.tilesUrl + '_files/' + level + '/' + x + '_' + y + '.' + this.fileFormat;
+            return this.tilesUrl + level + '/' + x + '_' + y + '.' + this.fileFormat;
         }
     }
 );
@@ -114,7 +115,8 @@ function processDzi(options) {
         throw new Error(invalidFormatMessage);
     }
 
-    var tilesUrl = getTilesPath(options.dziUrl);
+    // If tilesUrl were not provided, the default path is the same as dziUrl with ".dzi" changed into "_files".
+    var tilesUrl = options.tilesUrl || options.dziUrl.replace(/\.dzi$/, '_files/');
 
     if (!options.bounds) {
         options.bounds = new Seadragon.Rectangle(0, 0, width, height); // default bounds copied from DZI
@@ -131,19 +133,6 @@ function processDzi(options) {
         bounds: options.bounds,
         shown: options.shown
     });
-}
-
-function getTilesPath(dziUrl) {
-    // Extracts tiles url.
-
-    var urlParts = dziUrl.split('/');
-    var filename = urlParts[urlParts.length - 1];
-    var lastDot = filename.lastIndexOf('.');
-
-    if (lastDot > -1) {
-        urlParts[urlParts.length - 1] = filename.slice(0, lastDot);
-    }
-    return urlParts.join('/');
 }
 
 //noinspection JSValidateJSDoc
@@ -166,7 +155,7 @@ Seadragon.DziImage.createFromDzi = function createFromDzi(options) {
         console.log('\nReceived options: ', options);
         throw new Error('Seadragon.DziImage\'s createFromDzi method needs a JSON parameter with at ' +
             'least the following fields: dziUrl, $container, callback.\n' +
-            'Fields: bounds, index, shown are optional.');
+            'Fields: tilesUrl, bounds, index, shown are optional.');
     }
 
     if (!options.dziUrl) {

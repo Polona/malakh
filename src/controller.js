@@ -426,20 +426,23 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     /**
      * Opens Deep Zoom Image (DZI).
      *
-     * @param {string} dziUrl An URL/path to the DZI file.
-     * @param {number} index If specified, an image is loaded into <code>controller.dziImages[index]</code>.
-     *                       Otherwise it's put at the end of the table.
-     * @param {boolean} [shown=true] If false, image is not drawn. It can be made visible later.
-     * @param {Seadragon.Rectangle} [bounds] Bounds representing position and shape of the image on the virtual
-     *                                       Seadragon plane.
+     * @param {string} dziUrl  The URL/path to the DZI file.
+     * @param {string} tilesUrl  The URL/path to the tiles directory; by default it's the same as <code>dziUrl<code>
+     *                           with ".dzi" changed to "_files".
+     * @param {number} index  If specified, an image is loaded into <code>controller.dziImages[index]</code>.
+     *                        Otherwise it's put at the end of the table.
+     * @param {boolean} [shown=true]  If false, image is not drawn. It can be made visible later.
+     * @param {Seadragon.Rectangle} [bounds]  Bounds representing position and shape of the image on the virtual
+     *                                        Seadragon plane.
      */
-    this.openDzi = function openDzi(dziUrl, index, shown, bounds, /* internal */ dontIncrementCounter) {
+    this.openDzi = function openDzi(dziUrl, tilesUrl, index, shown, bounds, /* internal */ dontIncrementCounter) {
         if (!dontIncrementCounter) {
             dziImagesToHandle++;
         }
         try {
             Seadragon.DziImage.createFromDzi({
                 dziUrl: dziUrl,
+                tilesUrl: tilesUrl,
                 $container: $container,
                 bounds: bounds,
                 index: index,
@@ -453,6 +456,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         }
     };
 
+    // TODO this should probably just parse a properly structured JSON, current approach is not extensible.
     /**
      * Opens many DZIs.
      *
@@ -468,7 +472,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         var dziUrlArrayLength = dziUrlArray.length;
         dziImagesToHandle += dziUrlArrayLength;
         for (i = 0; i < dziUrlArrayLength; i++) {
-            that.openDzi(dziUrlArray[i], i, !hideByDefault, boundsArray[i], true);
+            that.openDzi(dziUrlArray[i], null, i, !hideByDefault, boundsArray[i], true);
         }
     };
 
