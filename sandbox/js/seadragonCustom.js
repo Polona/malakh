@@ -16,7 +16,7 @@ function seadragonCustom(options) {
     var constrainImage3 = false;
     var constrainImage17 = false;
 
-    var $container, dziArray, boundsArray, i;
+    var $container, dziArray, boundsArray;
 
     sdData = {
         containerSelector: undefined,
@@ -52,10 +52,10 @@ function seadragonCustom(options) {
 
     dziArray = [];
     boundsArray = [];
-    for (i = 0; i < dziNamesArray.length; i++) {
-        dziArray.push(sdData.tilesDir + dziNamesArray[i] + '.dzi');
+    dziNamesArray.forEach(function (dziName) {
+        dziArray.push(sdData.tilesDir + dziName + '.dzi');
         boundsArray.push(new Seadragon.Rectangle(1000000, 1000000, 1000, 1000));
-    }
+    });
     sdData.controller.openDziArray(dziArray, boundsArray);
     sdData.controller.alignRows(4920, 0, Infinity, true);
 

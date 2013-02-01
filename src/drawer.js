@@ -535,9 +535,10 @@ Seadragon.Drawer = function Drawer(options) {
 
 
     // See this.update description.
+    // TODO this function is too large
     function update() {
         var dziImage, tile, zeroDimensionMax, deltaTime, opacity;
-        var i, j, whichImage, x, y, level; // indexes for loops
+        var i, j, x, y, level; // indexes for loops
 
         if (midUpdate) {
             // We don't want to run two updates at the same time but we do want to indicate
@@ -639,160 +640,160 @@ Seadragon.Drawer = function Drawer(options) {
             drawnImageNumbers.push(whichImage);
         });
 
+        function updateBestTileForImageAtCurrentLevel(whichImage) {
+            if (drawingEnded[whichImage]) {
+                return; // We could delete whichImage from drawnImageNumbers but cost would be higher.
+            }
 
-        for (level = that.maxLevel; level >= 0; level--) {
-            for (i = 0; i < drawnImageNumbers.length; i++) {
-                whichImage = drawnImageNumbers[i];
+            dziImage = dziImages[whichImage];
+            var adjustedLevel = dziImage.getAdjustedLevel(level);
 
-                if (drawingEnded[whichImage]) {
-                    continue; // We could delete whichImage from drawnImageNumbers but cost would be higher.
-                }
+            viewportTL = viewportTLs[whichImage];
+            viewportBR = viewportBRs[whichImage];
 
-                dziImage = dziImages[whichImage];
-                var adjustedLevel = dziImage.getAdjustedLevel(level);
+            zeroDimensionMax = zeroDimensionsMax[whichImage];
 
-                viewportTL = viewportTLs[whichImage];
-                viewportBR = viewportBRs[whichImage];
+            if (adjustedLevel > dziImage.maxLevel || adjustedLevel < dziImage.minLevel) {
+                return;
+            }
 
-                zeroDimensionMax = zeroDimensionsMax[whichImage];
+            var drawLevel = false;
+            var renderPixelDimensionC = viewportZoom / dziImage.getLevelScale(level);
 
-                if (adjustedLevel > dziImage.maxLevel || adjustedLevel < dziImage.minLevel) {
-                    continue;
-                }
+            if (magnifierShown) {
+                // We need to load higher-level tiles as we need them
+                // for the magnifier. Notice that we load these higher
+                // levels for the whole space inside the viewport, not
+                // only ones under the magnifier. It helps to reduce the
+                // impression of slugishness as we move the magnifier. We
+                // don't need to worry about the additional tiles to load
+                // since before they're loaded we still see tiles from lower
+                // levels so transitions are smooth.
+                renderPixelDimensionC *= Seadragon.Config.magnifierZoom;
+            }
 
-                var drawLevel = false;
-                var renderPixelDimensionC = viewportZoom / dziImage.getLevelScale(level);
+            // If we haven't drawn yet, only draw level if tiles are big enough.
+            if ((!haveDrawns[whichImage] && renderPixelDimensionC >= MIN_PIXEL_RATIO) ||
+                adjustedLevel === dziImage.minLevel) {
+                drawLevel = true;
+                haveDrawns[whichImage] = true;
+            } else if (!haveDrawns[whichImage]) {
+                return;
+            }
 
-                if (magnifierShown) {
-                    // We need to load higher-level tiles as we need them
-                    // for the magnifier. Notice that we load these higher
-                    // levels for the whole space inside the viewport, not
-                    // only ones under the magnifier. It helps to reduce the
-                    // impression of slugishness as we move the magnifier. We
-                    // don't need to worry about the additional tiles to load
-                    // since before they're loaded we still see tiles from lower
-                    // levels so transitions are smooth.
-                    renderPixelDimensionC *= Seadragon.Config.magnifierZoom;
-                }
+            resetCoverage(whichImage, adjustedLevel);
 
-                // If we haven't drawn yet, only draw level if tiles are big enough.
-                if ((!haveDrawns[whichImage] && renderPixelDimensionC >= MIN_PIXEL_RATIO) ||
-                    adjustedLevel === dziImage.minLevel) {
-                    drawLevel = true;
-                    haveDrawns[whichImage] = true;
-                } else if (!haveDrawns[whichImage]) {
-                    continue;
-                }
+            // Calculate scores applicable to all tiles on this level --
+            // note that we're basing visibility on the TARGET pixel ratio.
+            var renderPixelDimensionTMax = getPixelOnImageSizeMax(whichImage, adjustedLevel);
+            var levelVisibility = zeroDimensionMax / Math.abs(zeroDimensionMax - renderPixelDimensionTMax);
 
-                resetCoverage(whichImage, adjustedLevel);
+            // Only iterate over visible tiles.
+            var tileTL = dziImage.getTileAtPoint(adjustedLevel, viewportTL, true);
+            var tileBR = dziImage.getTileAtPoint(adjustedLevel, viewportBR, true);
+            var numTiles = getNumTiles(whichImage, adjustedLevel);
+            var numTilesX = numTiles.x;
+            var numTilesY = numTiles.y;
+            tileTL.x = Math.max(tileTL.x, 0);
+            tileTL.y = Math.max(tileTL.y, 0);
+            tileBR.x = Math.min(tileBR.x, numTilesX - 1);
+            tileBR.y = Math.min(tileBR.y, numTilesY - 1);
 
-                // Calculate scores applicable to all tiles on this level --
-                // note that we're basing visibility on the TARGET pixel ratio.
-                var renderPixelDimensionTMax = getPixelOnImageSizeMax(whichImage, adjustedLevel);
-                var levelVisibility = zeroDimensionMax / Math.abs(zeroDimensionMax - renderPixelDimensionTMax);
+            for (x = tileTL.x; x <= tileBR.x; x++) {
+                for (y = tileTL.y; y <= tileBR.y; y++) {
+                    tile = getTile(whichImage, adjustedLevel, x, y, currentTime, true);
+                    var drawTile = drawLevel;
 
-                // Only iterate over visible tiles.
-                var tileTL = dziImage.getTileAtPoint(adjustedLevel, viewportTL, true);
-                var tileBR = dziImage.getTileAtPoint(adjustedLevel, viewportBR, true);
-                var numTiles = getNumTiles(whichImage, adjustedLevel);
-                var numTilesX = numTiles.x;
-                var numTilesY = numTiles.y;
-                tileTL.x = Math.max(tileTL.x, 0);
-                tileTL.y = Math.max(tileTL.y, 0);
-                tileBR.x = Math.min(tileBR.x, numTilesX - 1);
-                tileBR.y = Math.min(tileBR.y, numTilesY - 1);
+                    // Assume this tile doesn't cover initially.
+                    setCoverage(whichImage, adjustedLevel, x, y, false);
 
-                for (x = tileTL.x; x <= tileBR.x; x++) {
-                    for (y = tileTL.y; y <= tileBR.y; y++) {
-                        tile = getTile(whichImage, adjustedLevel, x, y, currentTime, true);
-                        var drawTile = drawLevel;
+                    if (tile.failedToLoad) {
+                        continue;
+                    }
 
-                        // Assume this tile doesn't cover initially.
-                        setCoverage(whichImage, adjustedLevel, x, y, false);
-
-                        if (tile.failedToLoad) {
-                            continue;
-                        }
-
-                        // If we've drawn a higher-resolution level and we're
-                        // not going to draw this level, then say this tile does
-                        // cover if it's covered by higher-resolution tiles. if
-                        // we're not covered, then we should draw this tile regardless.
-                        if (haveDrawns[whichImage] && !drawTile) {
-                            if (isCovered(whichImage, adjustedLevel, x, y)) {
-                                setCoverage(whichImage, adjustedLevel, x, y, true);
-                            } else {
-                                drawTile = true;
-                            }
-                        }
-
-                        if (!drawTile) {
-                            continue;
-                        }
-
-                        // Calculate tile's position and size in pixels.
-                        var boundsTL = tile.bounds.getTopLeft();
-                        var boundsSize = tile.bounds.getSize();
-
-                        var positionC = viewport.pixelFromPoint(boundsTL, true);
-                        var sizeC = viewport.deltaPixelsFromPoints(boundsSize, true);
-
-                        var drawOnMagnifier = magnifierShown && magnifier != null &&
-                            magnifier.intersectsRectangle(new Seadragon.Rectangle(
-                                positionC.x, positionC.y, sizeC.x, sizeC.y));
-
-                        // Calculate distance from center of viewport --
-                        // note that this is based on tile's TARGET position.
-                        var positionT = viewport.pixelFromPoint(boundsTL, false);
-                        var sizeT = viewport.deltaPixelsFromPoints(boundsSize, false);
-                        var centerT = positionT.plus(sizeT.divide(2));
-
-                        // Update tile's scores and values.
-                        tile.position = positionC;
-                        tile.size = sizeC;
-                        tile.targetCenter = centerT;
-                        tile.visibility = levelVisibility;
-
-                        if (tile.loaded) {
-                            if (!tile.blendStart) {
-                                // Image was just added, blend it.
-                                tile.blendStart = currentTime;
-                            }
-
-                            deltaTime = currentTime - tile.blendStart;
-                            opacity = Math.min(1, deltaTime / Seadragon.Config.blendTime);
-
-                            tile.opacity = opacity * dziImage.opacity;
-
-                            // Queue tile for drawing in reverse order.
-                            tilesDrawnLastFrame.push(tile);
-                            tilesDrawnLastFrameLayers.push(drawOnMagnifier ? 1 : 0);
-
-                            // If fully blended in, this tile now provides coverage,
-                            // otherwise we need to update again to keep blending.
-                            if (opacity >= 1) {
-                                setCoverage(whichImage, adjustedLevel, x, y, true);
-                            } else {
-                                updateAgain = true;
-                            }
-                        } else if (!tile.loading) {
-                            // Means tile isn't loaded yet, so score it.
-                            var interestingPoint;
-                            if (magnifierShown) { // if magnifier shown, draw tiles close to its center
-                                interestingPoint = magnifier.center;
-                            } else { // otherwise prefer the middle of the screen
-                                interestingPoint = viewportCenter;
-                            }
-                            best = compareTiles(best, tile, interestingPoint);
+                    // If we've drawn a higher-resolution level and we're
+                    // not going to draw this level, then say this tile does
+                    // cover if it's covered by higher-resolution tiles. if
+                    // we're not covered, then we should draw this tile regardless.
+                    if (haveDrawns[whichImage] && !drawTile) {
+                        if (isCovered(whichImage, adjustedLevel, x, y)) {
+                            setCoverage(whichImage, adjustedLevel, x, y, true);
+                        } else {
+                            drawTile = true;
                         }
                     }
-                }
 
-                // We may not need to draw any more lower-res levels.
-                if (providesCoverage(whichImage, adjustedLevel)) {
-                    drawingEnded[whichImage] = true;
+                    if (!drawTile) {
+                        continue;
+                    }
+
+                    // Calculate tile's position and size in pixels.
+                    var boundsTL = tile.bounds.getTopLeft();
+                    var boundsSize = tile.bounds.getSize();
+
+                    var positionC = viewport.pixelFromPoint(boundsTL, true);
+                    var sizeC = viewport.deltaPixelsFromPoints(boundsSize, true);
+
+                    var drawOnMagnifier = magnifierShown && magnifier != null &&
+                        magnifier.intersectsRectangle(new Seadragon.Rectangle(
+                            positionC.x, positionC.y, sizeC.x, sizeC.y));
+
+                    // Calculate distance from center of viewport --
+                    // note that this is based on tile's TARGET position.
+                    var positionT = viewport.pixelFromPoint(boundsTL, false);
+                    var sizeT = viewport.deltaPixelsFromPoints(boundsSize, false);
+                    var centerT = positionT.plus(sizeT.divide(2));
+
+                    // Update tile's scores and values.
+                    tile.position = positionC;
+                    tile.size = sizeC;
+                    tile.targetCenter = centerT;
+                    tile.visibility = levelVisibility;
+
+                    if (tile.loaded) {
+                        if (!tile.blendStart) {
+                            // Image was just added, blend it.
+                            tile.blendStart = currentTime;
+                        }
+
+                        deltaTime = currentTime - tile.blendStart;
+                        opacity = Math.min(1, deltaTime / Seadragon.Config.blendTime);
+
+                        tile.opacity = opacity * dziImage.opacity;
+
+                        // Queue tile for drawing in reverse order.
+                        tilesDrawnLastFrame.push(tile);
+                        tilesDrawnLastFrameLayers.push(drawOnMagnifier ? 1 : 0);
+
+                        // If fully blended in, this tile now provides coverage,
+                        // otherwise we need to update again to keep blending.
+                        if (opacity >= 1) {
+                            setCoverage(whichImage, adjustedLevel, x, y, true);
+                        } else {
+                            updateAgain = true;
+                        }
+                    } else if (!tile.loading) {
+                        // Means tile isn't loaded yet, so score it.
+                        var interestingPoint;
+                        if (magnifierShown) { // if magnifier shown, draw tiles close to its center
+                            interestingPoint = magnifier.center;
+                        } else { // otherwise prefer the middle of the screen
+                            interestingPoint = viewportCenter;
+                        }
+                        best = compareTiles(best, tile, interestingPoint);
+                    }
                 }
             }
+
+            // We may not need to draw any more lower-res levels.
+            if (providesCoverage(whichImage, adjustedLevel)) {
+                drawingEnded[whichImage] = true;
+            }
+        }
+
+
+        for (level = that.maxLevel; level >= 0; level--) {
+            drawnImageNumbers.forEach(updateBestTileForImageAtCurrentLevel);
         }
 
         // Load next tile if there is one to load.
