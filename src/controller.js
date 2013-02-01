@@ -343,7 +343,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
                 return;
             }
             update();
-            setTimeout(keepUpdating, 1);
+            requestAnimationFrame(keepUpdating);
         }
     }
 
@@ -392,11 +392,11 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         var animating = that.viewport.update() || forceAlign || forceRedraw;
         if (forceAlign) {
             forceAlign = false;
-            setTimeout(function () { // Timeouts to make it more asynchronous.
+            setTimeout(function () { // Making it more asynchronous.
                 that.dziImages.forEach(function (dziImage) {
-                    setTimeout(updateDziImageBounds, 17, dziImage);
+                    setTimeout(updateDziImageBounds, 0, dziImage);
                 });
-            }, 17);
+            }, 0);
         }
 
         if (animating) {

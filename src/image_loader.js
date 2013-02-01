@@ -56,7 +56,7 @@ Seadragon.ImageLoader.prototype = {
             image.onload = image.onabort = image.onerror = null;
 
             // Call on a timeout to ensure asynchronous behavior.
-            setTimeout(catchedCallback, 1, src, image.complete ? image : null);
+            setTimeout(catchedCallback, 0, src, image.complete ? image : null);
         }
 
         image.onload = image.onabort = image.onerror = finish;

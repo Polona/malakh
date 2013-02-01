@@ -15,5 +15,6 @@
     "devel": true,
 
     "predef": [
+        "requestAnimationFrame"
     ]
 }
