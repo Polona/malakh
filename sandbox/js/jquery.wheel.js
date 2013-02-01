@@ -10,8 +10,7 @@
     'use strict';
 
     // Modern browsers support 'wheel', other - 'mousewheel'.
-    var dummy = document.createElement('div'),
-        nativeEvent = 'onwheel' in dummy ? 'wheel' : 'mousewheel';
+    var nativeEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
 
     // Normalizing event properties for the 'wheel' event (like event.which etc.).
     if (nativeEvent === 'wheel') {
