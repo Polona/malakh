@@ -6,6 +6,10 @@
 
         var lastTime = 0;
 
+        if (window.requestAnimationFrame) {
+            return; // already defined
+        }
+
         ['webkit', 'moz', 'o'].forEach(function (vendorPrefix) {
             if (window.requestAnimationFrame) {
                 return;
