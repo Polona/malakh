@@ -590,10 +590,9 @@ Seadragon.Drawer = function Drawer(options) {
         currentTime = Date.now();
 
         // Drawing all images.
-        for (whichImage = 0; whichImage < dziImages.length; whichImage++) {
-            dziImage = dziImages[whichImage];
+        dziImages.forEach(function (dziImage, whichImage) {
             if (!(dziImage instanceof Seadragon.DziImage) || dziImage.isHidden()) {
-                continue;
+                return;
             }
 
             // We don't need to compute these two things on each update but filtering out cases where it's not needed
@@ -607,7 +606,7 @@ Seadragon.Drawer = function Drawer(options) {
             // If image is off image entirely, don't bother drawing.
             if (dziImageBR.x < viewportTL.x || dziImageBR.y < viewportTL.y ||
                 dziImageTL.x > viewportBR.x || dziImageTL.y > viewportBR.y) {
-                continue;
+                return;
             }
 
             // Restrain bounds of viewport relative to image.
@@ -638,7 +637,7 @@ Seadragon.Drawer = function Drawer(options) {
 
             // We'll draw this image.
             drawnImageNumbers.push(whichImage);
-        }
+        });
 
 
         for (level = that.maxLevel; level >= 0; level--) {

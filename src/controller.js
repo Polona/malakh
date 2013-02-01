@@ -291,10 +291,9 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      */
     function recalculateMaxLevel() {
         maxLevel = 0;
-        for (var i = 0; i < that.dziImages.length; i++) {
-            var dziImage = that.dziImages[i];
+        that.dziImages.forEach(function (dziImage) {
             maxLevel = Math.max(maxLevel, dziImage.getUnadjustedLevel(dziImage.maxLevel));
-        }
+        });
         that.viewport.maxLevelScale = Math.pow(2, maxLevel);
         that.drawer.maxLevel = maxLevel;
     }
@@ -365,11 +364,11 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     /**
      * Updates bounds of a Seadragon image; usually used during aligning (so not too often).
      *
-     * @param {number} whichImage Image index in <code>this.dziImages</code> table.
+     * @param {Seadragon.DziImage} dziImage  <code>DziImage</code> instance to update.
      * @private
      */
-    function updateDziImageBounds(whichImage) {
-        forceAlign = that.dziImages[whichImage].bounds.update() || forceAlign;
+    function updateDziImageBounds(dziImage) {
+        forceAlign = dziImage.bounds.update() || forceAlign;
         forceUpdate();
     }
 
@@ -394,9 +393,9 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         if (forceAlign) {
             forceAlign = false;
             setTimeout(function () { // Timeouts to make it more asynchronous.
-                for (var i = 0; i < that.dziImages.length; i++) {
-                    setTimeout(updateDziImageBounds, 17, i);
-                }
+                that.dziImages.forEach(function (dziImage) {
+                    setTimeout(updateDziImageBounds, 17, dziImage);
+                });
             }, 17);
         }
 
@@ -510,7 +509,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      */
     function alignRowsOrColumns(alingInRows, heightOrWidth, spaceBetweenImages, maxRowWidthOrColumnHeight,
                                 immediately) {
-        var whichImage, width, height, dziImage, widthSum, heightSum, newBounds;
+        var width, height, widthSum, heightSum, newBounds;
 
         if (isLoading()) {
             setTimeout(alignRowsOrColumns, 100,
@@ -524,9 +523,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             maxRowWidthOrColumnHeight = Infinity;
         }
 
-        for (whichImage = 0; whichImage < that.dziImages.length; whichImage++) {
-            dziImage = that.dziImages[whichImage];
-
+        that.dziImages.forEach(function (dziImage) {
             // Compute the current state.
             if (alingInRows) {
                 width = dziImage.width * heightOrWidth / dziImage.height;
@@ -558,8 +555,8 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             }
 
             dziImage.fitBounds(newBounds, immediately);
-            updateDziImageBounds(whichImage);
-        }
+            updateDziImageBounds(dziImage);
+        });
         recalculateMaxLevel();
 
         $container.trigger('seadragon:forcealign.seadragon');

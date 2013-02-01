@@ -69,30 +69,31 @@ Seadragon.CanvasLayersManager.prototype = {
      * @param {number} layerNum
      */
     drawLayer: function drawLayer(layerNum) {
-        var i, tilesOnLayer, drawLayer1, tile, zoom;
-        tilesOnLayer = this.tiles[layerNum];
-        drawLayer1 = layerNum === 1 && this.drawMagnifier && this.magnifier;
+        var tilesOnLayer, drawLayer1, zoom;
+        var that = this;
+
+        tilesOnLayer = that.tiles[layerNum];
+        drawLayer1 = layerNum === 1 && that.drawMagnifier && that.magnifier;
 
         if (drawLayer1) { // magnifier level
-            this.context.save();
-            this.magnifier.drawPath(this.context);
+            that.context.save();
+            that.magnifier.drawPath(that.context);
         }
-        for (i = 0; i < tilesOnLayer.length; i++) {
-            tile = tilesOnLayer[i];
+        tilesOnLayer.forEach(function (tile) {
             if (drawLayer1) {
                 zoom = Seadragon.Config.magnifierZoom;
             } else {
                 zoom = 1;
             }
             if (drawLayer1) {
-                tile.drawCanvas(this.context, zoom, this.magnifier.center);
+                tile.drawCanvas(that.context, zoom, that.magnifier.center);
             } else {
-                tile.drawCanvas(this.context, zoom, this.viewport.getCenter());
+                tile.drawCanvas(that.context, zoom, that.viewport.getCenter());
             }
-        }
+        });
         if (drawLayer1) { // magnifier level
-            this.magnifier.drawOnFinish(this.context);
-            this.context.restore();
+            that.magnifier.drawOnFinish(that.context);
+            that.context.restore();
         }
     },
 
