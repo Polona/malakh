@@ -24,8 +24,7 @@ Seadragon.Picker = function Picker($container, viewport) {
 
     (function init() {
         if ($container == null || !(viewport instanceof Seadragon.Viewport)) {
-            console.log('Received arguments: ');
-            console.log(Array.prototype.slice.apply(arguments));
+            console.info('Received arguments: ', [].slice.apply(arguments));
             throw new Error('Incorrect paremeters given to Seadragon.Picker!\n' +
                 'Use Seadragon.Picker($container, viewport)');
         }
@@ -36,7 +35,7 @@ Seadragon.Picker = function Picker($container, viewport) {
         };
         drawingArea = false; // Are we drawing a rectangle at the moment?
 
-        $pickerOverlay = $('<div class="pickerOverlay" />').css({
+        $pickerOverlay = $('<div class="pickerOverlay">').css({
             position: 'absolute',
             zIndex: 100,
             left: 0,
@@ -46,7 +45,7 @@ Seadragon.Picker = function Picker($container, viewport) {
             backgroundColor: 'transparent'
         });
 
-        $pickerArea = $('<div class="pickerArea" />').css({
+        $pickerArea = $('<div class="pickerArea">').css({
             position: 'absolute',
             display: 'none',
             zIndex: 150,
@@ -152,7 +151,7 @@ Seadragon.Picker = function Picker($container, viewport) {
                     case Pos.end:
                         return 'sw-resize';
                     default:
-                        console.log('Error 1! xPos: ' + xPos + ', yPos: ' + yPos);
+                        console.error('Error 1! xPos: ' + xPos + ', yPos: ' + yPos);
                         return 'default';
                 }
                 break;
@@ -166,7 +165,7 @@ Seadragon.Picker = function Picker($container, viewport) {
                     case Pos.end:
                         return 's-resize';
                     default:
-                        console.log('Error 2! xPos: ' + xPos + ', yPos: ' + yPos);
+                        console.error('Error 2! xPos: ' + xPos + ', yPos: ' + yPos);
                         return 'default';
                 }
                 break;
@@ -180,7 +179,7 @@ Seadragon.Picker = function Picker($container, viewport) {
                     case Pos.end:
                         return 'se-resize';
                     default:
-                        console.log('Error 3! xPos: ' + xPos + ', yPos: ' + yPos);
+                        console.error('Error 3! xPos: ' + xPos + ', yPos: ' + yPos);
                         return 'default';
                 }
                 break;
@@ -302,6 +301,7 @@ Seadragon.Picker = function Picker($container, viewport) {
 
             var areaBounds = viewport.pointRectangleFromPixelRectangle(getPickerAreaRectangle());
 
+            // TODO use this.
             console.log('areaBounds: [' + areaBounds.x + ', ' + areaBounds.y +
                 ', ' + areaBounds.width + ', ' + areaBounds.height +
                 '], right: ' + (areaBounds.x + areaBounds.width) +

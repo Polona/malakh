@@ -30,7 +30,7 @@
 Seadragon.DziImage = function DziImage(options) {
     if (options == null || options.$container == null || options.width == null || options.height == null ||
         options.tileSize == null || options.tilesUrl == null || options.fileFormat == null) {
-        console.log('\nReceived options: ', options);
+        console.info('Received options: ', options);
         throw new Error('Seadragon.DziImage needs a JSON parameter with at least the following ' +
             'fields: $container, width, height, tileSize, tilesUrl, fileFormat.\n' +
             'Fields: tileOverlap, bounds, minLevel, maxLevel, shown are optional.');
@@ -152,7 +152,7 @@ function processDzi(options) {
  */
 Seadragon.DziImage.createFromDzi = function createFromDzi(options) {
     if (options == null || options.dziUrl == null || options.$container == null || options.callback == null) {
-        console.log('\nReceived options: ', options);
+        console.info('Received options: ', options);
         throw new Error('Seadragon.DziImage\'s createFromDzi method needs a JSON parameter with at ' +
             'least the following fields: dziUrl, $container, callback.\n' +
             'Fields: tilesUrl, bounds, index, shown are optional.');

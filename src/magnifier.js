@@ -15,8 +15,7 @@
  */
 Seadragon.Magnifier = function Magnifier(center, radius) {
     if (!(center instanceof Seadragon.Point) || !radius) {
-        console.log('Received arguments: ');
-        console.log(Array.prototype.slice.apply(arguments));
+        console.info('Received arguments: ', [].slice.apply(arguments));
         throw new Error('Incorrect paremeters given to Seadragon.Magnifier!\n' +
             'Use Seadragon.Magnifier(center, radius). Radius has to be a positive number.');
     }

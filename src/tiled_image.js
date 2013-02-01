@@ -39,8 +39,7 @@
 Seadragon.TiledImage = function TiledImage(options) {
     if (options == null || options.$container == null || options.width == null || options.height == null ||
         options.tileSize == null || options.tileOverlap == null) {
-        console.log('Received arguments: ');
-        console.log(Array.prototype.slice.apply(arguments));
+        console.info('Received arguments: ', [].slice.apply(arguments));
         throw new Error('Seadragon.TiledImage needs a JSON parameter with at least the following fields: ' +
             '$container, width, height, tileSize.\n' +
             'Fields: tileOverlap, bounds, minLevel, maxLevel, shown are optional.');

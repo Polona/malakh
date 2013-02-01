@@ -20,23 +20,22 @@
  */
 // TODO document controller fields
 Seadragon.Controller = function Controller(containerSelectorOrElement) {
-    var that = this;
-
-    var $container, $canvas;
-    var lastOpenStartTime, lastOpenEndTime;
-    var animated;
-    var forceAlign, forceRedraw;
-    var dziImagesToHandle;
-    var lastPosition;
-    var containerSize;
-    var magnifierShown, pickerShown;
-    var lockOnUpdates, closing;
-    var maxLevel;
+    var that = this,
+        $container, $canvas,
+        lastOpenStartTime, lastOpenEndTime,
+        animated,
+        forceAlign, forceRedraw,
+        dziImagesToHandle,
+        lastPosition,
+        containerSize,
+        magnifierShown, pickerShown,
+        lockOnUpdates, closing,
+        maxLevel;
 
     (function init() {
         $container = $(containerSelectorOrElement);
         if ($container.length === 0) {
-            console.log('\nReceived containerSelectorOrElement: ', containerSelectorOrElement);
+            console.info('Received containerSelectorOrElement: ', containerSelectorOrElement);
             throw new Error('Can\'t create a Controller instance without a container!');
         }
         $container.empty();
@@ -44,7 +43,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             backgroundColor: Seadragon.Config.backgroundColor
         });
 
-        $canvas = $('<canvas />');
+        $canvas = $('<canvas>');
         $container.append($canvas);
 
         lastOpenStartTime = lastOpenEndTime = 0;
@@ -465,15 +464,13 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      *                                                    of the image on the virtual Seadragon plane.
      */
     this.openDziArray = function openDziArray(dziUrlArray, boundsArray, hideByDefault) {
-        var i;
         if (boundsArray == null) {
             boundsArray = [];
         }
-        var dziUrlArrayLength = dziUrlArray.length;
-        dziImagesToHandle += dziUrlArrayLength;
-        for (i = 0; i < dziUrlArrayLength; i++) {
-            that.openDzi(dziUrlArray[i], null, i, !hideByDefault, boundsArray[i], true);
-        }
+        dziImagesToHandle += dziUrlArray.length;
+        dziUrlArray.forEach(function (dziUrl, index) {
+            that.openDzi(dziUrl, null, index, !hideByDefault, boundsArray[index], true);
+        });
     };
 
     function isLoading() {
@@ -491,6 +488,8 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
     /**
      * Closes the Seadragon module, de-registers events and clears Seadragon HTML container.
+     * The Seadragon object is useless after invoking this method and should NOT be used any more.
+     * When there's a need to re-initialize Seadragon, a new <code>Controller</code> object should be created.
      */
     this.close = function close() {
         $(window, document, $container).off('.seadragon');

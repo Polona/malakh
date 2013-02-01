@@ -23,8 +23,7 @@ Seadragon.AnimatedRectangle = function AnimatedRectangle($container, bounds) {
     var that = this;
 
     if ($container == null || !(bounds instanceof Seadragon.Rectangle)) {
-        console.log('Received arguments: ');
-        console.log(Array.prototype.slice.apply(arguments));
+        console.info('Received arguments: ', [].slice.apply(arguments));
         throw new Error('Incorrect paremeters given to Seadragon.AnimatedRectangle!\n' +
             'Use Seadragon.AnimatedRectangle($container, bounds)');
     }
