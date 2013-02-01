@@ -6,7 +6,7 @@
 
         var lastTime = 0;
 
-        ['moz', 'webkit', 'o'].forEach(function (vendorPrefix) {
+        ['webkit', 'moz', 'o'].forEach(function (vendorPrefix) {
             if (window.requestAnimationFrame) {
                 return;
             }
