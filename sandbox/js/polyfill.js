@@ -5,11 +5,14 @@
         // requestAnimationFrame polyfill
 
         var lastTime = 0;
-        var vendors = ['moz', 'webkit', 'o'];
-        for (var i = 0; i < vendors.length && !window.requestAnimationFrame; ++i) {
-            window.requestAnimationFrame = window[vendors[i] + 'RequestAnimationFrame'];
-            window.cancelAnimationFrame = window[vendors[i] + 'CancelAnimationFrame'];
-        }
+
+        ['moz', 'webkit', 'o'].forEach(function (vendorPrefix) {
+            if (window.requestAnimationFrame) {
+                return;
+            }
+            window.requestAnimationFrame = window[vendorPrefix + 'RequestAnimationFrame'];
+            window.cancelAnimationFrame = window[vendorPrefix + 'CancelAnimationFrame'];
+        });
 
         if (!window.requestAnimationFrame) {
             window.requestAnimationFrame = function (callback) {
