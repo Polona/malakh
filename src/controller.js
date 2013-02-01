@@ -85,7 +85,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         // Begin updating.
         animated = false;
         forceAlign = forceRedraw = true;
-        keepUpdating();
+        scheduleUpdate();
     })();
 
     if (Seadragon.Magnifier) {
@@ -336,14 +336,13 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * Schedule the next update run. Scheduling is paused when animations and user actions finish.
      * @private
      */
-    function keepUpdating() {
+    function scheduleUpdate() {
         if (!lockOnUpdates) {
             if (isLoading()) {
-                setTimeout(keepUpdating, 1);
+                setTimeout(scheduleUpdate, 1);
                 return;
             }
-            update();
-            requestAnimationFrame(keepUpdating);
+            requestAnimationFrame(update);
         }
     }
 
@@ -351,7 +350,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         forceRedraw = true;
         if (lockOnUpdates) {
             lockOnUpdates = false;
-            keepUpdating();
+            scheduleUpdate();
         }
     }
 
@@ -420,6 +419,8 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
         // For the next update check.
         animated = animating;
+
+        scheduleUpdate();
     }
 
     /**
