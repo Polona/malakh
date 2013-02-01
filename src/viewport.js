@@ -35,8 +35,7 @@
  */
 Seadragon.Viewport = function Viewport($container) {
     if ($container == null) {
-        console.log('Received arguments: ');
-        console.log(Array.prototype.slice.apply(arguments));
+        console.info('Received arguments: ', [].slice.apply(arguments));
         throw new Error('Incorrect paremeter given to Seadragon.Viewport!\n' +
             'Use Seadragon.Viewport($container)');
     }

@@ -54,7 +54,7 @@ Seadragon.Drawer = function Drawer(options) {
 
     (function init() {
         if (options == null || options.viewport == null || options.$container == null) {
-            console.log('\nReceived options: ', options);
+            console.info('Received options: ', options);
             throw new Error('Seadragon.Drawer needs a JSON parameter with at least the following fields: ' +
                 'viewport, $container.\n' +
                 'Parameter magnifier is optional.');

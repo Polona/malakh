@@ -25,12 +25,11 @@ Seadragon.Markers = function Markers($container, viewport) {
 
     (function init() {
         if ($container == null || !(viewport instanceof Seadragon.Viewport)) {
-            console.log('Received arguments: ');
-            console.log(Array.prototype.slice.apply(arguments));
+            console.info('Received arguments: ', [].slice.apply(arguments));
             throw new Error('Incorrect paremeters given to Seadragon.Markers!\n' +
                 'Use Seadragon.Markers($container, viewport)');
         }
-        $markerOverlay = $('<div class="markerOverlay" />');
+        $markerOverlay = $('<div class="markerOverlay">');
         $container.append($markerOverlay);
         bindEvents();
     })();
