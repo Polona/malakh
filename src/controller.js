@@ -25,6 +25,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         lastOpenStartTime, lastOpenEndTime,
         animated,
         forceAlign, forceRedraw,
+        dziImageBoundsUpdatesInProgressNums,
         dziImagesToHandle,
         lastPosition,
         containerSize,
@@ -49,6 +50,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         lastOpenStartTime = lastOpenEndTime = 0;
 
         that.dziImages = [];
+        dziImageBoundsUpdatesInProgressNums = [];
 
         magnifierShown = pickerShown = false;
         lockOnUpdates = closing = false;
@@ -316,6 +318,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             index = that.dziImages.length;
         }
         that.dziImages[index] = dziImage;
+        dziImageBoundsUpdatesInProgressNums[index] = 0;
         that.drawer.addDziImage(dziImage, index);
 
         maxLevel = Math.max(maxLevel, dziImage.maxLevel);
@@ -362,12 +365,36 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     /**
      * Updates bounds of a Seadragon image; usually used during aligning (so not too often).
      *
-     * @param {Seadragon.DziImage} dziImage  <code>DziImage</code> instance to update.
+     * @param {number} whichImage  Image index of <code>dziImage</code> in <code>this.dziImages</code> table.
+     * @param {boolean} decreaseCounter  TODO document
      * @private
      */
-    function updateDziImageBounds(dziImage) {
+    function updateDziImageBounds(whichImage, decreaseCounter) {
+        var dziImage = that.dziImages[whichImage];
         forceAlign = dziImage.bounds.update() || forceAlign;
         forceUpdate();
+        if (decreaseCounter) {
+            dziImageBoundsUpdatesInProgressNums[whichImage]--;
+        }
+    }
+
+    // TODO document
+    function scheduleUpdateDziImageBounds(whichImage, forceExecution) {
+        var dziImageBoundsUpdatesInProgressNum = dziImageBoundsUpdatesInProgressNums[whichImage];
+
+        if (dziImageBoundsUpdatesInProgressNum === 0 || forceExecution) {
+            // no other instance of this function was dispatched on dziImage
+            if (!forceExecution) { // otherwise counter already increased
+                dziImageBoundsUpdatesInProgressNums[whichImage]++;
+            }
+            setTimeout(updateDziImageBounds, 0, whichImage, true);
+        }
+        else if (dziImageBoundsUpdatesInProgressNum === 1) {
+            // one function instance was dispatched on dziImage, trying in a moment
+            dziImageBoundsUpdatesInProgressNums[whichImage]++;
+            setTimeout(scheduleUpdateDziImageBounds, 100, whichImage, true);
+        }
+        /* else {} // one function instance already waits, no need for a new one */
     }
 
     /**
@@ -391,8 +418,8 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         if (forceAlign) {
             forceAlign = false;
             setTimeout(function () { // Making it more asynchronous.
-                that.dziImages.forEach(function (dziImage) {
-                    setTimeout(updateDziImageBounds, 0, dziImage);
+                that.dziImages.forEach(function (dziImage, whichImage) {
+                    scheduleUpdateDziImageBounds(whichImage);
                 });
             }, 0);
         }
@@ -523,7 +550,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             maxRowWidthOrColumnHeight = Infinity;
         }
 
-        that.dziImages.forEach(function (dziImage) {
+        that.dziImages.forEach(function (dziImage, whichImage) {
             // Compute the current state.
             if (alingInRows) {
                 width = dziImage.width * heightOrWidth / dziImage.height;
@@ -555,7 +582,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             }
 
             dziImage.fitBounds(newBounds, immediately);
-            updateDziImageBounds(dziImage);
+            updateDziImageBounds(whichImage);
         });
         recalculateMaxLevel();
 
