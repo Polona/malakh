@@ -2,22 +2,16 @@
  * Author: Michał Gołębiowski <michal.golebiowski@laboratorium.ee>
  * Author: Brandon Aaron (http://brandonaaron.net)
  * Copyright (c) 2011 Brandon Aaron (http://brandonaaron.net)
- * Copyright (c) 2013 Laboratorium EE
+ * Copyright (c) 2013 Laboratorium EE (http://laboratorium.ee)
  */
 
 /*global WheelEvent: false */
 (function ($) {
     'use strict';
 
-    var nativeEvent;
-    try {
-        // Modern browsers support 'wheel' => polyfill not needed.
-        if (new WheelEvent('wheel')) {
-            nativeEvent = 'wheel';
-        }
-    } catch (e) {
-        nativeEvent = 'mousewheel';
-    }
+    // Modern browsers support 'wheel', other - 'mousewheel'.
+    var dummy = document.createElement('div'),
+        nativeEvent = 'onwheel' in dummy ? 'wheel' : 'mousewheel';
 
     // Normalizing event properties for the 'wheel' event (like event.which etc.).
     if (nativeEvent === 'wheel') {
