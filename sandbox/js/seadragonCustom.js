@@ -98,7 +98,7 @@ function seadragonCustom(options) {
             }
         });
     } else {
-        $magnifier.remove();
+        $magnifier.hide();
     }
 
     var $picker = $('#picker');
@@ -118,7 +118,7 @@ function seadragonCustom(options) {
             }
         });
     } else {
-        $picker.remove();
+        $picker.hide();
     }
 
 
