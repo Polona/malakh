@@ -16,7 +16,7 @@ function seadragonCustom(options) {
     var constrain_image_3 = false;
     var constrain_image_17 = false;
 
-    var $container, dziDataArray, boundsArray;
+    var $container, dziDataArray;
 
     sdData = {
         containerSelector: undefined,
