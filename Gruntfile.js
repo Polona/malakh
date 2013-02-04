@@ -91,11 +91,11 @@ module.exports = function (grunt) {
 
         // Translation example
         //
-        //   grunt custom:+ajax,-dimensions,-effects,-offset
+        //   grunt custom:+magnifier,-picker
         //
         // Becomes:
         //
-        //   grunt build:*:*:+ajax:-dimensions:-effects:-offset
+        //   grunt build:*:*:+magnifier,-picker
 
         grunt.log.writeln('Creating custom build...\n');
 
@@ -113,7 +113,7 @@ module.exports = function (grunt) {
         });
     });
 
-    // Special concat/build task to handle various jQuery build requirements.
+    // Special concat/build task to handle various Seadragon build requirements.
     grunt.registerMultiTask(
         'build',
         'Concatenate source (include/exclude modules with +/- flags), embed date/version',
@@ -167,13 +167,13 @@ module.exports = function (grunt) {
             //  > dependency implicit exclude
             //  > implicit exclude
             // examples:
-            //  *                  none (implicit exclude)
-            //  *:*                all (implicit include)
-            //  *:*:-css           all except css and dependents (explicit > implicit)
-            //  *:*:-css:+effects  same (excludes effects because explicit include is trumped by
-            //                         explicit exclude of dependency)
-            //  *:+effects         none except effects and its dependencies (explicit include trumps
-            //                         implicit exclude of dependency)
+            //  *                           none (implicit exclude)
+            //  *:*                         all (implicit include)
+            //  *:*:-magnifier              all except magnifier and dependents (explicit > implicit)
+            //  *:*:-magnifier:+dependency  same (excludes dependency because explicit include is trumped by
+            //                              explicit exclude of dependency)
+            //  *:+picker                   none except picker and its dependencies (explicit include trumps
+            //                              implicit exclude of dependency)
             src.forEach(function (filepath) {
                 var flag = filepath.flag;
 
