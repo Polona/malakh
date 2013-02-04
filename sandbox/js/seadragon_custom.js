@@ -241,6 +241,4 @@ function seadragonCustom(options) {
             return false;
         }
     });
-
-    $('#seadragonPreloader').remove();
 }
