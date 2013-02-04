@@ -412,7 +412,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * <code>setTimeout</code> and needs to be invoked when it remains the only waiting instance.
      *
      * @param {number} whichImage  Image index of <code>dziImage</code> in <code>this.dziImages</code> table.
-     * @param {boolean} forceExecution
+     * @param {boolean} [forceExecution=false]
      * @private
      */
     function scheduleUpdateDziImageBounds(whichImage, forceExecution) {
