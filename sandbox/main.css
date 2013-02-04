@@ -92,7 +92,6 @@ body, #seadragonPreloader {
     border-radius: 9999px;
     cursor: pointer;
     background-color: #cd5c5c;
-    transition: background-color 0.5s;
 }
 
 #buttonsBar > *:nth-child(n+4) {
