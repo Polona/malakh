@@ -16,7 +16,7 @@ function seadragonCustom(options) {
     var constrain_image_3 = false;
     var constrain_image_17 = false;
 
-    var $container, dziArray, boundsArray;
+    var $container, dziDataArray;
 
     sdData = {
         containerSelector: undefined,
@@ -50,13 +50,14 @@ function seadragonCustom(options) {
     $container = $(sdData.containerSelector);
     sdData.controller = new Seadragon.Controller($container);
 
-    dziArray = [];
-    boundsArray = [];
-    dziNamesArray.forEach(function (dziName) {
-        dziArray.push(sdData.tilesDir + dziName + '.dzi');
-        boundsArray.push(new Seadragon.Rectangle(1000000, 1000000, 1000, 1000));
+    dziDataArray = [];
+    dziNamesArray.forEach(function (dziName, index) {
+        dziDataArray[index] = {
+            dziUrl: sdData.tilesDir + dziName + '.dzi',
+            bounds: new Seadragon.Rectangle(1000000, 1000000, 1000, 1000)
+        };
     });
-    sdData.controller.openDziArray(dziArray, boundsArray);
+    sdData.controller.openDziArray(dziDataArray);
     sdData.controller.alignRows(4920, 0, Infinity, true);
 
     // Adjust -- not necessary, just removes the need to do it by ourselves.

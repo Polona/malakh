@@ -22,10 +22,14 @@
 Seadragon.AnimatedRectangle = function AnimatedRectangle($container, bounds) {
     var that = this;
 
-    if ($container == null || !(bounds instanceof Seadragon.Rectangle)) {
+    if ($container == null || bounds == null) {
         console.info('Received arguments: ', [].slice.apply(arguments));
         throw new Error('Incorrect paremeters given to Seadragon.AnimatedRectangle!\n' +
             'Use Seadragon.AnimatedRectangle($container, bounds)');
+    }
+
+    if (!(bounds instanceof Seadragon.Rectangle)) {
+        bounds = new Seadragon.Rectangle(bounds);
     }
 
     /**
@@ -86,7 +90,7 @@ Seadragon.AnimatedRectangle.prototype = {
     /**
      * Returns the usual Seadragon.Rectangle instance from the current or target state.
      *
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {Seadragon.Rectangle}
      */
     getRectangle: function getRectangle(current) {
@@ -101,7 +105,7 @@ Seadragon.AnimatedRectangle.prototype = {
     /**
      * Returns aspect ratio of the rectangle (<code>width / height</code>).
      *
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {number}
      */
     getAspectRatio: function getAspectRatio(current) {
@@ -109,7 +113,7 @@ Seadragon.AnimatedRectangle.prototype = {
     },
 
     /**
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {Seadragon.Point}
      */
     getTopLeft: function getTopLeft(current) {
@@ -117,7 +121,7 @@ Seadragon.AnimatedRectangle.prototype = {
     },
 
     /**
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {Seadragon.Point}
      */
     getBottomRight: function getBottomRight(current) {
@@ -127,7 +131,7 @@ Seadragon.AnimatedRectangle.prototype = {
     /**
      * Returns a point <code>(width, height)</code>.
      *
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {Seadragon.Point}
      */
     getSize: function getSize(current) {
@@ -135,7 +139,7 @@ Seadragon.AnimatedRectangle.prototype = {
     },
 
     /**
-     * @param current
+     * @param [current=false]
      * @return {Seadragon.Point}
      */
     getCenter: function getCenter(current) {
@@ -146,7 +150,7 @@ Seadragon.AnimatedRectangle.prototype = {
      * Pans the viewport to a given center.
      *
      * @param {Seadragon.Point} center
-     * @param {boolean} immediately
+     * @param {boolean} [immediately=false]
      */
     panTo: function panTo(center, immediately) {
         this.springs.x.springTo(center.x - this.springs.width.targetValue / 2, immediately);
@@ -159,7 +163,7 @@ Seadragon.AnimatedRectangle.prototype = {
     /**
      * Pans the viewport by a given <code>delta</code> vector.
      * @param {Seadragon.Point} delta
-     * @param {boolean} immediately
+     * @param {boolean} [immediately=false]
      */
     panBy: function panBy(delta, immediately) {
         this.panTo(this.getCenter().plus(delta), immediately);
@@ -193,7 +197,7 @@ Seadragon.AnimatedRectangle.prototype = {
      * Animates a rectangle to a new one.
      *
      * @param {Seadragon.Rectangle} bounds
-     * @param {boolean} immediately
+     * @param {boolean} [immediately=false]
      */
     fitBounds: function fitBounds(bounds, immediately) {
         this.isAnimating = true;

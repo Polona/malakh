@@ -121,5 +121,5 @@ Seadragon.Config = {
      * redraw background in places where there are no tiles to display.
      * @type string
      */
-    backgroundColor: '#2d2a2b'
+    backgroundColor: ''
 };

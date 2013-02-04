@@ -82,7 +82,7 @@ $.extend(Seadragon.Viewport.prototype,
          * Returns a number indicating how much the viewport is zoomed in. zoom === 1 means container width
          * equals viewport width.
          *
-         * @param {boolean} current
+         * @param {boolean} [current=false]
          * @return {number}
          */
         getZoom: function getZoom(current) {
@@ -93,8 +93,8 @@ $.extend(Seadragon.Viewport.prototype,
          * Zooms an image to a given value. <code>zoom</code> of value 1 means 1 point equals 1 pixel.
          *
          * @param {number} zoom
-         * @param {boolean} immediately
-         * @param {Seadragon.Point} refPoint
+         * @param {boolean} [immediately=false]
+         * @param {Seadragon.Point} [refPoint]
          */
         zoomTo: function zoomTo(zoom, immediately, refPoint, /* internal */ dontApplyConstraints) {
             if (!(refPoint instanceof Seadragon.Point)) {
@@ -128,8 +128,8 @@ $.extend(Seadragon.Viewport.prototype,
          * @see #zoomTo
          *
          * @param {number} factor
-         * @param {boolean} immediately
-         * @param {Seadragon.Point} refPoint
+         * @param {boolean} [immediately=false]
+         * @param {Seadragon.Point} [refPoint]
          */
         zoomBy: function zoomBy(factor, immediately, refPoint, /* internal */ dontApplyConstraints) {
             this.zoomTo(this.getZoom() * factor, immediately, refPoint, dontApplyConstraints);
@@ -139,7 +139,7 @@ $.extend(Seadragon.Viewport.prototype,
          * Pans the viewport so that its center moves to a given <code>center</code> parameter.
          *
          * @param {Seadragon.Point} center
-         * @param {boolean} immediately
+         * @param {boolean} [immediately=false]
          */
         panTo: function panTo(center, immediately, /* internal */ dontApplyConstraints) {
             Seadragon.AnimatedRectangle.prototype.panTo.call(this, center, immediately);
@@ -153,7 +153,7 @@ $.extend(Seadragon.Viewport.prototype,
          * Pans the viewport my a given vector.
          *
          * @param {Seadragon.Point} delta A vector by which we pan the viewport.
-         * @param {boolean} immediately
+         * @param {boolean} [immediately=false]
          */
         panBy: function panBy(delta, immediately, /* internal */ dontApplyConstraints) {
             this.panTo(this.getCenter().plus(delta), immediately, dontApplyConstraints);
@@ -169,7 +169,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @see Seadragon.AnimatedRectangle#fitBounds
          *
          * @param {Seadragon.Rectangle} bounds
-         * @param {boolean} immediately
+         * @param {boolean} [immediately=false]
          */
         fitBounds: function fitBounds(bounds, immediately) {
             var aspect = this.getAspectRatio();
@@ -195,7 +195,7 @@ $.extend(Seadragon.Viewport.prototype,
         /**
          * Zooms out as much as possible while preserving constraints.
          *
-         * @param {boolean} immediately
+         * @param {boolean} [immediately=false]
          */
         fitConstraintBounds: function fitConstraintBounds(immediately) {
             if (!(this.constraintBounds instanceof Seadragon.Rectangle)) {
@@ -231,8 +231,8 @@ $.extend(Seadragon.Viewport.prototype,
          * <code>Seadragon.Config.constraintViewport</code> parameter since it's checked in controller's
          * method anyway.
          *
-         * @param {boolean} immediately
-         * @param {Seadragon.Point} refPoint
+         * @param {boolean} [immediately=false]
+         * @param {Seadragon.Point} [refPoint]
          */
         applyConstraints: function applyConstraints(immediately, refPoint) {
             if (!Seadragon.Config.constraintViewport) {
@@ -325,7 +325,7 @@ $.extend(Seadragon.Viewport.prototype,
          * (analogous).
          *
          * @param {Seadragon.Point} deltaPoints
-         * @param {boolean} current
+         * @param {boolean} [current=false]
          * @return {Seadragon.Point}
          */
         deltaPixelsFromPoints: function deltaPixelsFromPoints(deltaPoints, current) {
@@ -338,7 +338,7 @@ $.extend(Seadragon.Viewport.prototype,
          * exhibit this behaviour.
          *
          * @param {Seadragon.Point} deltaPixels
-         * @param {boolean} current
+         * @param {boolean} [current=false]
          * @return {Seadragon.Point}
          */
         deltaPointsFromPixels: function deltaPointsFromPixels(deltaPixels, current) {
@@ -350,7 +350,7 @@ $.extend(Seadragon.Viewport.prototype,
          * <code>(0, 0)</code>.
          *
          * @param {Seadragon.Point} point
-         * @param {boolean} current
+         * @param {boolean} [current=false]
          * @return {Seadragon.Point}
          */
         pixelFromPoint: function pixelFromPoint(point, current) {
@@ -364,7 +364,7 @@ $.extend(Seadragon.Viewport.prototype,
          * Converts a pixel to a point.
          *
          * @param {Seadragon.Point} pixel
-         * @param {boolean} current
+         * @param {boolean} [current=false]
          * @return {Seadragon.Point}
          */
         pointFromPixel: function pointFromPixel(pixel, current) {
@@ -378,7 +378,7 @@ $.extend(Seadragon.Viewport.prototype,
          * described in pixels to those described in points.
          *
          * @param {Seadragon.Rectangle} rectangle
-         * @param {boolean} current
+         * @param {boolean} [current=false]
          * @return {Seadragon.Rectangle}
          */
         pointRectangleFromPixelRectangle: function pointRectangleFromPixelRectangle(rectangle, current) {
@@ -397,7 +397,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @see #pointRectangleFromPixelRectangle
          *
          * @param {Seadragon.Rectangle} rectangle
-         * @param {boolean} current
+         * @param {boolean} [current=false]
          * @return {Seadragon.Rectangle}
          */
         pixelRectangleFromPointRectangle: function pixelRectangleFromPointRectangle(rectangle, current) {

@@ -168,7 +168,7 @@ Seadragon.Drawer = function Drawer(options) {
      * @param {number} y Tile's row.
      * @param {number} time Current time. It's passed as a parameter so that we don't compute time individually
      *                      for each tile.
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {Seadragon.Tile}
      * @private
      */
@@ -446,8 +446,8 @@ Seadragon.Drawer = function Drawer(options) {
      * Hides the image if <code>hide</code> is true, shows it otherwise.
      *
      * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
-     * @param {boolean} hide
-     * @param {boolean} immediately
+     * @param {boolean} [hide=false]
+     * @param {boolean} [immediately=false]
      * @private
      */
     function showOrHideDzi(whichImage, hide, immediately) {
@@ -483,7 +483,7 @@ Seadragon.Drawer = function Drawer(options) {
      * Shows the image.
      *
      * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
-     * @param {boolean} immediately
+     * @param {boolean} [immediately=false]
      * @function
      */
     this.showDzi = showDzi;
@@ -496,7 +496,7 @@ Seadragon.Drawer = function Drawer(options) {
      * Hides the image.
      *
      * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
-     * @param {boolean} immediately
+     * @param {boolean} [immediately=false]
      * @function
      */
     this.hideDzi = hideDzi;

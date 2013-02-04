@@ -1,11 +1,10 @@
 /**
  * <p>Constructs a rectangle. Use cases are as follows:
  * <ul>
- *     <li><code>new Seadragon.Rectangle()</code> gives rectangle <code>[0, 0, 0 x 0]</code></li>
- *     <li><code>new Seadragon.Rectangle({x: x, y: y, width: width, height: height})</code>
- *         gives rectangle <code>[x, y, width x height]</code></li>
- *     <li><code>new Seadragon.Rectangle(x, y, width, height)</code>
- *         gives rectangle <code>[x, y, width x height]</code></li>
+ *     <li><code>new Seadragon.Rectangle()</code> (gives rectangle <code>[0, 0, 0 x 0])</code></li>
+ *     <li><code>new Seadragon.Rectangle({x: x, y: y, width: width, height: height})</code></li>
+ *     <li><code>new Seadragon.Rectangle(x, y, width, height)</code></li>
+ *     <li><code>new Seadragon.Rectangle([x, y, width, height])</code></li>
  * </ul>
  *
  * @class <p>Represents a rectangle on a 2-dimensional plane.
@@ -44,10 +43,10 @@ Seadragon.Rectangle = function Rectangle() {
          */
         this.height = 0;
     } else if (arguments0.x == null) {
-        this.x = arguments0 || 0;
-        this.y = arguments[1] || 0;
-        this.width = arguments[2] || 0;
-        this.height = arguments[3] || 0;
+        this.x = arguments0[0] || arguments0 || 0;
+        this.y = arguments0[1] || arguments[1] || 0;
+        this.width = arguments0[2] || arguments[2] || 0;
+        this.height = arguments0[3] || arguments[3] || 0;
     } else {
         this.x = arguments0.x || 0;
         this.y = arguments0.y || 0;
