@@ -26,7 +26,6 @@
  * @param {number} [options.maxLevel] Sets this.maxLevel.
  * @param {number} [options.shown=true] If true, an image is hidden.
  */
-// TODO document fields
 Seadragon.DziImage = function DziImage(options) {
     if (options == null || options.$container == null || options.width == null || options.height == null ||
         options.tileSize == null || options.tilesUrl == null || options.fileFormat == null) {
@@ -48,7 +47,17 @@ Seadragon.DziImage = function DziImage(options) {
         shown: options.shown
     });
 
+    /**
+     * URL to the directory containing tile files.
+     *
+     * @type string
+     */
     this.tilesUrl = options.tilesUrl;
+    /**
+     * Format of tile files ('png' or 'jpg').
+     *
+     * @type string
+     */
     this.fileFormat = options.fileFormat;
 };
 
