@@ -29,7 +29,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         lastPosition,
         containerSize,
         magnifierShown, pickerShown,
-        lockOnUpdates, closing,
+        lockOnUpdates,
         maxLevel;
 
     (function init() {
@@ -52,7 +52,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         dziImageBoundsUpdatesInProgressNums = [];
 
         magnifierShown = pickerShown = false;
-        lockOnUpdates = closing = false;
+        lockOnUpdates = false;
 
         maxLevel = 0; // No DZIs loaded yet.
 
@@ -187,7 +187,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
     function onDocumentMouseUp() {
         $(document).off('mousemove.seadragon', dragCanvas);
-        forceUpdate();
+        restartUpdating();
     }
 
     function bindEvents() {
@@ -195,14 +195,14 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             'mouseenter.seadragon': function () {
                 if (magnifierShown) {
                     that.drawer.canvasLayersManager.drawMagnifier = true;
-                    forceUpdate();
+                    restartUpdating();
                 }
             },
 
             'mouseleave.seadragon': function () {
                 if (magnifierShown) { // We have to redraw to hide magnifier.
                     that.drawer.canvasLayersManager.drawMagnifier = false;
-                    forceUpdate();
+                    restartUpdating();
                 }
             },
 
@@ -220,7 +220,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
                     return false;
                 }
                 zoomCanvas(evt);
-                forceUpdate();
+                restartUpdating();
                 return false;
             }
         });
@@ -228,16 +228,16 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         $container.on({
             'seadragon:forcealign.seadragon': function () {
                 forceAlign = true;
-                forceUpdate();
+                restartUpdating();
             },
 
             'seadragon:forceredraw.seadragon': function () {
-                forceUpdate();
+                restartUpdating();
             }
         });
 
         $(document).on('mouseup.seadragon', onDocumentMouseUp);
-        $(window).on('resize.seadragon', forceUpdate);
+        $(window).on('resize.seadragon', restartUpdating);
     }
 
     /**
@@ -292,7 +292,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     function moveMagnifier(evt) {
         var position = getMousePosition(evt);
         that.magnifier.panTo(position);
-        forceUpdate();
+        restartUpdating();
     }
 
     /**
@@ -344,7 +344,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         if (dziImagesToHandle === 0) {
             $container.trigger('seadragon:loadeddziarray.seadragon');
         }
-        forceUpdate();
+        restartUpdating();
     }
 
     /**
@@ -361,7 +361,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         }
     }
 
-    function forceUpdate() {
+    function restartUpdating() {
         forceRedraw = true;
         if (lockOnUpdates) {
             lockOnUpdates = false;
@@ -373,7 +373,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * Unblock updates stopped by a lack of action. Invoked by single actions expecting redrawing.
      * @function
      */
-    this.forceUpdate = forceUpdate;
+    this.restartUpdating = restartUpdating;
 
     /**
      * Updates bounds of a Seadragon image; usually used during aligning (so not too often).
@@ -387,7 +387,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     function updateDziImageBounds(whichImage, decreaseCounter) {
         var dziImage = that.dziImages[whichImage];
         forceAlign = dziImage.bounds.update() || forceAlign;
-        forceUpdate();
+        restartUpdating();
         if (decreaseCounter) {
             dziImageBoundsUpdatesInProgressNums[whichImage]--;
         }
@@ -552,11 +552,30 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     this.isLoading = isLoading;
 
     /**
-     * Closes the Seadragon module, de-registers events and clears Seadragon HTML container.
+     * TODO document.
+     */
+    this.reset = function close() {
+        that.dziImages = [];
+        dziImageBoundsUpdatesInProgressNums = [];
+
+        magnifierShown = pickerShown = false;
+        lockOnUpdates = true; // 'seadragon:forcealign.seadragon' handler will resume updating
+
+        maxLevel = 0; // No DZIs loaded yet.
+
+        dziImagesToHandle = 0;
+
+        // Reset the drawer (at the end it triggers the <code>seadragon:forcealign.seadragon</code> event)
+        // so controller will know when to force re-draw.
+        that.drawer.reset();
+    };
+
+    /**
+     * Destroys the Seadragon module, de-registers events and clears Seadragon HTML container.
      * The Seadragon object is useless after invoking this method and should NOT be used any more.
      * When there's a need to re-initialize Seadragon, a new <code>Controller</code> object should be created.
      */
-    this.close = function close() {
+    this.destroy = function destroy() {
         $(window, document, $container).off('.seadragon');
         $container.empty();
     };
@@ -710,7 +729,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      */
     this.showDzi = function showDzi(whichImage, immediately) {
         that.drawer.showDzi(whichImage, immediately);
-        forceUpdate();
+        restartUpdating();
     };
 
     /**
@@ -721,6 +740,6 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      */
     this.hideDzi = function hideDzi(whichImage, immediately) {
         that.drawer.hideDzi(whichImage, immediately);
-        forceUpdate();
+        restartUpdating();
     };
 };

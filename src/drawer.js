@@ -40,11 +40,6 @@ Seadragon.Drawer = function Drawer(options) {
     var tilesDrawnLastFrame; // unordered list of Tiles drawn last frame
     var tilesDrawnLastFrameLayers; // layers of above tiles
 
-    var dziImagesTL;
-    var dziImagesBR;
-    var viewportTL;
-    var viewportBR;
-
     var currentTime;
     var lastResetTime;
     var midUpdate;
@@ -60,7 +55,6 @@ Seadragon.Drawer = function Drawer(options) {
                 'Parameter magnifier is optional.');
         }
 
-        dziImages = [];
         viewport = options.viewport;
         magnifier = options.magnifier;
 
@@ -75,28 +69,7 @@ Seadragon.Drawer = function Drawer(options) {
 
         imageLoader = new Seadragon.ImageLoader(Seadragon.Config.imageLoaderLimit);
 
-        magnifierShown = false;
-
-        cacheNumTiles = [];
-        cachePixelOnImageSizeMax = [];
-        coverage = [];
-        tilesMatrix = [];
-        tileBoundsNotChangedMatrix = [];
-
-        tilesLoaded = [];
-        tilesDrawnLastFrame = [];
-        tilesDrawnLastFrameLayers = [];
-
-        dziImagesTL = [];
-        dziImagesBR = [];
-        viewportTL = [];
-        viewportBR = [];
-
-        that.maxLevel = 0; // It needs to be passed by controller.
-
-        currentTime = Date.now();
-        lastResetTime = 0;
-        midUpdate = false;
+        reset();
     })();
 
     /**
@@ -327,11 +300,6 @@ Seadragon.Drawer = function Drawer(options) {
 
         tilesLoaded[insertionIndex] = tile;
         $container.trigger('seadragon:forceredraw.seadragon');
-    }
-
-    function clearTiles() {
-        tilesMatrix = [];
-        tilesLoaded = [];
     }
 
     /**
@@ -829,16 +797,42 @@ Seadragon.Drawer = function Drawer(options) {
      */
     this.update = update;
 
-    function reset() {
-        clearTiles();
-        lastResetTime = Date.now();
+    function refreshAll() {
+        magnifierShown = false;
+
+        cacheNumTiles = [];
+        cachePixelOnImageSizeMax = [];
+        coverage = [];
+        tilesMatrix = [];
+        tileBoundsNotChangedMatrix = [];
+
+        tilesLoaded = [];
+        tilesDrawnLastFrame = [];
+        tilesDrawnLastFrameLayers = [];
+
+        that.maxLevel = 0; // It needs to be passed by controller.
+
+        currentTime = Date.now();
+        lastResetTime = 0;
+        midUpdate = false;
+
         $container.trigger('seadragon:forceredraw.seadragon');
     }
 
     /**
      * Resets drawer state: clears all tiles, sets <code>lastResetTime</code> to now and
      * triggers the <code>seadragon:forceredraw.seadragon</code> event.
-     *
+     * @function
+     */
+    this.refreshAll = refreshAll;
+
+    function reset() {
+        dziImages = [];
+        refreshAll();
+    }
+
+    /**
+     * Restores drawer to its initial state.
      * @function
      */
     this.reset = reset;
