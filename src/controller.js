@@ -582,7 +582,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @param {number} spaceBetweenImages
      * @param {number} maxRowWidthOrColumnHeight If not infinite, the next row/column is started
      *                                           upon reaching the limit.
-     * @param {boolean} immediately
+     * @param {boolean} [immediately=false]
      * @private
      */
     function alignRowsOrColumns(alingInRows, heightOrWidth, spaceBetweenImages, maxRowWidthOrColumnHeight,
@@ -647,7 +647,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @param {number} spaceBetweenImages Space between images in a row and between columns.
      * @param {number} maxRowWidth Maximum row width. If the next image exceeded it, it's moved to the next row.
      *                             If set to <code>Infinity</code>, only one row will be created.
-     * @param {boolean} immediately
+     * @param {boolean} [immediately=false]
      */
     this.alignRows = function alignRows(height, spaceBetweenImages, maxRowWidth, immediately) {
         alignRowsOrColumns(true, height, spaceBetweenImages, maxRowWidth, immediately);
@@ -661,7 +661,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @param {number} width
      * @param {number} spaceBetweenImages
      * @param {number} maxColumnHeight
-     * @param {boolean} immediately
+     * @param {boolean} [immediately=false]
      */
     this.alignColumns = function alignColumns(width, spaceBetweenImages, maxColumnHeight, immediately) {
         alignRowsOrColumns(false, width, spaceBetweenImages, maxColumnHeight, immediately);
@@ -672,7 +672,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * while still being contained within the viewport.
      *
      * @param {number} whichImage We fit the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      */
     this.fitImage = function fitImage(whichImage, current) {
         var dziImage = that.dziImages[whichImage];
@@ -693,7 +693,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * Returns bounds of the given image in points.
      *
      * @param {number} whichImage We get bounds of the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {Seadragon.Rectangle}
      * @function
      */
@@ -708,7 +708,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * Returns bounds of the given image in pixels.
      *
      * @param {number} whichImage We get bounds of the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {Seadragon.Rectangle}
      * @function
      */
@@ -719,7 +719,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * Shows the given image.
      *
      * @param {number} whichImage We show the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} immediately
+     * @param {boolean} [immediately=false]
      */
     this.showDzi = function showDzi(whichImage, immediately) {
         that.drawer.showDzi(whichImage, immediately);
@@ -730,7 +730,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * Hides the given image.
      *
      * @param {number} whichImage We hide the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} immediately
+     * @param {boolean} [immediately=false]
      */
     this.hideDzi = function hideDzi(whichImage, immediately) {
         that.drawer.hideDzi(whichImage, immediately);

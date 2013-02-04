@@ -1,5 +1,11 @@
 /**
- * <p>Constructs a segment <code>[(x_1, y_1), (x_2, y_2)]</code>.
+ * <p>Constructs a segment <code>[(x_1, y_1), (x_2, y_2)]</code>. Use cases are as follows:
+ * <ul>
+ *     <li><code>new Seadragon.Segment()</code> (gives segment <code>[(0, 0), (0, 0)])</code></li>
+ *     <li><code>new Seadragon.Segment({x1: x1, y1: y1, x2: x2, y2: y2})</code></li>
+ *     <li><code>new Seadragon.Segment(x1, y1, x2, y2)</code></code></li>
+ *     <li><code>new Seadragon.Segment([x1, y1, x2, y2])</code></code></li>
+ * </ul>
  *
  * @class <p>Represents a Segment <code>[(x_1, y_1), (x_2, y_2)]</code> on a 2-dimensional plane.
  *
@@ -8,17 +14,45 @@
  *     <li>Publisher: <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
- *
- * @param {number} [x1=0]
- * @param {number} [y1=0]
- * @param {number} [x2=0]
- * @param {number} [y2=0]
  */
-Seadragon.Segment = function Segment(x1, y1, x2, y2) {
-    this.x1 = x1 || 0;
-    this.y1 = y1 || 0;
-    this.x2 = x2 || 0;
-    this.y2 = y2 || 0;
+Seadragon.Segment = function Segment() {
+    var arguments0 = arguments[0];
+    if (arguments0 == null) {
+        /**
+         * Horizontal start segment parameter.
+         * @type number
+         * @default 0
+         */
+        this.x1 = 0;
+        /**
+         * Vertical start segment parameter.
+         * @type number
+         * @default 0
+         */
+        this.y1 = 0;
+        /**
+         * Horizontal end segment parameter.
+         * @type number
+         * @default 0
+         */
+        this.x2 = 0;
+        /**
+         * Vertical end segment parameter.
+         * @type number
+         * @default 0
+         */
+        this.y2 = 0;
+    } else if (arguments0.x1 == null) {
+        this.x1 = arguments0[0] || arguments0 || 0;
+        this.y1 = arguments0[1] || arguments[1] || 0;
+        this.x2 = arguments0[2] || arguments[2] || 0;
+        this.y2 = arguments0[3] || arguments[3] || 0;
+    } else {
+        this.x1 = arguments0.x1 || 0;
+        this.y1 = arguments0.y1 || 0;
+        this.x2 = arguments0.x2 || 0;
+        this.y2 = arguments0.y2 || 0;
+    }
 };
 
 Seadragon.Segment.prototype = {

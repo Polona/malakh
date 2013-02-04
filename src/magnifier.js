@@ -14,10 +14,13 @@
  * @param {number} radius
  */
 Seadragon.Magnifier = function Magnifier(center, radius) {
-    if (!(center instanceof Seadragon.Point) || !radius) {
+    if (center == null || !radius) {
         console.info('Received arguments: ', [].slice.apply(arguments));
         throw new Error('Incorrect paremeters given to Seadragon.Magnifier!\n' +
             'Use Seadragon.Magnifier(center, radius). Radius has to be a positive number.');
+    }
+    if (!(center instanceof Seadragon.Point)) {
+        center = new Seadragon.Point(center);
     }
     this.center = center;
     this.radius = radius;

@@ -171,7 +171,7 @@ Seadragon.TiledImage.prototype = {
      * too many of them!)
      *
      * @param {number} level
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {number}
      */
     getAdjustedLevel: function getAdjustedLevel(level, current) {
@@ -185,7 +185,7 @@ Seadragon.TiledImage.prototype = {
      * @see #getAdjustedLevel
      *
      * @param {number} level
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {number}
      */
     getUnadjustedLevel: function getUnadjustedLevel(level, current) {
@@ -196,7 +196,7 @@ Seadragon.TiledImage.prototype = {
     /**
      * Returns bounds width & height with regards to original image dimensions.
      *
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {Seadragon.Point}
      */
     getBoundsScale: function getBoundsScale(current) {
@@ -237,7 +237,7 @@ Seadragon.TiledImage.prototype = {
      * Returns bounds dimensions scaled (i.e. usually divided by some power of 2) to the given level.
      *
      * @param {number} level
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {Seadragon.Point}
      */
     getScaledDimensions: function getScaledDimensions(level, current) {
@@ -250,7 +250,7 @@ Seadragon.TiledImage.prototype = {
      *
      * @param {number} level
      * @param {Seadragon.Point} point
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {Seadragon.Point}
      */
     getTileAtPoint: function getTileAtPoint(level, point, current) {
@@ -274,7 +274,7 @@ Seadragon.TiledImage.prototype = {
      * @param {number} level
      * @param {number} x
      * @param {number} y
-     * @param {boolean} current
+     * @param {boolean} [current=false]
      * @return {Seadragon.Rectangle}
      */
     getTileBounds: function getTileBounds(level, x, y, current) {
@@ -329,7 +329,7 @@ Seadragon.TiledImage.prototype = {
      * @see Seadragon.AnimatedRectangle#fitBounds
      *
      * @param {Seadragon.Rectangle} bounds
-     * @param {boolean} immediately
+     * @param {boolean} [immediately=false]
      */
     fitBounds: function fitBounds(bounds, immediately) {
         this.bounds.fitBounds(bounds, immediately);

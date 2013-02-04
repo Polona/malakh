@@ -1,9 +1,10 @@
 /**
  * <p>Constructs a point. Use cases are as follows:
  * <ul>
- *     <li><code>new Seadragon.Point()</code> gives point <code>(0, 0)</code></li>
- *     <li><code>new Seadragon.Point({x: xVal, y: yVal})</code> gives point <code>(xVal, yVal)</code></li>
- *     <li><code>new Seadragon.Point(x, y)</code> gives point <code>(x, y)</code></li>
+ *     <li><code>new Seadragon.Point()</code> (gives point <code>(0, 0)</code>)</li>
+ *     <li><code>new Seadragon.Point({x: x, y: y})</code></li>
+ *     <li><code>new Seadragon.Point(x, y)</code></code></li>
+ *     <li><code>new Seadragon.Point([x, y])</code></code></li>
  * </ul>
  *
  * @class <p>Represents a point on a 2-dimensional plane.
@@ -30,8 +31,8 @@ Seadragon.Point = function Point() {
          */
         this.y = 0;
     } else if (arguments0.x == null) {
-        this.x = arguments0 || 0;
-        this.y = arguments[1] || 0;
+        this.x = arguments0[0] || arguments0 || 0;
+        this.y = arguments0[1] || arguments[1] || 0;
     } else {
         this.x = arguments0.x || 0;
         this.y = arguments0.y || 0;
