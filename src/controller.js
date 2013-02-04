@@ -520,21 +520,15 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         }
     };
 
-    // TODO this should probably just parse a properly structured JSON, current approach is not extensible.
     /**
-     * Opens many DZIs.
+     * Opens an array of DZIs.
      *
-     * @param {Array.<string>} dziUrlArray Array of URLs/paths to DZI files.
-     * @param {Array.<Seadragon.Rectangle>} [boundsArray] Array of bounds representing position and shape
-     *                                                    of the image on the virtual Seadragon plane.
+     * @param {Array.<string>} dziDataArray Array of objects containing data of particular DZIs.
      */
-    this.openDziArray = function openDziArray(dziUrlArray, boundsArray, hideByDefault) {
-        if (boundsArray == null) {
-            boundsArray = [];
-        }
-        dziImagesToHandle += dziUrlArray.length;
-        dziUrlArray.forEach(function (dziUrl, index) {
-            that.openDzi(dziUrl, null, index, !hideByDefault, boundsArray[index], true);
+    this.openDziArray = function openDziArray(dziDataArray, hideByDefault) {
+        dziImagesToHandle += dziDataArray.length;
+        dziDataArray.forEach(function (dziData, index) {
+            that.openDzi(dziData.dziUrl, dziData.tilesUrl, index, !hideByDefault, dziData.boundsArray, true);
         });
     };
 
