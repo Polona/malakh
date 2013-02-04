@@ -401,10 +401,15 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      *
      * <p>If the <code>dziImageBoundsUpdatesInProgressNums[whichImage]</code> value is:
      * <ul>
-     *     <li><code>0</code>, then we invoke the <code>updateDziImageBounds</code> asynchronously.</li>
+     *     <li><code>0</code> (or <code>1</code> if <code>forceExecution</code> is true), then we invoke the
+     *         <code>updateDziImageBounds</code> asynchronously.</li>
      *     <li><code>1</code>, then we wait a short time before trying again.</li>
      *     <li><code>>=2</code>, then we abort since one other instance is already waiting.</li>
      * </ul>
+     * If the flag <code>forceExecution</code> is true, we invoke <code>updateDziImageBounds</code>
+     * if only <code>dziImageBoundsUpdatesInProgressNums[whichImage] < 2</code>. This is necessary
+     * because when counter increases by 1, the invocation which triggered the increase waits on
+     * <code>setTimeout</code> and needs to be invoked when it remains the only waiting instance.
      *
      * @param {number} whichImage  Image index of <code>dziImage</code> in <code>this.dziImages</code> table.
      * @param {boolean} forceExecution
@@ -413,7 +418,8 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     function scheduleUpdateDziImageBounds(whichImage, forceExecution) {
         var dziImageBoundsUpdatesInProgressNum = dziImageBoundsUpdatesInProgressNums[whichImage];
 
-        if (dziImageBoundsUpdatesInProgressNum === 0 || forceExecution) {
+        if (dziImageBoundsUpdatesInProgressNum === 0 ||
+            (forceExecution && dziImageBoundsUpdatesInProgressNum === 1)) {
             // no other instance of this function was dispatched on dziImage
             if (!forceExecution) { // otherwise counter already increased
                 dziImageBoundsUpdatesInProgressNums[whichImage]++;
