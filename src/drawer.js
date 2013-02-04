@@ -2,7 +2,7 @@
 /**
  * Constructs a drawer.
  *
- * @class Handles all the drawing based on events passed to it by the controller.
+ * @class Handles all the drawing when invoked by the controller.
  *
  * <p> See <code>Seadragon.Viewport</code> description for information about conventions around parameter
  * named <code>current</code> and names <strong>point</strong> and <strong>pixel</strong>.
@@ -556,7 +556,7 @@ Seadragon.Drawer = function Drawer(options) {
 
         // The tiles that were drawn last frame, but won't be this frame,
         // can be cleared from the cache, so they should be marked as such.
-        while (tilesDrawnLastFrame.length > 0) {
+        while (tilesDrawnLastFrame.length) {
             tile = tilesDrawnLastFrame.pop();
             tilesDrawnLastFrameLayers.pop();
             tile.beingDrawn = false;

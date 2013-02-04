@@ -18,7 +18,6 @@
  *
  * @param {string|jQuery object} containerSelectorOrElement
  */
-// TODO document controller fields
 Seadragon.Controller = function Controller(containerSelectorOrElement) {
     var that = this,
         $container, $canvas,
@@ -69,14 +68,28 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         // Restart other fields.
         that.viewport = new Seadragon.Viewport($container);
         if (Seadragon.Magnifier) {
+            /**
+             * @type {Seadragon.Magnifier}
+             */
             that.magnifier = new Seadragon.Magnifier(new Seadragon.Point(0, 0), Seadragon.Config.magnifierRadius);
         }
         if (Seadragon.Picker) {
+            /**
+             * @type {Seadragon.Picker}
+             */
             that.picker = new Seadragon.Picker($container, that.viewport);
         }
         if (Seadragon.Markers) {
+            /**
+             * @type {Seadragon.Markers}
+             */
             that.markers = new Seadragon.Markers($container, that.viewport);
         }
+        /**
+         * A <code>Seadragon.Drawer</code> instance, handles all the drawing.
+         *
+         * @type {Seadragon.Drawer}
+         */
         that.drawer = new Seadragon.Drawer({
             viewport: that.viewport,
             $container: $container,
@@ -366,7 +379,9 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * Updates bounds of a Seadragon image; usually used during aligning (so not too often).
      *
      * @param {number} whichImage  Image index of <code>dziImage</code> in <code>this.dziImages</code> table.
-     * @param {boolean} decreaseCounter  TODO document
+     * @param {boolean} decreaseCounter  If provided, decreases the counted number of <code>updateDziImageBounds</code>
+     *                                   invocations on the <code>dziImage</code> with a given index. Parameter used
+     *                                   only by the <code>scheduleUpdateDziImageBounds</code> function.
      * @private
      */
     function updateDziImageBounds(whichImage, decreaseCounter) {
@@ -378,7 +393,23 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         }
     }
 
-    // TODO document
+    /**
+     * <p>Schedules the <code>updateDziImageBounds</code> function on the <code>dziImage</code> with index
+     * <code>whichImage</code>. The whole idea behind this function is to not allow more than one invocation of
+     * <code>updateDziImageBounds</code> to wait on <code>setTimeout</code>s; it increases performance on weaker
+     * computers.
+     *
+     * <p>If the <code>dziImageBoundsUpdatesInProgressNums[whichImage]</code> value is:
+     * <ul>
+     *     <li><code>0</code>, then we invoke the <code>updateDziImageBounds</code> asynchronously.</li>
+     *     <li><code>1</code>, then we wait a short time before trying again.</li>
+     *     <li><code>>=2</code>, then we abort since one other instance is already waiting.</li>
+     * </ul>
+     *
+     * @param {number} whichImage  Image index of <code>dziImage</code> in <code>this.dziImages</code> table.
+     * @param {boolean} forceExecution
+     * @private
+     */
     function scheduleUpdateDziImageBounds(whichImage, forceExecution) {
         var dziImageBoundsUpdatesInProgressNum = dziImageBoundsUpdatesInProgressNums[whichImage];
 
@@ -387,7 +418,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             if (!forceExecution) { // otherwise counter already increased
                 dziImageBoundsUpdatesInProgressNums[whichImage]++;
             }
-            setTimeout(updateDziImageBounds, 0, whichImage, true);
+            setTimeout(updateDziImageBounds, 0, whichImage, true); // invoke asynchronously
         }
         else if (dziImageBoundsUpdatesInProgressNum === 1) {
             // one function instance was dispatched on dziImage, trying in a moment
@@ -449,6 +480,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         scheduleUpdate();
     }
 
+    // TODO this should probably just parse a properly structured JSON, current approach is not extensible.
     /**
      * Opens Deep Zoom Image (DZI).
      *
