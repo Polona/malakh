@@ -62,8 +62,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
         // Clear any previous message.
         var containerCss = $container.css(['width', 'height']);
-        containerSize = new Seadragon.Point(
-            parseInt(containerCss.width, 10), parseInt(containerCss.height, 10));
+        containerSize = new Seadragon.Point(parseFloat(containerCss.width), parseFloat(containerCss.height));
 
         // Restart other fields.
         that.viewport = new Seadragon.Viewport($container);
@@ -440,8 +439,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      */
     function update() {
         var containerCss = $container.css(['width', 'height']);
-        var newContainerSize = new Seadragon.Point(
-            parseInt(containerCss.width, 10), parseInt(containerCss.height, 10));
+        var newContainerSize = new Seadragon.Point(parseFloat(containerCss.width), parseFloat(containerCss.height));
 
         if (!newContainerSize.equals(containerSize)) {
             // Maintain image position:

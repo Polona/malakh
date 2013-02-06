@@ -41,8 +41,8 @@ Seadragon.Viewport = function Viewport($container) {
     }
 
     var containerDimensions = $container.css(['width', 'height']);
-    var containerWidth = parseInt(containerDimensions.width, 10);
-    var containerHeight = parseInt(containerDimensions.height, 10);
+    var containerWidth = parseFloat(containerDimensions.width);
+    var containerHeight = parseFloat(containerDimensions.height);
     Seadragon.AnimatedRectangle.call(this, $container,
         new Seadragon.Rectangle(0, 0, containerWidth, containerHeight));
 
