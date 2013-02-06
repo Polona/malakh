@@ -261,10 +261,10 @@ Seadragon.Picker = function Picker($container, viewport) {
     function getPickerAreaRectangle() {
         var pickerAreaCss = $pickerArea.css(['left', 'top', 'width', 'height']);
         return new Seadragon.Rectangle(
-            parseInt(pickerAreaCss.left, 10),
-            parseInt(pickerAreaCss.top, 10),
-            parseInt(pickerAreaCss.width, 10),
-            parseInt(pickerAreaCss.height, 10)
+            parseFloat(pickerAreaCss.left),
+            parseFloat(pickerAreaCss.top),
+            parseFloat(pickerAreaCss.width),
+            parseFloat(pickerAreaCss.height)
         );
     }
 
@@ -335,10 +335,10 @@ Seadragon.Picker = function Picker($container, viewport) {
 
                 var pickerAreaCss = $pickerArea.css(['left', 'top', 'width', 'height']);
                 var pickerAreaCssNormalized = {
-                    x: parseInt(pickerAreaCss.left, 10),
-                    y: parseInt(pickerAreaCss.top, 10),
-                    width: parseInt(pickerAreaCss.width, 10),
-                    height: parseInt(pickerAreaCss.height, 10)
+                    x: parseFloat(pickerAreaCss.left),
+                    y: parseFloat(pickerAreaCss.top),
+                    width: parseFloat(pickerAreaCss.width),
+                    height: parseFloat(pickerAreaCss.height)
                 };
 
                 var cursorType;
