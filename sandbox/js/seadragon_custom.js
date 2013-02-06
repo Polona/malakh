@@ -42,6 +42,8 @@ function seadragonCustom(options) {
     Seadragon.Config.zoomPerScroll = 1.2;
     Seadragon.Config.imageLoaderLimit = 50;
 
+    Seadragon.Config.backgroundColor = '#2d2a2b';
+
     // Debug options:
     Seadragon.Config.debugMode = sdData.debugMode;
     Seadragon.Config.debugTileBorders = sdData.debugTileBorders;
