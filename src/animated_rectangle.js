@@ -1,4 +1,3 @@
-//noinspection JSValidateJSDoc
 /**
  * Constructs an animated rectangle.
  *
@@ -16,7 +15,7 @@
  *
  * @see Seadragon.Viewport
  *
- * @param {jQuery object} $container Sets <code>this.$container</code>.
+ * @param {jQuery} $container Sets <code>this.$container</code>.
  * @param {Seadragon.Rectangle} bounds A rectangle representing the initial value of the animated rectangle.
  */
 Seadragon.AnimatedRectangle = function AnimatedRectangle($container, bounds) {

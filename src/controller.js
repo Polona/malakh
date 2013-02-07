@@ -1,6 +1,5 @@
-//noinspection JSValidateJSDoc
 /**
- * <p>Constructs a controller.
+ * Constructs a controller.
  *
  * @class <p>Manages all of Seadragon parts. It receives events and passes them along to the viewport,
  * Seadragon images and tells drawer when to update the current view. This is the 'core' Seadragon part.
@@ -16,7 +15,7 @@
  *
  * @see Seadragon.Viewport
  *
- * @param {string|jQuery object} containerSelectorOrElement
+ * @param {string|jQuery} containerSelectorOrElement
  */
 Seadragon.Controller = function Controller(containerSelectorOrElement) {
     var that = this,
@@ -94,6 +93,12 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             $container: $container,
             magnifier: that.magnifier
         });
+        /**
+         * A <code>Seadragon.LayoutManager</code> instance, contains helper layout methods.
+         *
+         * @type {Seadragon.LayoutManager}
+         */
+        that.layoutManager = new Seadragon.LayoutManager(that);
 
         // Begin updating.
         animated = false;
@@ -186,7 +191,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
     function onDocumentMouseUp() {
         $(document).off('mousemove.seadragon', dragCanvas);
-        restartUpdating();
+        restoreUpdating();
     }
 
     function bindEvents() {
@@ -194,14 +199,14 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             'mouseenter.seadragon': function () {
                 if (magnifierShown) {
                     that.drawer.canvasLayersManager.drawMagnifier = true;
-                    restartUpdating();
+                    restoreUpdating();
                 }
             },
 
             'mouseleave.seadragon': function () {
                 if (magnifierShown) { // We have to redraw to hide magnifier.
                     that.drawer.canvasLayersManager.drawMagnifier = false;
-                    restartUpdating();
+                    restoreUpdating();
                 }
             },
 
@@ -219,7 +224,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
                     return false;
                 }
                 zoomCanvas(evt);
-                restartUpdating();
+                restoreUpdating();
                 return false;
             }
         });
@@ -227,16 +232,17 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         $container.on({
             'seadragon:forcealign.seadragon': function () {
                 forceAlign = true;
-                restartUpdating();
+                recalculateMaxLevel();
+                restoreUpdating();
             },
 
             'seadragon:forceredraw.seadragon': function () {
-                restartUpdating();
+                restoreUpdating();
             }
         });
 
         $(document).on('mouseup.seadragon', onDocumentMouseUp);
-        $(window).on('resize.seadragon', restartUpdating);
+        $(window).on('resize.seadragon', restoreUpdating);
     }
 
     /**
@@ -291,12 +297,12 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     function moveMagnifier(evt) {
         var position = getMousePosition(evt);
         that.magnifier.panTo(position);
-        restartUpdating();
+        restoreUpdating();
     }
 
     /**
      * Computes maximum level to be drawn on canvas. Note that it's not simply
-     * maximum of all dziImage.maxLevel - their levels all scaled so that
+     * maximum of all <code>dziImage.maxLevel<code>s - their levels all scaled so that
      * they match "virtual" levels with regards to their representation on canvas.
      *
      * @see Seadragon.TiledImage.getAdjustedLevel
@@ -310,6 +316,21 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         that.viewport.maxLevelScale = Math.pow(2, maxLevel);
         that.drawer.maxLevel = maxLevel;
     }
+
+    function fitBounds(whichImage, bounds, immediately) {
+        that.dziImages[whichImage].fitBounds(bounds, immediately);
+        $container.trigger('seadragon:forcealign.seadragon');
+    }
+
+    /**
+     * Animates a <code>TiledImage</code> bounds to new ones.
+     *
+     * @param {Seadragon.TiledImage} whichImage
+     * @param {Seadragon.Rectangle} bounds
+     * @param {boolean} [immediately=false]
+     * @function
+     */
+    this.fitBounds = fitBounds;
 
     /**
      * Registers a new open image.
@@ -343,7 +364,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         if (dziImagesToHandle === 0) {
             $container.trigger('seadragon:loadeddziarray.seadragon');
         }
-        restartUpdating();
+        restoreUpdating();
     }
 
     /**
@@ -360,7 +381,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         }
     }
 
-    function restartUpdating() {
+    function restoreUpdating() {
         forceRedraw = true;
         if (lockOnUpdates) {
             lockOnUpdates = false;
@@ -372,7 +393,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * Unblock updates stopped by a lack of action. Invoked by single actions expecting redrawing.
      * @function
      */
-    this.restartUpdating = restartUpdating;
+    this.restoreUpdating = restoreUpdating;
 
     /**
      * Updates bounds of a Seadragon image; usually used during aligning (so not too often).
@@ -386,7 +407,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     function updateDziImageBounds(whichImage, decreaseCounter) {
         var dziImage = that.dziImages[whichImage];
         forceAlign = dziImage.bounds.update() || forceAlign;
-        restartUpdating();
+        restoreUpdating();
         if (decreaseCounter) {
             dziImageBoundsUpdatesInProgressNums[whichImage]--;
         }
@@ -572,116 +593,6 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         $container.empty();
     };
 
-    /**
-     * Organizes DZIs into a given layout.
-     *
-     * @param {boolean} [alingInRows=false] If true, align in rows; otherwise in columns.
-     * @param {number} heightOrWidth If <code>alignInRows</code>: height of rows; otherwise width of columns.
-     * @param {number} spaceBetweenImages
-     * @param {number} maxRowWidthOrColumnHeight If not infinite, the next row/column is started
-     *                                           upon reaching the limit.
-     * @param {boolean} [immediately=false]
-     * @private
-     */
-    function alignRowsOrColumns(alingInRows, heightOrWidth, spaceBetweenImages, maxRowWidthOrColumnHeight,
-                                immediately) {
-        var width, height, widthSum, heightSum, newBounds;
-
-        if (isLoading()) {
-            setTimeout(alignRowsOrColumns, 100,
-                alingInRows, heightOrWidth, spaceBetweenImages, maxRowWidthOrColumnHeight, immediately);
-            return;
-        }
-
-        widthSum = heightSum = 0;
-
-        if (!maxRowWidthOrColumnHeight) {
-            maxRowWidthOrColumnHeight = Infinity;
-        }
-
-        that.dziImages.forEach(function (dziImage, whichImage) {
-            // Compute the current state.
-            if (alingInRows) {
-                width = dziImage.width * heightOrWidth / dziImage.height;
-                height = heightOrWidth;
-                if (widthSum + width > maxRowWidthOrColumnHeight) {
-                    // Row width is now too much!
-                    widthSum = 0;
-                    heightSum += height + spaceBetweenImages;
-                }
-            }
-            else { // Align in columns.
-                width = heightOrWidth;
-                height = dziImage.height * heightOrWidth / dziImage.width;
-                if (heightSum + height > maxRowWidthOrColumnHeight) {
-                    // Column height is now too much!
-                    heightSum = 0;
-                    widthSum += width + spaceBetweenImages;
-                }
-            }
-
-            // Set bounds.
-            newBounds = new Seadragon.Rectangle(widthSum, heightSum, width, height);
-
-            // Compute parameters after placing an image.
-            if (alingInRows) {
-                widthSum += width + spaceBetweenImages;
-            } else {
-                heightSum += height + spaceBetweenImages;
-            }
-
-            dziImage.fitBounds(newBounds, immediately);
-            updateDziImageBounds(whichImage);
-        });
-        recalculateMaxLevel();
-
-        $container.trigger('seadragon:forcealign.seadragon');
-    }
-
-    /**
-     * Align images in rows.
-     *
-     * @param {number} height Height of a single row.
-     * @param {number} spaceBetweenImages Space between images in a row and between columns.
-     * @param {number} maxRowWidth Maximum row width. If the next image exceeded it, it's moved to the next row.
-     *                             If set to <code>Infinity</code>, only one row will be created.
-     * @param {boolean} [immediately=false]
-     */
-    this.alignRows = function alignRows(height, spaceBetweenImages, maxRowWidth, immediately) {
-        alignRowsOrColumns(true, height, spaceBetweenImages, maxRowWidth, immediately);
-    };
-
-    /**
-     * Align images in columns.
-     *
-     * @see #alignRows
-     *
-     * @param {number} width
-     * @param {number} spaceBetweenImages
-     * @param {number} maxColumnHeight
-     * @param {boolean} [immediately=false]
-     */
-    this.alignColumns = function alignColumns(width, spaceBetweenImages, maxColumnHeight, immediately) {
-        alignRowsOrColumns(false, width, spaceBetweenImages, maxColumnHeight, immediately);
-    };
-
-    /**
-     * Moves the viewport so that the given image is centered and zoomed as much as possible
-     * while still being contained within the viewport.
-     *
-     * @param {number} whichImage We fit the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} [current=false]
-     */
-    this.fitImage = function fitImage(whichImage, current) {
-        var dziImage = that.dziImages[whichImage];
-        if (!dziImage) {
-            console.error('No image with number ' + whichImage);
-            return;
-        }
-
-        that.viewport.fitBounds(dziImage.bounds.getRectangle(current));
-    };
-
 
     function dziImageBoundsInPoints(whichImage, current) {
         return that.dziImages[whichImage].bounds.getRectangle(current);
@@ -711,27 +622,4 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @function
      */
     this.dziImageBoundsInPixels = dziImageBoundsInPixels;
-
-
-    /**
-     * Shows the given image.
-     *
-     * @param {number} whichImage We show the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} [immediately=false]
-     */
-    this.showDzi = function showDzi(whichImage, immediately) {
-        that.drawer.showDzi(whichImage, immediately);
-        restartUpdating();
-    };
-
-    /**
-     * Hides the given image.
-     *
-     * @param {number} whichImage We hide the <code>this.dziImages[whichImage]</code> image
-     * @param {boolean} [immediately=false]
-     */
-    this.hideDzi = function hideDzi(whichImage, immediately) {
-        that.drawer.hideDzi(whichImage, immediately);
-        restartUpdating();
-    };
 };

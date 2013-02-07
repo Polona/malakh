@@ -1,6 +1,5 @@
-//noinspection JSValidateJSDoc
 /**
- * <p>Constructs a <code>Seadragon.Markers</code> instance.
+ * Constructs a <code>Seadragon.Markers</code> instance.
  *
  * @class <p>Each marker is represented by a DOM object and a Seadragon.Rectangle instance
  * to which it's scaled. The rectangle represents element's position in points, not pixels;
@@ -13,7 +12,7 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {jQuery object} $container A jQuery object representing the DOM element containing
+ * @param {jQuery} $container A jQuery object representing the DOM element containing
  *                                   all the HTML structure of Seadragon.
  * @param {Seadragon.Viewport} viewport The viewport handling current Seadragon instance.
  */

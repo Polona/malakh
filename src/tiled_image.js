@@ -1,6 +1,5 @@
-//noinspection JSValidateJSDoc
 /**
- * <p>Constructs a tiled image.
+ * Constructs a tiled image.
  *
  * @class <p>Represents a (potentially) large image in a following structure:
  * <ul>
@@ -24,7 +23,7 @@
  * @see Seadragon.Viewport
  *
  * @param {Object} options An object containing all given options.
- * @param {jQuery object} options.$container A jQuery object representing the DOM element containing
+ * @param {jQuery} options.$container A jQuery object representing the DOM element containing
  *                                           all the HTML structure of Seadragon.
  * @param {number} options.width Sets <code>this.width</code>.
  * @param {number} options.height Sets <code>this.height</code>.
@@ -123,7 +122,6 @@ Seadragon.TiledImage = function TiledImage(options) {
     this.opacity = options.shown ? 1 : 0;
 };
 
-//noinspection JSValidateJSDoc,JSValidateJSDoc
 Seadragon.TiledImage.prototype = {
     /**
      * Is the image fully shown? False during blending in/out.
@@ -320,13 +318,16 @@ Seadragon.TiledImage.prototype = {
      * @param {number} y Tile's row number (starting from 0).
      * @return {string}
      */
-    getTileUrl: function getTileUrl(/* level, x, y */) {
-        console.error('Method not implemented.');
+    getTileUrl: function getTileUrl(level, x, y) {
+        console.error('Method not implemented; arguments:', level, x, y);
         return '';
     },
 
     /**
      * @see Seadragon.AnimatedRectangle#fitBounds
+     *
+     * NOTE: this method shouldn't be called manually, use controller's <code>fitBounds</code> method instead.
+     * The controller's method handles updating other important parameters as well.
      *
      * @param {Seadragon.Rectangle} bounds
      * @param {boolean} [immediately=false]

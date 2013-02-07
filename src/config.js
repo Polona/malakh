@@ -1,5 +1,5 @@
 /**
- * <p>Configuration options of Seadragon.
+ * Configuration options of Seadragon.
  *
  * @namespace
  *

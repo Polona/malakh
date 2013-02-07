@@ -1,4 +1,3 @@
-//noinspection JSValidateJSDoc
 /**
  * Constructs a drawer.
  *
@@ -17,7 +16,7 @@
  *
  * @param {Object} options An object containing all given options.
  * @param {Seadragon.Viewport} options.viewport
- * @param {jQuery object} options.$container A jQuery object representing the DOM element containing
+ * @param {jQuery} options.$container A jQuery object representing the DOM element containing
  *                                           all the HTML structure of Seadragon.
  * @param {Seadragon.Magnifier} [options.magnifier]
  */

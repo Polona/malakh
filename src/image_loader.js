@@ -1,5 +1,5 @@
 /**
- * <p>Creates a new <code>ImageLoader</code>.
+ * Creates a new <code>ImageLoader</code> instance.
  *
  * @class <p>Represents objects managing loading of images. Remembers number of images
  * currently downloading and makes sure it doesn't exceed maximum set in
