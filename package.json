@@ -23,11 +23,10 @@
     "devDependencies": {
         "grunt-compare-size": "0.3.1",
         "grunt-git-authors": "1.0.0",
-        "grunt-update-submodules": "0.2.0",
-        "grunt-contrib-watch": "0.1.4",
-        "grunt-contrib-jshint": "0.1.1rc6",
-        "grunt-contrib-uglify": "0.1.1rc6",
-        "grunt": "0.4.0rc5"
+        "grunt-contrib-watch": "~0.2.0",
+        "grunt-contrib-jshint": "~0.1.1",
+        "grunt-contrib-uglify": "~0.1.1",
+        "grunt": "~0.4.0"
     },
     "keywords": ["seadragon", "deep zoom"]
 }

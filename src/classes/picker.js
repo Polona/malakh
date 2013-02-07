@@ -10,56 +10,47 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {jQuery} $container A jQuery object representing the DOM element containing
- *                                   all the HTML structure of Seadragon.
- * @param {Seadragon.Viewport} viewport The viewport handling current Seadragon instance.
+ * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.Picker = function Picker($container, viewport) {
-    var $pickerOverlay, $pickerArea;
+Seadragon.Picker = function Picker(seadragon) {
+    this.ensureArguments(arguments, 'Picker');
 
-    var HANDLE_SIZE = 10;
+    var that = this,
+        $pickerOverlay, $pickerArea,
+        pickerAreaMode, drawingArea;
 
-    var pickerAreaMode, drawingArea;
+    // Indicates direction in which we are resizing the rectangle at the moment.
+    pickerAreaMode = {
+        toRight: true, // Is the rectangle being resized to the right, keeping its left edge intact?
+        toBottom: true // Is the rectangle being resized to the bottom, keeping its top edge intact?
+    };
+    drawingArea = false; // Are we drawing a rectangle at the moment?
 
-    (function init() {
-        if ($container == null || !(viewport instanceof Seadragon.Viewport)) {
-            console.info('Received arguments: ', [].slice.apply(arguments));
-            throw new Error('Incorrect paremeters given to Seadragon.Picker!\n' +
-                'Use Seadragon.Picker($container, viewport)');
-        }
-        // Indicates direction in which we are resizing the rectangle at the moment.
-        pickerAreaMode = {
-            toRight: true, // Is the rectangle being resized to the right, keeping its left edge intact?
-            toBottom: true // Is the rectangle being resized to the bottom, keeping its top edge intact?
-        };
-        drawingArea = false; // Are we drawing a rectangle at the moment?
+    $pickerOverlay = $('<div class="pickerOverlay">').css({
+        position: 'absolute',
+        zIndex: 100,
+        left: 0,
+        top: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'transparent'
+    });
 
-        $pickerOverlay = $('<div class="pickerOverlay">').css({
-            position: 'absolute',
-            zIndex: 100,
-            left: 0,
-            top: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'transparent'
-        });
+    $pickerArea = $('<div class="pickerArea">').css({
+        position: 'absolute',
+        display: 'none',
+        zIndex: 150,
+        left: 0,
+        top: 0,
+        backgroundColor: 'transparent',
+        border: '5px dashed #00d5ef'
+    });
+    $pickerOverlay.append($pickerArea);
 
-        $pickerArea = $('<div class="pickerArea">').css({
-            position: 'absolute',
-            display: 'none',
-            zIndex: 150,
-            left: 0,
-            top: 0,
-            backgroundColor: 'transparent',
-            border: '5px dashed #00d5ef'
-        });
-        $pickerOverlay.append($pickerArea);
-
-        bindEvents();
-    })();
+    bindEvents();
 
     function show() {
-        $container.append($pickerOverlay);
+        that.$container.append($pickerOverlay);
         $(document).on('mouseup.seadragon', onMouseUp);
     }
 
@@ -91,7 +82,7 @@ Seadragon.Picker = function Picker($container, viewport) {
      * @private
      */
     function getMousePosition(evt) {
-        var offset = $container.offset();
+        var offset = that.$container.offset();
         return new Seadragon.Point(evt.pageX - offset.left, evt.pageY - offset.top);
     }
 
@@ -107,6 +98,7 @@ Seadragon.Picker = function Picker($container, viewport) {
      * @private
      */
     function overBorder(bounds, mouseX, mouseY) {
+        var handleSize = that.config.pickerHandleSize;
         // Click position wrt. border of the rectangle.
         var Pos = {
             begin: 0,
@@ -116,25 +108,25 @@ Seadragon.Picker = function Picker($container, viewport) {
         var xPos, yPos;
 
         // Did we click outside the rectangle?
-        if (mouseX < bounds.x - HANDLE_SIZE || mouseX > bounds.x + bounds.width + HANDLE_SIZE) {
+        if (mouseX < bounds.x - handleSize || mouseX > bounds.x + bounds.width + handleSize) {
             return 'default';
         }
-        if (mouseY < bounds.y - HANDLE_SIZE || mouseY > bounds.y + bounds.height + HANDLE_SIZE) {
+        if (mouseY < bounds.y - handleSize || mouseY > bounds.y + bounds.height + handleSize) {
             return 'default';
         }
 
         // Position of the click in the rectangle.
-        if (mouseX < bounds.x + HANDLE_SIZE && mouseX < bounds.x + bounds.width / 2) {
+        if (mouseX < bounds.x + handleSize && mouseX < bounds.x + bounds.width / 2) {
             xPos = Pos.begin;
-        } else if (mouseX > bounds.x + bounds.width - HANDLE_SIZE) {
+        } else if (mouseX > bounds.x + bounds.width - handleSize) {
             xPos = Pos.end;
         } else {
             xPos = Pos.middle;
         }
 
-        if (mouseY < bounds.y + HANDLE_SIZE && mouseY < bounds.y + bounds.height / 2) {
+        if (mouseY < bounds.y + handleSize && mouseY < bounds.y + bounds.height / 2) {
             yPos = Pos.begin;
-        } else if (mouseY > bounds.y + bounds.height - HANDLE_SIZE) {
+        } else if (mouseY > bounds.y + bounds.height - handleSize) {
             yPos = Pos.end;
         } else {
             yPos = Pos.middle;
@@ -298,9 +290,9 @@ Seadragon.Picker = function Picker($container, viewport) {
             $pickerOverlay.off('mousemove.seadragon');
             bindPickerMouseMove();
 
-            var areaBounds = viewport.pointRectangleFromPixelRectangle(getPickerAreaRectangle());
+            var areaBounds = that.viewport.pointRectangleFromPixelRectangle(getPickerAreaRectangle());
 
-            // TODO use this.
+            // Prints coordinates of the selected area (so far it's not used anywhere).
             console.log('areaBounds: [' + areaBounds.x + ', ' + areaBounds.y +
                 ', ' + areaBounds.width + ', ' + areaBounds.height +
                 '], right: ' + (areaBounds.x + areaBounds.width) +
@@ -413,3 +405,5 @@ Seadragon.Picker = function Picker($container, viewport) {
         });
     }
 };
+
+Seadragon.Picker.prototype = Object.create(seadragonBasePrototype);

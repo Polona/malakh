@@ -5,7 +5,6 @@
  * Copyright (c) 2013 Laboratorium EE (http://laboratorium.ee)
  */
 
-/*global WheelEvent: false */
 (function ($) {
     'use strict';
 
@@ -22,6 +21,7 @@
     }
 
     function handler(orgEvent) {
+        /* jshint validthis:true */ // event handler
         // Handler for the 'mousewheel' event (Chrome, Opera, Safari).
 
         var multiplier = -1 / 120,
@@ -48,7 +48,6 @@
         var args = [].slice.call(arguments, 0);
         args[0] = event;
 
-        /*jshint validthis:true */ // event handler
         return $.event.dispatch.apply(this, args);
     }
 

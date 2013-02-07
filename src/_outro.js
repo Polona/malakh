@@ -1,1 +1,1 @@
-})(this, this.Seadragon);
+})(this);

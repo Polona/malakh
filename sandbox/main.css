@@ -48,7 +48,7 @@ body, #seadragonPreloader {
     color: white;
 }
 
-.seadragonContainer {
+.seadragon_container {
     overflow: hidden;
     right: 0;
     top: 0;
@@ -56,12 +56,12 @@ body, #seadragonPreloader {
     height: 100%;
 }
 
-#seadragonContainerContainer {
+#seadragon_container_container {
     position: fixed;
     padding-left: 130px;
 }
 
-#seadragonContainer {
+#seadragon_container {
     position: relative;
 }
 

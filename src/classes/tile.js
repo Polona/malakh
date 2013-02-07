@@ -10,6 +10,8 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
+ * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ *
  * @param {Object} options An object containing all given options.
  * @param {number} options.level Sets <code>this.level</code>.
  * @param {number} options.x Sets <code>this.x</code>.
@@ -17,13 +19,9 @@
  * @param {Seadragon.Rectangle} options.bounds Sets <code>this.bounds</code>.
  * @param {string} options.url Sets <code>this.url</code>.
  */
-Seadragon.Tile = function Tile(options) {
-    if (options == null || options.level == null || options.x == null || options.y == null ||
-        options.bounds == null || options.url == null) {
-        console.info('Received options: ', options);
-        throw new Error('Seadragon.Tile needs a JSON parameter with at least the following fields: ' +
-            'level, x, y, bounds, exists, url.');
-    }
+Seadragon.Tile = function Tile(seadragon, options) {
+    this.ensureArguments(arguments, 'Tile', [options]);
+    this.ensureOptions(options, 'Tile', ['level', 'x', 'y', 'bounds', 'url']);
 
     // Core
     /**
@@ -131,62 +129,70 @@ Seadragon.Tile = function Tile(options) {
     this.lastTouchTime = 0;
 };
 
-Seadragon.Tile.prototype = {
-    /**
-     * Updates tile's version to the current time.
-     */
-    updateVersion: function updateVersion() {
-        this.version = Date.now();
-    },
+Seadragon.Tile.prototype = Object.create(seadragonBasePrototype);
 
+$.extend(Seadragon.Tile.prototype,
     /**
-     * Draws the tile on canvas. Optionally applies zoom needed for magnifier support
-     * and in that case makes it so both the usual and enlarged tile is identical
-     * around <code>mousePosition</code>.
-     *
-     * @param {CanvasRenderingContext2D} context '2d' context of canvas on which we are drawing
-     * @param {number} [zoom=1]
-     * @param {Seadragon.Point} [mousePosition]
+     * @lends Seadragon.Tile.prototype
      */
-    drawCanvas: function drawCanvas(context, zoom, mousePosition) {
-        if (!this.loaded) {
-            throw new Error('Attempting to draw tile ' + this.toString() + ' when it\'s not yet loaded.');
+    {
+        /**
+         * Updates tile's version to the current time.
+         */
+        updateVersion: function updateVersion() {
+            this.version = Date.now();
+        },
+
+        /**
+         * Draws the tile on canvas. Optionally applies zoom needed for magnifier support
+         * and in that case makes it so both the usual and enlarged tile is identical
+         * around <code>mousePosition</code>.
+         *
+         * @param {number} [zoom=1]
+         * @param {Seadragon.Point} [mousePosition]
+         */
+        draw: function draw(zoom, mousePosition) {
+            if (!this.loaded) {
+                throw new Error('Attempting to draw tile ' + this.toString() + ' when it\'s not yet loaded.');
+            }
+
+            var context = this.canvasContext,
+                position = this.position,
+                size = this.size;
+
+            if (zoom != null && zoom !== 1) {
+                position = position
+                    .minus(mousePosition)
+                    .multiply(zoom)
+                    .plus(mousePosition);
+                size.x *= zoom;
+                size.y *= zoom;
+            }
+
+            context.globalAlpha = this.opacity;
+            context.drawImage(this.image, position.x, position.y, size.x, size.y);
+
+            if (this.config.debugTileBorders) {
+                context.strokeRect(position.x, position.y, size.x, size.y);
+            }
+            context.globalAlpha = 1;
+        },
+
+        /**
+         * Resets the tile and removes the reference to the image it contained.
+         */
+        unload: function unload() {
+            this.image = null;
+            this.loaded = false;
+            this.loading = false;
+        },
+
+        /**
+         * Returns the string representation of the tile.
+         * @return {string}
+         */
+        toString: function toString() {
+            return this.level + '/' + this.x + '_' + this.y;
         }
-
-        var position = this.position;
-        var size = this.size;
-        if (zoom != null && zoom !== 1) {
-            position = position
-                .minus(mousePosition)
-                .multiply(zoom)
-                .plus(mousePosition);
-            size.x *= zoom;
-            size.y *= zoom;
-        }
-
-        context.globalAlpha = this.opacity;
-        context.drawImage(this.image, position.x, position.y, size.x, size.y);
-
-        if (Seadragon.Config.debugTileBorders) {
-            context.strokeRect(position.x, position.y, size.x, size.y);
-        }
-        context.globalAlpha = 1;
-    },
-
-    /**
-     * Resets the tile and removes the reference to the image it contained.
-     */
-    unload: function unload() {
-        this.image = null;
-        this.loaded = false;
-        this.loading = false;
-    },
-
-    /**
-     * Returns the string representation of the tile.
-     * @return {string}
-     */
-    toString: function toString() {
-        return this.level + '/' + this.x + '_' + this.y;
     }
-};
+);

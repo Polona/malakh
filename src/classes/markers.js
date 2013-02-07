@@ -12,26 +12,21 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {jQuery} $container A jQuery object representing the DOM element containing
- *                                   all the HTML structure of Seadragon.
- * @param {Seadragon.Viewport} viewport The viewport handling current Seadragon instance.
+ * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.Markers = function Markers($container, viewport) {
+Seadragon.Markers = function Markers(seadragon) {
+    this.ensureArguments(arguments, 'Markers');
+
+    var that = this;
+
     //An array of all kept markers.
     var markers = [];
     // An HTML overlay keeping all markers.
     var $markerOverlay;
 
-    (function init() {
-        if ($container == null || !(viewport instanceof Seadragon.Viewport)) {
-            console.info('Received arguments: ', [].slice.apply(arguments));
-            throw new Error('Incorrect paremeters given to Seadragon.Markers!\n' +
-                'Use Seadragon.Markers($container, viewport)');
-        }
-        $markerOverlay = $('<div class="markerOverlay">');
-        $container.append($markerOverlay);
-        bindEvents();
-    })();
+    $markerOverlay = $('<div class="markerOverlay">');
+    this.$container.append($markerOverlay);
+    bindEvents();
 
     function addMarker(object, rectangle) {
         markers.push({object: object, rectangle: rectangle});
@@ -65,7 +60,7 @@ Seadragon.Markers = function Markers($container, viewport) {
      */
     function fixPositions() {
         $.each(markers, function (_, pair) {
-            var pixelRectangle = viewport.pixelRectangleFromPointRectangle(pair.rectangle, true);
+            var pixelRectangle = that.viewport.pixelRectangleFromPointRectangle(pair.rectangle, true);
             var object = pair.object;
             object.css({
                 left: pixelRectangle.x,
@@ -78,6 +73,8 @@ Seadragon.Markers = function Markers($container, viewport) {
     }
 
     function bindEvents() {
-        $container.on('seadragon:animation.seadragon', fixPositions);
+        that.$container.on('seadragon:animation.seadragon', fixPositions);
     }
 };
+
+Seadragon.Markers.prototype = Object.create(seadragonBasePrototype);

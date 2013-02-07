@@ -9,8 +9,8 @@
 </head>
 
 <body>
-<div id="seadragonContainerContainer" class="seadragonContainer">
-    <div id="seadragonContainer" class="seadragonContainer"></div>
+<div id="seadragon_container_container" class="seadragon_container">
+    <div id="seadragon_container" class="seadragon_container"></div>
 </div>
 
 <div id="buttonsBar">
@@ -38,8 +38,7 @@
 <script src="js/seadragon_custom.js"></script>
 <script>
     $(function () {
-        seadragonCustom({
-            containerSelector: '#seadragonContainer',
+        seadragonCustom('#seadragon_container', {
             //animationTime: 0,
             //debugTileBorders: true,
             debugMode: true

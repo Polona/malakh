@@ -1,3 +1,4 @@
+/*jshint camelcase: false */
 /*global module: false, process: false, require: false, Buffer: false */
 
 module.exports = function (grunt) {
@@ -28,24 +29,30 @@ module.exports = function (grunt) {
                 dest: 'dist/seadragon.js',
                 src: [
                     'src/_intro.js',
-                    'src/config.js',
-                    'src/point.js',
-                    'src/segment.js',
-                    'src/rectangle.js',
-                    'src/spring.js',
-                    'src/image_loader.js',
-                    'src/tiled_image.js',
-                    'src/animated_rectangle.js',
-                    {flag: 'magnifier', src: 'src/magnifier.js'},
-                    'src/dzi_image.js',
-                    'src/viewport.js',
-                    {flag: 'picker', src: 'src/picker.js'},
-                    {flag: 'markers', src: 'src/markers.js'},
-                    'src/tile.js',
-                    'src/canvas_layers_manager.js',
-                    'src/drawer.js',
-                    'src/layout_manager.js',
-                    'src/controller.js',
+
+                    'src/utils/point.js',
+                    'src/utils/segment.js',
+                    'src/utils/rectangle.js',
+
+                    'src/base_prototype.js',
+
+                    'src/classes/spring.js',
+                    'src/classes/image_loader.js',
+                    'src/classes/tiled_image.js',
+                    'src/classes/animated_rectangle.js',
+                    {flag: 'magnifier', src: 'src/classes/magnifier.js'},
+                    'src/classes/dzi_image.js',
+                    'src/classes/viewport.js',
+                    {flag: 'picker', src: 'src/classes/picker.js'},
+                    {flag: 'markers', src: 'src/classes/markers.js'},
+                    'src/classes/tile.js',
+                    'src/classes/canvas_layers_manager.js',
+                    'src/classes/drawer.js',
+                    {flag: 'layout_manager', src: 'src/classes/layout_manager.js'},
+                    'src/classes/controller.js',
+
+                    'src/core.js',
+
                     'src/_outro.js'
                 ]
             }

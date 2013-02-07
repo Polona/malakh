@@ -8,8 +8,6 @@
  * Date: @DATE
  */
 
-this.Seadragon = {};
-
-(function (global, Seadragon, undefined) {
+;(function (global, undefined) {
     'use strict';
 
