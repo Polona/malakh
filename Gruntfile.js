@@ -44,6 +44,7 @@ module.exports = function (grunt) {
                     'src/tile.js',
                     'src/canvas_layers_manager.js',
                     'src/drawer.js',
+                    'src/layout_manager.js',
                     'src/controller.js',
                     'src/_outro.js'
                 ]

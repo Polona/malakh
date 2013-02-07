@@ -326,6 +326,9 @@ Seadragon.TiledImage.prototype = {
     /**
      * @see Seadragon.AnimatedRectangle#fitBounds
      *
+     * NOTE: this method shouldn't be called manually, use controller's <code>fitBounds</code> method instead.
+     * The controller's method handles updating other important parameters as well.
+     *
      * @param {Seadragon.Rectangle} bounds
      * @param {boolean} [immediately=false]
      */

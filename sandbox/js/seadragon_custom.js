@@ -60,7 +60,7 @@ function seadragonCustom(options) {
         };
     });
     sdData.controller.openDziArray(dziDataArray);
-    sdData.controller.alignRows(4920, 0, Infinity, true);
+    sdData.controller.layoutManager.alignRows(4920, 0, Infinity, true);
 
     // Adjust -- not necessary, just removes the need to do it by ourselves.
     sdData.controller.viewport.zoomTo(0.1, true);
@@ -133,7 +133,7 @@ function seadragonCustom(options) {
             if (constrain_image_3 || constrain_image_17) {
                 return false;
             }
-            sdData.controller.alignRows(6000, 100, Infinity);
+            sdData.controller.layoutManager.alignRows(6000, 100, Infinity);
             return false;
         }
     });
@@ -146,7 +146,7 @@ function seadragonCustom(options) {
             if (constrain_image_3 || constrain_image_17) {
                 return false;
             }
-            sdData.controller.alignColumns(6000, 100, Infinity);
+            sdData.controller.layoutManager.alignColumns(6000, 100, Infinity);
             return false;
         }
     });
@@ -159,7 +159,7 @@ function seadragonCustom(options) {
             if (constrain_image_3 || constrain_image_17) {
                 return false;
             }
-            sdData.controller.alignRows(6000, 100, 100000);
+            sdData.controller.layoutManager.alignRows(6000, 100, 100000);
             return false;
         }
     });
@@ -172,7 +172,7 @@ function seadragonCustom(options) {
             if (constrain_image_3 || constrain_image_17) {
                 return false;
             }
-            sdData.controller.alignColumns(6000, 100, 100000);
+            sdData.controller.layoutManager.alignColumns(6000, 100, 100000);
             return false;
         }
     });
@@ -217,7 +217,7 @@ function seadragonCustom(options) {
             $('#constrain_image_17').css('background-color', buttonColors[false]);
             Seadragon.Config.constraintViewport = constrain_image_3;
             sdData.controller.viewport.constraintBounds = new Seadragon.Rectangle(
-                sdData.controller.dziImages[2].bounds.getRectangle());
+                sdData.controller.dziImages[2].bounds.getRectangle()); // TODO better API
             sdData.controller.viewport.fitConstraintBounds();
             sdData.controller.viewport.applyConstraints();
             return false;
@@ -238,7 +238,7 @@ function seadragonCustom(options) {
             $('#constrain_image_3').css('background-color', buttonColors[false]);
             Seadragon.Config.constraintViewport = constrain_image_17;
             sdData.controller.viewport.constraintBounds = new Seadragon.Rectangle(
-                sdData.controller.dziImages[16].bounds.getRectangle());
+                sdData.controller.dziImages[16].bounds.getRectangle()); // TODO better API
             sdData.controller.viewport.fitConstraintBounds();
             sdData.controller.viewport.applyConstraints();
             return false;
