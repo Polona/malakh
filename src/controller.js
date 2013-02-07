@@ -186,7 +186,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
     function onDocumentMouseUp() {
         $(document).off('mousemove.seadragon', dragCanvas);
-        restartUpdating();
+        restoreUpdating();
     }
 
     function bindEvents() {
@@ -194,14 +194,14 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             'mouseenter.seadragon': function () {
                 if (magnifierShown) {
                     that.drawer.canvasLayersManager.drawMagnifier = true;
-                    restartUpdating();
+                    restoreUpdating();
                 }
             },
 
             'mouseleave.seadragon': function () {
                 if (magnifierShown) { // We have to redraw to hide magnifier.
                     that.drawer.canvasLayersManager.drawMagnifier = false;
-                    restartUpdating();
+                    restoreUpdating();
                 }
             },
 
@@ -219,7 +219,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
                     return false;
                 }
                 zoomCanvas(evt);
-                restartUpdating();
+                restoreUpdating();
                 return false;
             }
         });
@@ -227,16 +227,16 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         $container.on({
             'seadragon:forcealign.seadragon': function () {
                 forceAlign = true;
-                restartUpdating();
+                restoreUpdating();
             },
 
             'seadragon:forceredraw.seadragon': function () {
-                restartUpdating();
+                restoreUpdating();
             }
         });
 
         $(document).on('mouseup.seadragon', onDocumentMouseUp);
-        $(window).on('resize.seadragon', restartUpdating);
+        $(window).on('resize.seadragon', restoreUpdating);
     }
 
     /**
@@ -291,7 +291,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     function moveMagnifier(evt) {
         var position = getMousePosition(evt);
         that.magnifier.panTo(position);
-        restartUpdating();
+        restoreUpdating();
     }
 
     /**
@@ -343,7 +343,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         if (dziImagesToHandle === 0) {
             $container.trigger('seadragon:loadeddziarray.seadragon');
         }
-        restartUpdating();
+        restoreUpdating();
     }
 
     /**
@@ -360,7 +360,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         }
     }
 
-    function restartUpdating() {
+    function restoreUpdating() {
         forceRedraw = true;
         if (lockOnUpdates) {
             lockOnUpdates = false;
@@ -372,7 +372,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * Unblock updates stopped by a lack of action. Invoked by single actions expecting redrawing.
      * @function
      */
-    this.restartUpdating = restartUpdating;
+    this.restoreUpdating = restoreUpdating;
 
     /**
      * Updates bounds of a Seadragon image; usually used during aligning (so not too often).
@@ -386,7 +386,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     function updateDziImageBounds(whichImage, decreaseCounter) {
         var dziImage = that.dziImages[whichImage];
         forceAlign = dziImage.bounds.update() || forceAlign;
-        restartUpdating();
+        restoreUpdating();
         if (decreaseCounter) {
             dziImageBoundsUpdatesInProgressNums[whichImage]--;
         }
@@ -721,7 +721,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      */
     this.showDzi = function showDzi(whichImage, immediately) {
         that.drawer.showDzi(whichImage, immediately);
-        restartUpdating();
+        restoreUpdating();
     };
 
     /**
@@ -732,6 +732,6 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      */
     this.hideDzi = function hideDzi(whichImage, immediately) {
         that.drawer.hideDzi(whichImage, immediately);
-        restartUpdating();
+        restoreUpdating();
     };
 };
