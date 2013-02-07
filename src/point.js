@@ -1,5 +1,5 @@
 /**
- * <p>Constructs a point. Use cases are as follows:
+ * Constructs a point. Use cases are as follows:
  * <ul>
  *     <li><code>new Seadragon.Point()</code> (gives point <code>(0, 0)</code>)</li>
  *     <li><code>new Seadragon.Point({x: x, y: y})</code></li>

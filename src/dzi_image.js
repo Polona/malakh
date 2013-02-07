@@ -1,4 +1,3 @@
-//noinspection JSValidateJSDoc
 /**
  * Constructs a DZI image.
  *
@@ -13,7 +12,7 @@
  * @extends Seadragon.TiledImage
  *
  * @param {Object} options An object containing all given options.
- * @param {jQuery object} options.$container A jQuery object representing the DOM element containing
+ * @param {jQuery} options.$container A jQuery object representing the DOM element containing
  *                                           all the HTML structure of Seadragon.
  * @param {number} options.width Sets <code>this.width</code>.
  * @param {number} options.height Sets <code>this.height</code>.
@@ -83,14 +82,13 @@ $.extend(Seadragon.DziImage.prototype,
 );
 
 
-//noinspection JSValidateJSDoc
 /**
  * Processes a DZI file, creating a <code>DziImage</code> instance.
  *
  * @param {Object} options An object containing all given options.
  * @param {Document} options.data An object representing a DZI file.
  * @param {string} options.dziUrl See <a href="#createFromDzi"><code>Seadragon.DziImage.createFromDzi</code></a>.
- * @param {jQuery object} options.$container See <a href="#createFromDzi"><code>Seadragon.DziImage.createFromDzi</code></a>.
+ * @param {jQuery} options.$container See <a href="#createFromDzi"><code>Seadragon.DziImage.createFromDzi</code></a>.
  * @param {Document} [options.bounds] Bounds in which an image must fit. If not given, we assume the rectangle
  *                                    <code>[0, 0, width x height]</code> where <code>width</code> and
  *                                    <code>height</code> are taken from DZI.
@@ -144,13 +142,13 @@ function processDzi(options) {
     });
 }
 
-//noinspection JSValidateJSDoc
+
 /**
  * Creates a DziImage instance from the DZI file.
  *
  * @param {Object} options An object containing all given options.
  * @param {string} options.dziUrl An URL/path to the DZI file.
- * @param {jQuery object} options.$container A jQuery object representing the DOM element containing
+ * @param {jQuery} options.$container A jQuery object representing the DOM element containing
  *                                           all the HTML structure of Seadragon.
  * @param {function} options.callback Function invoked when DZI is fully processed.
  * @param {Seadragon.Rectangle} [options.bounds] Bounds representing position and shape of the image on the virtual

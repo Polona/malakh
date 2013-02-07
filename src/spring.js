@@ -1,5 +1,5 @@
 /**
- * <p>Constructs a spring.
+ * Constructs a spring.
  *
  * @class <p>Represents a one-dimensional value together with animation definition invoked
  * on the value change. A lot of methods in other classes use springs to implement

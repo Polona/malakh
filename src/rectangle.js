@@ -1,5 +1,5 @@
 /**
- * <p>Constructs a rectangle. Use cases are as follows:
+ * Constructs a rectangle. Use cases are as follows:
  * <ul>
  *     <li><code>new Seadragon.Rectangle()</code> (gives rectangle <code>[0, 0, 0 x 0])</code></li>
  *     <li><code>new Seadragon.Rectangle({x: x, y: y, width: width, height: height})</code></li>

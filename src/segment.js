@@ -1,5 +1,5 @@
 /**
- * <p>Constructs a segment <code>[(x_1, y_1), (x_2, y_2)]</code>. Use cases are as follows:
+ * Constructs a segment <code>[(x_1, y_1), (x_2, y_2)]</code>. Use cases are as follows:
  * <ul>
  *     <li><code>new Seadragon.Segment()</code> (gives segment <code>[(0, 0), (0, 0)])</code></li>
  *     <li><code>new Seadragon.Segment({x1: x1, y1: y1, x2: x2, y2: y2})</code></li>

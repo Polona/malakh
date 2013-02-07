@@ -1,5 +1,5 @@
 /**
- * <p>Constructs a <code>Seadragon.Tile</code> instance.
+ * Constructs a <code>Seadragon.Tile</code> instance.
  *
  * @class <p>Represents a single tile used by Seadragon. The tile knows about it's image path,
  * its position (i.e. it's column & row), the corresponding level and a few other parameters.

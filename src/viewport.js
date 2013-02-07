@@ -1,6 +1,5 @@
-//noinspection JSValidateJSDoc
 /**
- * <p>Constructs a viewport.
+ * Constructs a viewport.
  *
  * @class <p>Represents the visible part of the virtual plane containing all Seadragon images.
  * Supports animations by extending <code>Seadragon.AnimatedRectangle</code>.
@@ -30,7 +29,7 @@
  *
  * @extends Seadragon.AnimatedRectangle
  *
- * @param {jQuery object} $container A jQuery object representing the DOM element containing
+ * @param {jQuery} $container A jQuery object representing the DOM element containing
  *                                   all the HTML structure of Seadragon.
  */
 Seadragon.Viewport = function Viewport($container) {

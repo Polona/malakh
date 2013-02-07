@@ -1,6 +1,5 @@
-//noinspection JSValidateJSDoc
 /**
- * <p>Constructs a controller.
+ * Constructs a controller.
  *
  * @class <p>Manages all of Seadragon parts. It receives events and passes them along to the viewport,
  * Seadragon images and tells drawer when to update the current view. This is the 'core' Seadragon part.
@@ -16,7 +15,7 @@
  *
  * @see Seadragon.Viewport
  *
- * @param {string|jQuery object} containerSelectorOrElement
+ * @param {string|jQuery} containerSelectorOrElement
  */
 Seadragon.Controller = function Controller(containerSelectorOrElement) {
     var that = this,
@@ -296,7 +295,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
     /**
      * Computes maximum level to be drawn on canvas. Note that it's not simply
-     * maximum of all dziImage.maxLevel - their levels all scaled so that
+     * maximum of all <code>dziImage.maxLevel<code>s - their levels all scaled so that
      * they match "virtual" levels with regards to their representation on canvas.
      *
      * @see Seadragon.TiledImage.getAdjustedLevel

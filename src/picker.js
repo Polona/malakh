@@ -1,6 +1,5 @@
-//noinspection JSValidateJSDoc
 /**
- * <p>Constructs the Picker instance.
+ * Constructs the <code>Picker</code> instance.
  *
  * @class <p>Allows to mark rectangular areas on the virtual plane. These areas
  * can be later memorized using <code>Seadragon.Markers</code> instance.
@@ -11,7 +10,7 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {jQuery object} $container A jQuery object representing the DOM element containing
+ * @param {jQuery} $container A jQuery object representing the DOM element containing
  *                                   all the HTML structure of Seadragon.
  * @param {Seadragon.Viewport} viewport The viewport handling current Seadragon instance.
  */

@@ -1,5 +1,5 @@
 /**
- * <p>Creates a magnifier with given <code>center</code> and <code>radius</code>.
+ * Creates a magnifier with given <code>center</code> and <code>radius</code>.
  *
  * @class <p>Represents a magnifier which enlarges tiles around the mouse pointer
  * enclosing them in a circular shape.
