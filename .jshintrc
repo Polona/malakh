@@ -1,17 +1,5 @@
 {
-    "bitwise": true,
-    "curly": true,
-    "eqeqeq": true,
-    "forin": true,
-    "immed": true,
-    "newcap": true,
-    "noarg": true,
-    "noempty": true,
-    "nonew": true,
     "quotmark": "single",
-    "strict": true,
-    "trailing": true,
-    "undef": true,
     "unused": false,
 
     "eqnull": true,
