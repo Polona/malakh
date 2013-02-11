@@ -223,4 +223,5 @@ $.extend(Seadragon.Rectangle.prototype,
         toString: function toString() {
             return '[' + this.x + ', ' + this.y + ', ' + this.width + ' x ' + this.height + ']';
         }
-    });
+    }
+);

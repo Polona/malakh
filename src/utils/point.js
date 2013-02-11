@@ -39,110 +39,115 @@ Seadragon.Point = function Point() {
     }
 };
 
-Seadragon.Point.prototype = {
+$.extend(Seadragon.Point.prototype,
     /**
-     * Returns a sum by current point and another one.
-     *
-     * @param {Seadragon.Point} point
-     * @return {Seadragon.Point}
+     * @lends Seadragon.Point.prototype
      */
-    plus: function plus(point) {
-        return new Seadragon.Point(this.x + point.x, this.y + point.y);
-    },
+    {
+        /**
+         * Returns a sum by current point and another one.
+         *
+         * @param {Seadragon.Point} point
+         * @return {Seadragon.Point}
+         */
+        plus: function plus(point) {
+            return new Seadragon.Point(this.x + point.x, this.y + point.y);
+        },
 
-    /**
-     * Returns a difference by current point and another one.
-     *
-     * @param {Seadragon.Point} point
-     * @return {Seadragon.Point}
-     */
-    minus: function minus(point) {
-        return new Seadragon.Point(this.x - point.x, this.y - point.y);
-    },
+        /**
+         * Returns a difference by current point and another one.
+         *
+         * @param {Seadragon.Point} point
+         * @return {Seadragon.Point}
+         */
+        minus: function minus(point) {
+            return new Seadragon.Point(this.x - point.x, this.y - point.y);
+        },
 
-    /**
-     * Returns the current point multiplied by a given factor.
-     *
-     * @param {number} factor
-     * @return {Seadragon.Point}
-     */
-    multiply: function multiply(factor) {
-        return new Seadragon.Point(this.x * factor, this.y * factor);
-    },
+        /**
+         * Returns the current point multiplied by a given factor.
+         *
+         * @param {number} factor
+         * @return {Seadragon.Point}
+         */
+        multiply: function multiply(factor) {
+            return new Seadragon.Point(this.x * factor, this.y * factor);
+        },
 
-    /**
-     * Returns the current point divided by a given factor.
-     *
-     * @param {number} factor
-     * @return {Seadragon.Point}
-     */
-    divide: function divide(factor) {
-        return new Seadragon.Point(this.x / factor, this.y / factor);
-    },
+        /**
+         * Returns the current point divided by a given factor.
+         *
+         * @param {number} factor
+         * @return {Seadragon.Point}
+         */
+        divide: function divide(factor) {
+            return new Seadragon.Point(this.x / factor, this.y / factor);
+        },
 
-    /**
-     * Returns a negated point (i.e. replaces <code>x</code> by <code>-x</code> etc.).
-     *
-     * @return {Seadragon.Point}
-     */
-    negate: function negate() {
-        return new Seadragon.Point(-this.x, -this.y);
-    },
+        /**
+         * Returns a negated point (i.e. replaces <code>x</code> by <code>-x</code> etc.).
+         *
+         * @return {Seadragon.Point}
+         */
+        negate: function negate() {
+            return new Seadragon.Point(-this.x, -this.y);
+        },
 
-    /**
-     * Returns an inverted point (i.e. replaces <code>x</code> by <code>1/x</code> etc.).
-     *
-     * @return {Seadragon.Point}
-     */
-    invert: function invert() {
-        return new Seadragon.Point(1 / this.x, 1 / this.y);
-    },
+        /**
+         * Returns an inverted point (i.e. replaces <code>x</code> by <code>1/x</code> etc.).
+         *
+         * @return {Seadragon.Point}
+         */
+        invert: function invert() {
+            return new Seadragon.Point(1 / this.x, 1 / this.y);
+        },
 
-    /**
-     * Calculates a distance to another point.
-     *
-     * @param {Seadragon.Point} point
-     * @return {number}
-     */
-    distanceTo: function distanceTo(point) {
-        return Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
-    },
+        /**
+         * Calculates a distance to another point.
+         *
+         * @param {Seadragon.Point} point
+         * @return {number}
+         */
+        distanceTo: function distanceTo(point) {
+            return Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2));
+        },
 
-    /**
-     * Applies a function to both of point fields.
-     *
-     * @param {function} func
-     * @return {Seadragon.Point}
-     */
-    apply: function apply(func) {
-        return new Seadragon.Point(func(this.x), func(this.y));
-    },
+        /**
+         * Applies a function to both of point fields.
+         *
+         * @param {function} func
+         * @return {Seadragon.Point}
+         */
+        apply: function apply(func) {
+            return new Seadragon.Point(func(this.x), func(this.y));
+        },
 
-    /**
-     * Returns the current point with both of fields rounded to integers.
-     *
-     * @return {Seadragon.Point}
-     */
-    round: function round() {
-        return new Seadragon.Point(Math.round(this.x), Math.round(this.y));
-    },
+        /**
+         * Returns the current point with both of fields rounded to integers.
+         *
+         * @return {Seadragon.Point}
+         */
+        round: function round() {
+            return new Seadragon.Point(Math.round(this.x), Math.round(this.y));
+        },
 
-    /**
-     * Checks if another point is equal to the current one.
-     *
-     * @param {Seadragon.Point} point
-     * @return {boolean}
-     */
-    equals: function equals(point) {
-        return point instanceof Seadragon.Point && this.x === point.x && this.y === point.y;
-    },
+        /**
+         * Checks if another point is equal to the current one.
+         *
+         * @param {Seadragon.Point} point
+         * @return {boolean}
+         */
+        equals: function equals(point) {
+            return point instanceof Seadragon.Point && this.x === point.x && this.y === point.y;
+        },
 
-    /**
-     * Returns a <code>string</code> representing the point.
-     *
-     * @return {string}
-     */
-    toString: function toString() {
-        return '(' + this.x + ', ' + this.y + ')';
+        /**
+         * Returns a <code>string</code> representing the point.
+         *
+         * @return {string}
+         */
+        toString: function toString() {
+            return '(' + this.x + ', ' + this.y + ')';
+        }
     }
-};
+);
