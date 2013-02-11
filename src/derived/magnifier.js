@@ -36,6 +36,7 @@ $.extend(Seadragon.Magnifier.prototype,
         panBy: function panBy(delta) {
             this.center.x += delta.x;
             this.center.y += delta.y;
+            return this;
         },
 
         /**
@@ -46,6 +47,7 @@ $.extend(Seadragon.Magnifier.prototype,
         panTo: function panTo(newCenter) {
             this.center.x = newCenter.x;
             this.center.y = newCenter.y;
+            return this;
         },
 
         contains: function contains(point) {
@@ -94,6 +96,7 @@ $.extend(Seadragon.Magnifier.prototype,
             context.lineTo(this.center.x + crossLength / 2, this.center.y);
             context.moveTo(this.center.x, this.center.y - crossLength / 2);
             context.lineTo(this.center.x, this.center.y + crossLength / 2);
+            return this;
         },
 
         /**
@@ -105,6 +108,7 @@ $.extend(Seadragon.Magnifier.prototype,
             context.lineWidth = 5;
             context.strokeStyle = '#00d5ef';
             context.stroke();
+            return this;
         },
 
         /**

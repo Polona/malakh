@@ -28,31 +28,28 @@ Seadragon.Markers = function Markers(seadragon) {
     this.$container.append($markerOverlay);
     bindEvents();
 
-    function addMarker(object, rectangle) {
-        markers.push({object: object, rectangle: rectangle});
-        $markerOverlay.append(object);
-        fixPositions();
-    }
-
     /**
      * Adds a single marker representing given object enclosed in a given rectangle. Rectangle is represented
      * in Seadragon points, relative to the virtual canvas on which everything is drawn.
      *
      * @param {HTMLElement} object An HTML element being marked.
      * @param {Seadragon.Rectangle} rectangle The rectangle representing object's position on the virtual canvas.
-     * @function
      */
-    this.addMarker = addMarker;
-
-    function deleteMarkers() {
-        markers = [];
-        $markerOverlay.html('');
-    }
+    this.addMarker = function addMarker(object, rectangle) {
+        markers.push({object: object, rectangle: rectangle});
+        $markerOverlay.append(object);
+        fixPositions();
+        return this;
+    };
 
     /**
      * Clears markers array.
      */
-    this.deleteMarkers = deleteMarkers;
+    this.deleteMarkers = function deleteMarkers() {
+        markers = [];
+        $markerOverlay.html('');
+        return this;
+    };
 
     /**
      * Moves markers to fit canvas when moving.

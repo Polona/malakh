@@ -49,30 +49,26 @@ Seadragon.Picker = function Picker(seadragon) {
 
     bindEvents();
 
-    function show() {
-        that.$container.append($pickerOverlay);
-        $(document).on('mouseup.seadragon', onMouseUp);
-    }
-
     /**
      * Activates the Picker.
-     * @function
      */
-    this.show = show;
+    this.show = function show() {
+        that.$container.append($pickerOverlay);
+        $(document).on('mouseup.seadragon', onMouseUp);
+        return this;
+    };
 
-    function hide() {
+    /**
+     * Deactivates the Picker.
+     */
+    this.hide = function hide() {
         $(document).off({
             'mouseup.seadragon': onMouseUp
         });
         $pickerArea.hide();
         $pickerOverlay.detach();
-    }
-
-    /**
-     * Deactivates the Picker.
-     * @function
-     */
-    this.hide = hide;
+        return this;
+    };
 
     /**
      * Returns current mouse position relative to the canvas top left corner.

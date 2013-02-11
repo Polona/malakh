@@ -41,6 +41,7 @@ $.extend(Seadragon.CanvasLayersManager.prototype,
          */
         addToLayer: function addToLayer(layerNum, tile) {
             this.tiles[layerNum].push(tile);
+            return this;
         },
 
         /**
@@ -76,14 +77,14 @@ $.extend(Seadragon.CanvasLayersManager.prototype,
                 this.magnifier.drawOnFinish(context);
                 context.restore();
             }
+            return this;
         },
 
         /**
          * Draws both canvas layers.
          */
         draw: function draw() {
-            this.drawLayer(0);
-            this.drawLayer(1);
+            return this.drawLayer(0).drawLayer(1);
         },
 
         /**
@@ -94,6 +95,7 @@ $.extend(Seadragon.CanvasLayersManager.prototype,
                 [],
                 []
             ];
+            return this;
         }
     }
 );

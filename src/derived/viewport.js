@@ -121,6 +121,7 @@ $.extend(Seadragon.Viewport.prototype,
                 this.applyConstraints(false, refPoint);
             }
             this.$container.trigger('seadragon:forceredraw.seadragon');
+            return this;
         },
 
         /**
@@ -133,7 +134,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {Seadragon.Point} [refPoint]
          */
         zoomBy: function zoomBy(factor, immediately, refPoint, /* internal */ dontApplyConstraints) {
-            this.zoomTo(this.getZoom() * factor, immediately, refPoint, dontApplyConstraints);
+            return this.zoomTo(this.getZoom() * factor, immediately, refPoint, dontApplyConstraints);
         },
 
         /**
@@ -148,6 +149,7 @@ $.extend(Seadragon.Viewport.prototype,
                 this.applyConstraints(false);
             }
             this.$container.trigger('seadragon:forceredraw.seadragon');
+            return this;
         },
 
         /**
@@ -157,7 +159,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          */
         panBy: function panBy(delta, immediately, /* internal */ dontApplyConstraints) {
-            this.panTo(this.getCenter().plus(delta), immediately, dontApplyConstraints);
+            return this.panTo(this.getCenter().plus(delta), immediately, dontApplyConstraints);
         },
 
         /**
@@ -191,6 +193,7 @@ $.extend(Seadragon.Viewport.prototype,
             parentPrototype.fitBounds.call(this, newBounds, immediately);
 
             this.$container.trigger('seadragon:forcealign.seadragon');
+            return this;
         },
 
         /**
@@ -201,9 +204,9 @@ $.extend(Seadragon.Viewport.prototype,
         fitConstraintBounds: function fitConstraintBounds(immediately) {
             if (!(this.constraintBounds instanceof Seadragon.Rectangle)) {
                 console.error('Can\'t fit the viewport to constraintBounds because they\'re not set.');
-                return;
+                return this;
             }
-            this.fitBounds(this.constraintBounds, immediately);
+            return this.fitBounds(this.constraintBounds, immediately);
         },
 
         /**
@@ -217,7 +220,7 @@ $.extend(Seadragon.Viewport.prototype,
             this.containerSize = new Seadragon.Point(newContainerSize.x, newContainerSize.y); // TODO a Seadragon field?
             this.springs.width.resetTo(this.containerSize.x / zoom);
             this.springs.height.resetTo(this.springs.width.get() * this.containerSize.y / this.containerSize.x);
-            this.applyConstraints(true);
+            return this.applyConstraints(true);
         },
 
         /**
@@ -237,11 +240,11 @@ $.extend(Seadragon.Viewport.prototype,
          */
         applyConstraints: function applyConstraints(immediately, refPoint) {
             if (!this.config.constraintViewport) {
-                return;
+                return this;
             }
             if (!(this.constraintBounds instanceof Seadragon.Rectangle)) { // TODO a Seadragon field?
                 console.error('Can\'t apply constraints because constraintBounds is not set.');
-                return;
+                return this;
             }
             var scale;
             var needToAdjust = false;
@@ -318,6 +321,8 @@ $.extend(Seadragon.Viewport.prototype,
             if (needToAdjust) {
                 this.panTo(vR.getCenter(), immediately, true);
             }
+
+            return this;
         },
 
         // CONVERSION HELPERS

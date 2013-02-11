@@ -124,7 +124,7 @@ $.extend(Seadragon.Rectangle.prototype,
          */
         panBy: function panBy(delta) {
             var oldCenter = this.getCenter();
-            this.panTo(oldCenter.plus(delta));
+            return this.panTo(oldCenter.plus(delta));
         },
 
         /**
@@ -135,6 +135,7 @@ $.extend(Seadragon.Rectangle.prototype,
         panTo: function panTo(center) {
             this.x = center.x - this.width / 2;
             this.y = center.y - this.height / 2;
+            return this;
         },
 
         /**

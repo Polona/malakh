@@ -141,6 +141,7 @@ $.extend(Seadragon.Tile.prototype,
          */
         updateVersion: function updateVersion() {
             this.version = Date.now();
+            return this;
         },
 
         /**
@@ -176,6 +177,8 @@ $.extend(Seadragon.Tile.prototype,
                 context.strokeRect(position.x, position.y, size.x, size.y);
             }
             context.globalAlpha = 1;
+
+            return this;
         },
 
         /**
@@ -185,6 +188,7 @@ $.extend(Seadragon.Tile.prototype,
             this.image = null;
             this.loaded = false;
             this.loading = false;
+            return this;
         },
 
         /**

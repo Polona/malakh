@@ -45,7 +45,7 @@ var seadragonBasePrototype = {
             throw new Error('Seadragon.' + className + ' needs a JSON parameter with at least the following ' +
                 'fields: ' + expectedOptionsArray.join(', ') + '.');
         }
-
+        return this;
     }
 };
 

@@ -78,7 +78,7 @@ $.extend(Seadragon.Spring.prototype,
          * @return {number}
          * @private
          */
-        transform: function transform(x) {
+        _transform: function _transform(x) {
             var s = this.config.springStiffness;
             return (1.0 - Math.exp(-x * s)) / (1.0 - Math.exp(-s));
         },
@@ -115,6 +115,7 @@ $.extend(Seadragon.Spring.prototype,
             } else {
                 this.targetTime = this.startTime + this.config.animationTime;
             }
+            return this;
         },
 
         /**
@@ -123,7 +124,7 @@ $.extend(Seadragon.Spring.prototype,
          * @param {number} target
          */
         resetTo: function resetTo(target) {
-            this.springTo(target, true);
+            return this.springTo(target, true);
         },
 
         /**
@@ -150,7 +151,8 @@ $.extend(Seadragon.Spring.prototype,
             this.currentValue = currentTime >= this.targetTime ?
                 this.targetValue :
                 this.startValue + (this.targetValue - this.startValue) *
-                    this.transform((currentTime - this.startTime) / (this.targetTime - this.startTime));
+                    this._transform((currentTime - this.startTime) / (this.targetTime - this.startTime));
+            return this;
         }
     }
 );

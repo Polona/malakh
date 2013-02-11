@@ -152,6 +152,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
 
             this.isAnimating = true;
             this.$container.trigger('seadragon:forceredraw.seadragon');
+            return this;
         },
 
         /**
@@ -160,7 +161,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
          * @param {boolean} [immediately=false]
          */
         panBy: function panBy(delta, immediately) {
-            this.panTo(this.getCenter().plus(delta), immediately);
+            return this.panTo(this.getCenter().plus(delta), immediately);
         },
 
         /**
@@ -200,6 +201,8 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
             this.springs.y.springTo(bounds.y, immediately);
             this.springs.width.springTo(bounds.width, immediately);
             this.springs.height.springTo(bounds.height, immediately);
+
+            return this;
         }
     }
 );

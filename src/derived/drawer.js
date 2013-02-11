@@ -35,7 +35,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
     var lastResetTime;
     var midUpdate;
 
-    reset(); // initialize fields
+    this.reset(); // initialize fields
 
     /**
      * "Registers" a new DZI image at a given index. We assume <code>dziImage = controller.dziImages[index]</code>.
@@ -50,17 +50,19 @@ Seadragon.Drawer = function Drawer(seadragon) {
             setTimeout(function () {
                 that.registerDziImage(dziImage, index);
             }, 100);
-            return;
+            return this;
         }
         if (!dziImage) {
             console.error('No DZI Image given to Drawer\'s registerDziImage method!');
-            return;
+            return this;
         }
 
         cacheNumTiles[index] = [];
         cachePixelOnImageSizeMax[index] = [];
         tilesMatrix[index] = [];
         coverage[index] = [];
+
+        return this;
     };
 
     /**
@@ -410,11 +412,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         }
         dziImage.blending = true;
 
-        update();
-    }
-
-    function showDzi(whichImage, immediately) {
-        showOrHideDzi(whichImage, false, immediately);
+        that.update();
     }
 
     /**
@@ -422,27 +420,32 @@ Seadragon.Drawer = function Drawer(seadragon) {
      *
      * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
      * @param {boolean} [immediately=false]
-     * @function
      */
-    this.showDzi = showDzi;
-
-    function hideDzi(whichImage, immediately) {
-        showOrHideDzi(whichImage, true, immediately);
-    }
+    this.showDzi = function showDzi(whichImage, immediately) {
+        showOrHideDzi(whichImage, false, immediately);
+        return this;
+    };
 
     /**
      * Hides the image.
      *
      * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
      * @param {boolean} [immediately=false]
-     * @function
      */
-    this.hideDzi = hideDzi;
+    this.hideDzi = function hideDzi(whichImage, immediately) {
+        showOrHideDzi(whichImage, true, immediately);
+        return this;
+    };
 
 
-    // See this.update description.
     // TODO this function is too large
-    function update() {
+    /**
+     * The main update function.
+     *
+     * @return {boolean} Are there some actions left to perform (like showing a tile, blurring it in/out etc.)?
+     *                   In such a case the function must be invoked again.
+     */
+    this.update = function update() {
         var dziImage, tile, zeroDimensionMax, deltaTime, opacity;
         var i, j, x, y, level; // indexes for loops
 
@@ -728,19 +731,15 @@ Seadragon.Drawer = function Drawer(seadragon) {
         midUpdate = false;
 
         return updateAgain;
-    }
+    };
+
 
     /**
-     * The main update function.
-     *
-     * @return {boolean} Are there some actions left to perform (like showing a tile, blurring it in/out etc.)?
-     *                   In such a case the function must be invoked again.
-     * @function
+     * Resets drawer state: clears all tiles, sets <code>lastResetTime</code> to now and
+     * triggers the <code>seadragon:forceredraw.seadragon</code> event.
+     * Restores drawer to its initial state.
      */
-    this.update = update;
-
-
-    function reset() {
+    this.reset = function reset() {
         cacheNumTiles = [];
         cachePixelOnImageSizeMax = [];
         coverage = [];
@@ -756,15 +755,8 @@ Seadragon.Drawer = function Drawer(seadragon) {
         midUpdate = false;
 
         that.$container.trigger('seadragon:forceredraw.seadragon');
-    }
-
-    /**
-     * Resets drawer state: clears all tiles, sets <code>lastResetTime</code> to now and
-     * triggers the <code>seadragon:forceredraw.seadragon</code> event.
-     * Restores drawer to its initial state.
-     * @function
-     */
-    this.reset = reset;
+        return this;
+    };
 };
 
 Seadragon.Drawer.prototype = Object.create(seadragonBasePrototype);

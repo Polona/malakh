@@ -37,7 +37,7 @@ $.extend(Seadragon.LayoutManager.prototype,
                     that._alignRowsOrColumns(alingInRows, heightOrWidth, spaceBetweenImages,
                         maxRowWidthOrColumnHeight, immediately);
                 }, 100);
-                return;
+                return this;
             }
 
             widthSum = heightSum = 0;
@@ -79,6 +79,8 @@ $.extend(Seadragon.LayoutManager.prototype,
 
                 dziImage.fitBounds(newBounds, immediately);
             });
+
+            return this;
         },
 
         /**
@@ -91,7 +93,7 @@ $.extend(Seadragon.LayoutManager.prototype,
          * @param {boolean} [immediately=false]
          */
         alignRows: function alignRows(height, spaceBetweenImages, maxRowWidth, immediately) {
-            this._alignRowsOrColumns(true, height, spaceBetweenImages, maxRowWidth, immediately);
+            return this._alignRowsOrColumns(true, height, spaceBetweenImages, maxRowWidth, immediately);
         },
 
         /**
@@ -105,7 +107,7 @@ $.extend(Seadragon.LayoutManager.prototype,
          * @param {boolean} [immediately=false]
          */
         alignColumns: function _alignColumns(width, spaceBetweenImages, maxColumnHeight, immediately) {
-            this._alignRowsOrColumns(false, width, spaceBetweenImages, maxColumnHeight, immediately);
+            return this._alignRowsOrColumns(false, width, spaceBetweenImages, maxColumnHeight, immediately);
         },
 
         /**
@@ -119,9 +121,10 @@ $.extend(Seadragon.LayoutManager.prototype,
             var dziImage = this.dziImages[whichImage];
             if (!dziImage) {
                 console.error('No image with number ' + whichImage);
-                return;
+                return this;
             }
             this.viewport.fitBounds(dziImage.bounds.getRectangle(current));
+            return this;
         },
 
 
@@ -134,6 +137,7 @@ $.extend(Seadragon.LayoutManager.prototype,
         showDzi: function showDzi(whichImage, immediately) {
             this.drawer.showDzi(whichImage, immediately);
             this.controller.restoreUpdating();
+            return this;
         },
 
         /**
@@ -145,6 +149,7 @@ $.extend(Seadragon.LayoutManager.prototype,
         hideDzi: function hideDzi(whichImage, immediately) {
             this.drawer.hideDzi(whichImage, immediately);
             this.controller.restoreUpdating();
+            return this;
         }
     }
 );
