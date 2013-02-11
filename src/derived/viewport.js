@@ -29,20 +29,21 @@
  *
  * @extends Seadragon.AnimatedRectangle
  *
- * @param {jQuery} $container A jQuery object representing the DOM element containing
- *                                   all the HTML structure of Seadragon.
+ * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.Viewport = function Viewport($container) {
-    if ($container == null) {
-        console.info('Received arguments: ', [].slice.apply(arguments));
-        throw new Error('Incorrect paremeter given to Seadragon.Viewport!\n' +
-            'Use Seadragon.Viewport($container)');
-    }
+Seadragon.Viewport = function Viewport(seadragon) {
+    this.ensureArguments(arguments, 'Viewport');
 
-    var containerDimensions = $container.css(['width', 'height']);
+    /**
+     * Maximum level to be drawn.
+     * @type number
+     */
+    this.maxLevel = 0;
+
+    var containerDimensions = this.$container.css(['width', 'height']);
     var containerWidth = parseFloat(containerDimensions.width);
     var containerHeight = parseFloat(containerDimensions.height);
-    Seadragon.AnimatedRectangle.call(this, $container,
+    Seadragon.AnimatedRectangle.call(this, this.seadragon,
         new Seadragon.Rectangle(0, 0, containerWidth, containerHeight));
 
     /**
@@ -57,13 +58,13 @@ Seadragon.Viewport = function Viewport($container) {
      * Maximum permissible
      * @type number
      */
-    this.maxLevelScale = Infinity; // We'll change it later.
+    this.maxLevelExp = Infinity; // We'll change it later.
     /**
      * Viewport can be constrained in a particular rectangle so that a user can't pan or zoom
-     * beyond its visibility. It's done by setting <code>Seadragon.Config.constraintViewport</code>
+     * beyond its visibility. It's done by setting <code>this.config.constraintViewport</code>
      * to true and then this parameter is used for constraining. If this parameter is not an instance
      * of <code>Seadragon.Rectangle</code>, viewport is not constrained regardless of
-     * <code>Seadragon.Config.constraintViewport</code> setting.
+     * <code>this.config.constraintViewport</code> setting.
      *
      * @type Seadragon.Rectangle
      */
@@ -71,6 +72,7 @@ Seadragon.Viewport = function Viewport($container) {
 };
 
 Seadragon.Viewport.prototype = Object.create(Seadragon.AnimatedRectangle.prototype);
+var parentPrototype = Object.getPrototypeOf(Seadragon.Viewport.prototype);
 
 $.extend(Seadragon.Viewport.prototype,
     /**
@@ -119,6 +121,7 @@ $.extend(Seadragon.Viewport.prototype,
                 this.applyConstraints(false, refPoint);
             }
             this.$container.trigger('seadragon:forceredraw.seadragon');
+            return this;
         },
 
         /**
@@ -131,7 +134,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {Seadragon.Point} [refPoint]
          */
         zoomBy: function zoomBy(factor, immediately, refPoint, /* internal */ dontApplyConstraints) {
-            this.zoomTo(this.getZoom() * factor, immediately, refPoint, dontApplyConstraints);
+            return this.zoomTo(this.getZoom() * factor, immediately, refPoint, dontApplyConstraints);
         },
 
         /**
@@ -141,11 +144,12 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          */
         panTo: function panTo(center, immediately, /* internal */ dontApplyConstraints) {
-            Seadragon.AnimatedRectangle.prototype.panTo.call(this, center, immediately);
+            parentPrototype.panTo.call(this, center, immediately);
             if (!dontApplyConstraints) {
                 this.applyConstraints(false);
             }
             this.$container.trigger('seadragon:forceredraw.seadragon');
+            return this;
         },
 
         /**
@@ -155,7 +159,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          */
         panBy: function panBy(delta, immediately, /* internal */ dontApplyConstraints) {
-            this.panTo(this.getCenter().plus(delta), immediately, dontApplyConstraints);
+            return this.panTo(this.getCenter().plus(delta), immediately, dontApplyConstraints);
         },
 
         /**
@@ -186,9 +190,10 @@ $.extend(Seadragon.Viewport.prototype,
                 newBounds.x = center.x - newBounds.width / 2;
             }
 
-            Seadragon.AnimatedRectangle.prototype.fitBounds.call(this, newBounds, immediately);
+            parentPrototype.fitBounds.call(this, newBounds, immediately);
 
             this.$container.trigger('seadragon:forcealign.seadragon');
+            return this;
         },
 
         /**
@@ -199,9 +204,9 @@ $.extend(Seadragon.Viewport.prototype,
         fitConstraintBounds: function fitConstraintBounds(immediately) {
             if (!(this.constraintBounds instanceof Seadragon.Rectangle)) {
                 console.error('Can\'t fit the viewport to constraintBounds because they\'re not set.');
-                return;
+                return this;
             }
-            this.fitBounds(this.constraintBounds, immediately);
+            return this.fitBounds(this.constraintBounds, immediately);
         },
 
         /**
@@ -212,10 +217,10 @@ $.extend(Seadragon.Viewport.prototype,
         resize: function resize(newContainerSize) {
             var zoom = this.getZoom();
             // Update container size, but make a copy first.
-            this.containerSize = new Seadragon.Point(newContainerSize.x, newContainerSize.y);
+            this.containerSize = new Seadragon.Point(newContainerSize.x, newContainerSize.y); // TODO a Seadragon field?
             this.springs.width.resetTo(this.containerSize.x / zoom);
             this.springs.height.resetTo(this.springs.width.get() * this.containerSize.y / this.containerSize.x);
-            this.applyConstraints(true);
+            return this.applyConstraints(true);
         },
 
         /**
@@ -223,23 +228,23 @@ $.extend(Seadragon.Viewport.prototype,
          * to "lose" the image.
          *
          * <p>NOTE: Since viewport doesn't have any information about pixel density in particular DZIs,
-         * without the <code>maxLevelScale</code> parameter it can't protect from zooming in too much but
+         * without the <code>maxLevelExp</code> parameter it can't protect from zooming in too much but
          * only from zooming out or dragging the constraints rectangle outside of the viewport. Zooming
          * in has to be handled separately. Thus, it's advised to NOT USE this method directly but
          * to use controller's <code>applyConstraints</code> method instead. This method ignores the
-         * <code>Seadragon.Config.constraintViewport</code> parameter since it's checked in controller's
+         * <code>this.config.constraintViewport</code> parameter since it's checked in controller's
          * method anyway.
          *
          * @param {boolean} [immediately=false]
          * @param {Seadragon.Point} [refPoint]
          */
         applyConstraints: function applyConstraints(immediately, refPoint) {
-            if (!Seadragon.Config.constraintViewport) {
-                return;
+            if (!this.config.constraintViewport) {
+                return this;
             }
-            if (!(this.constraintBounds instanceof Seadragon.Rectangle)) {
+            if (!(this.constraintBounds instanceof Seadragon.Rectangle)) { // TODO a Seadragon field?
                 console.error('Can\'t apply constraints because constraintBounds is not set.');
-                return;
+                return this;
             }
             var scale;
             var needToAdjust = false;
@@ -262,15 +267,15 @@ $.extend(Seadragon.Viewport.prototype,
                 needToAdjust = true;
                 scale = vR[whatToScale] / cR[whatToScale];
             } else {
-                // We use 'else' just in case the maxLevelScale parameter has a stupid value.
+                // We use 'else' just in case the maxLevelExp parameter has a stupid value.
                 // Otherwise, it could case the image to flicker.
                 var cRInPixels = this.deltaPixelsFromPoints(new Seadragon.Point(cR.width, cR.height));
-                if (cRInPixels.x > this.maxLevelScale) { // We've zoomed in too much
+                if (cRInPixels.x > this.maxLevelExp) { // We've zoomed in too much
                     needToAdjust = true;
-                    scale = this.maxLevelScale / cRInPixels.x;
-                } else if (cRInPixels.y > this.maxLevelScale) { // We've zoomed in too much
+                    scale = this.maxLevelExp / cRInPixels.x;
+                } else if (cRInPixels.y > this.maxLevelExp) { // We've zoomed in too much
                     needToAdjust = true;
-                    scale = this.maxLevelScale / cRInPixels.y;
+                    scale = this.maxLevelExp / cRInPixels.y;
                 }
             }
 
@@ -316,6 +321,8 @@ $.extend(Seadragon.Viewport.prototype,
             if (needToAdjust) {
                 this.panTo(vR.getCenter(), immediately, true);
             }
+
+            return this;
         },
 
         // CONVERSION HELPERS

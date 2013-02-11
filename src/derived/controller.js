@@ -15,134 +15,82 @@
  *
  * @see Seadragon.Viewport
  *
- * @param {string|jQuery} containerSelectorOrElement
+ * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.Controller = function Controller(containerSelectorOrElement) {
+Seadragon.Controller = function Controller(seadragon) {
+    this.ensureArguments(arguments, 'Controller');
+
     var that = this,
-        $container, $canvas,
-        lastOpenStartTime, lastOpenEndTime,
         animated,
         forceAlign, forceRedraw,
         dziImageBoundsUpdatesInProgressNums,
         dziImagesToHandle,
         lastPosition,
         containerSize,
-        magnifierShown, pickerShown,
-        lockOnUpdates,
-        maxLevel;
+        lockOnUpdates;
 
-    (function init() {
-        $container = $(containerSelectorOrElement);
-        if ($container.length === 0) {
-            console.info('Received containerSelectorOrElement: ', containerSelectorOrElement);
-            throw new Error('Can\'t create a Controller instance without a container!');
-        }
-        $container.empty();
-        $container.css({
-            backgroundColor: Seadragon.Config.backgroundColor
-        });
-
-        $canvas = $('<canvas>');
-        $container.append($canvas);
-
-        lastOpenStartTime = lastOpenEndTime = 0;
-
-        that.dziImages = [];
+    function init() {
         dziImageBoundsUpdatesInProgressNums = [];
-
-        magnifierShown = pickerShown = false;
         lockOnUpdates = false;
-
-        maxLevel = 0; // No DZIs loaded yet.
 
         dziImagesToHandle = 0;
 
         bindEvents();
 
-        // Clear any previous message.
-        var containerCss = $container.css(['width', 'height']);
+        var containerCss = that.$container.css(['width', 'height']);
         containerSize = new Seadragon.Point(parseFloat(containerCss.width), parseFloat(containerCss.height));
-
-        // Restart other fields.
-        that.viewport = new Seadragon.Viewport($container);
-        if (Seadragon.Magnifier) {
-            /**
-             * @type {Seadragon.Magnifier}
-             */
-            that.magnifier = new Seadragon.Magnifier(new Seadragon.Point(0, 0), Seadragon.Config.magnifierRadius);
-        }
-        if (Seadragon.Picker) {
-            /**
-             * @type {Seadragon.Picker}
-             */
-            that.picker = new Seadragon.Picker($container, that.viewport);
-        }
-        if (Seadragon.Markers) {
-            /**
-             * @type {Seadragon.Markers}
-             */
-            that.markers = new Seadragon.Markers($container, that.viewport);
-        }
-        /**
-         * A <code>Seadragon.Drawer</code> instance, handles all the drawing.
-         *
-         * @type {Seadragon.Drawer}
-         */
-        that.drawer = new Seadragon.Drawer({
-            viewport: that.viewport,
-            $container: $container,
-            magnifier: that.magnifier
-        });
-        /**
-         * A <code>Seadragon.LayoutManager</code> instance, contains helper layout methods.
-         *
-         * @type {Seadragon.LayoutManager}
-         */
-        that.layoutManager = new Seadragon.LayoutManager(that);
 
         // Begin updating.
         animated = false;
         forceAlign = forceRedraw = true;
         scheduleUpdate();
-    })();
+    }
 
     if (Seadragon.Magnifier) {
         /**
          * Shows the magnifier.
          */
-        this.showMagnifier = function showMagnifier() {
-            $(document).mouseup(); // To stop canvas dragging etc.
+        this.enableMagnifier = function enableMagnifier() {
+            if (that.config.enableMagnifier) { // already enabled
+                return this;
+            }
+            $(document).trigger('mouseup.seadragon'); // To stop canvas dragging etc.
 
-            magnifierShown = true;
-            that.drawer.setMagnifier(true);
-            that.drawer.canvasLayersManager.drawMagnifier = true;
+            that.config.enableMagnifier = true;
+            document.body.style.cursor = 'none';
 
-            $canvas.on('mousemove.seadragon', moveMagnifier);
-            $canvas.trigger('mousemove.seadragon');
+            that.$canvas.on('mousemove.seadragon', moveMagnifier);
+            that.$canvas.trigger('mousemove.seadragon');
+
+            return this;
         };
 
         /**
          * Hides the magnifier.
          */
-        this.hideMagnifier = function hideMagnifier() {
-            $canvas.off('mousemove.seadragon', moveMagnifier);
+        this.disableMagnifier = function disableMagnifier() {
+            if (!that.config.enableMagnifier) { // already disabled
+                return this;
+            }
+            that.$canvas.off('mousemove.seadragon', moveMagnifier);
 
-            that.drawer.canvasLayersManager.drawMagnifier = false;
-            that.drawer.setMagnifier(false);
-            magnifierShown = false;
+            that.config.enableMagnifier = false;
+            document.body.style.cursor = '';
 
             forceRedraw = true;
+            return this;
         };
 
         /**
          * Toggles magnifier's state - shows it if it was hidden; hides it otherwise.
          */
         this.toggleMagnifier = function toggleMagnifier() {
-            if (magnifierShown) {
-                that.hideMagnifier();
+            if (that.config.enableMagnifier) {
+                that.disableMagnifier();
             } else {
-                that.showMagnifier();
+                that.enableMagnifier();
             }
+            return this;
         };
     }
 
@@ -150,99 +98,103 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         /**
          * Shows the picker.
          */
-        this.showPicker = function showPicker() {
-            pickerShown = true;
+        this.enablePicker = function enablePicker() {
+            if (that.config.enablePicker) { // already enabled
+                return this;
+            }
+            that.config.enablePicker = true;
             that.picker.show();
+            return this;
         };
 
         /**
          * Hides the picker.
          */
-        this.hidePicker = function hidePicker() {
-            pickerShown = false;
+        this.disablePicker = function disablePicker() {
+            if (!that.config.enablePicker) { // already disabled
+                return this;
+            }
+            that.config.enablePicker = false;
             that.picker.hide();
+            return this;
         };
 
         /**
          * Toggles picker's state - shows it if it was hidden; hides it otherwise.
          */
         this.togglePicker = function togglePicker() {
-            if (pickerShown) {
-                that.hidePicker();
+            if (that.config.enablePicker) {
+                that.disablePicker();
             } else {
-                that.showPicker();
+                that.enablePicker();
             }
+            return this;
         };
-    }
-
-    function getMousePosition(evt) {
-        var offset = $container.offset();
-        return new Seadragon.Point(evt.pageX - offset.left, evt.pageY - offset.top);
     }
 
     /**
      * Returns mouse position extracted from <code>event</code>.
      *
-     * @param {jQuery.Event} event Mouse event.
+     * @param {jQuery.Event} evt Mouse event.
      * @return {Seadragon.Point}
-     * @function
      */
-    this.getMousePosition = getMousePosition;
+    this.getMousePosition = function getMousePosition(evt) {
+        var offset = that.$container.offset();
+        return new Seadragon.Point(evt.pageX - offset.left, evt.pageY - offset.top);
+    };
 
     function onDocumentMouseUp() {
         $(document).off('mousemove.seadragon', dragCanvas);
-        restoreUpdating();
+        that.restoreUpdating();
     }
 
     function bindEvents() {
-        $canvas.on({
+        that.$canvas.on({
             'mouseenter.seadragon': function () {
-                if (magnifierShown) {
-                    that.drawer.canvasLayersManager.drawMagnifier = true;
-                    restoreUpdating();
+                if (that.config.enableMagnifier) {
+                    that.restoreUpdating();
                 }
             },
 
             'mouseleave.seadragon': function () {
-                if (magnifierShown) { // We have to redraw to hide magnifier.
-                    that.drawer.canvasLayersManager.drawMagnifier = false;
-                    restoreUpdating();
+                if (that.config.enableMagnifier) { // We have to redraw to hide magnifier.
+                    that.restoreUpdating();
                 }
             },
 
             'mousedown.seadragon': function (evt) {
-                if (evt.which !== 1 || magnifierShown) { // Only left-click is supported.
+                if (evt.which !== 1 || that.config.enableMagnifier) { // Only left-click is supported.
                     return false;
                 }
-                lastPosition = getMousePosition(evt);
+                lastPosition = that.getMousePosition(evt);
                 $(document).on('mousemove.seadragon', dragCanvas);
                 return false;
             },
 
             'wheel.seadragon': function (evt) {
-                if (magnifierShown || !evt.deltaY) {
+                if (that.config.enableMagnifier || !evt.deltaY) {
                     return false;
                 }
                 zoomCanvas(evt);
-                restoreUpdating();
+                that.restoreUpdating();
                 return false;
             }
         });
 
-        $container.on({
+        that.$container.on({
             'seadragon:forcealign.seadragon': function () {
                 forceAlign = true;
                 recalculateMaxLevel();
-                restoreUpdating();
+                that.restoreUpdating();
             },
 
             'seadragon:forceredraw.seadragon': function () {
-                restoreUpdating();
+                that.restoreUpdating();
             }
         });
 
         $(document).on('mouseup.seadragon', onDocumentMouseUp);
-        $(window).on('resize.seadragon', restoreUpdating);
+        $(window).on('resize.seadragon', that.restoreUpdating);
     }
 
     /**
@@ -252,10 +204,10 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @private
      */
     function dragCanvas(evt) {
-        var position = getMousePosition(evt);
+        var position = that.getMousePosition(evt);
         var delta = position.minus(lastPosition);
 
-        var blockMovement = Seadragon.Config.blockMovement;
+        var blockMovement = that.config.blockMovement;
         if (blockMovement.horizontal) {
             delta.x = 0;
         }
@@ -274,17 +226,17 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @private
      */
     function zoomCanvas(evt) {
-        if (Seadragon.Config.blockZoom) {
+        if (that.config.blockZoom) {
             return;
         }
-        var factor = Seadragon.Config.zoomPerScroll;
+        var factor = that.config.zoomPerScroll;
         if (evt.deltaY > 0) { // zooming out
             factor = 1 / factor;
         }
         that.viewport.zoomBy(
             factor,
             false,
-            that.viewport.pointFromPixel(getMousePosition(evt), true));
+            that.viewport.pointFromPixel(that.getMousePosition(evt), true));
     }
 
 
@@ -295,9 +247,9 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @private
      */
     function moveMagnifier(evt) {
-        var position = getMousePosition(evt);
+        var position = that.getMousePosition(evt);
         that.magnifier.panTo(position);
-        restoreUpdating();
+        that.restoreUpdating();
     }
 
     /**
@@ -305,32 +257,16 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * maximum of all <code>dziImage.maxLevel<code>s - their levels all scaled so that
      * they match "virtual" levels with regards to their representation on canvas.
      *
-     * @see Seadragon.TiledImage.getAdjustedLevel
+     * @see Seadragon.TiledImage#getTiledImageLevel
      * @private
      */
     function recalculateMaxLevel() {
-        maxLevel = 0;
+        that.viewport.maxLevel = 0;
         that.dziImages.forEach(function (dziImage) {
-            maxLevel = Math.max(maxLevel, dziImage.getUnadjustedLevel(dziImage.maxLevel));
+            that.viewport.maxLevel = Math.max(that.viewport.maxLevel, dziImage.getViewportLevel(dziImage.maxLevel));
         });
-        that.viewport.maxLevelScale = Math.pow(2, maxLevel);
-        that.drawer.maxLevel = maxLevel;
+        that.viewport.maxLevelExp = Math.pow(2, that.viewport.maxLevel); // TODO shouldn't this be in Seadragon?
     }
-
-    function fitBounds(whichImage, bounds, immediately) {
-        that.dziImages[whichImage].fitBounds(bounds, immediately);
-        $container.trigger('seadragon:forcealign.seadragon');
-    }
-
-    /**
-     * Animates a <code>TiledImage</code> bounds to new ones.
-     *
-     * @param {Seadragon.TiledImage} whichImage
-     * @param {Seadragon.Rectangle} bounds
-     * @param {boolean} [immediately=false]
-     * @function
-     */
-    this.fitBounds = fitBounds;
 
     /**
      * Registers a new open image.
@@ -342,29 +278,28 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      */
     function onOpen(dziImage, index) {
         if (!dziImage) {
-            console.error('No DZI Image given to Viewer\'s onOpen()!');
+            console.error('No DZI Image given to Controller\'s onOpen()!');
             return;
         }
 
         // Add an image.
-        if (typeof index !== 'number') {
+        if (index == null) {
             index = that.dziImages.length;
         }
         that.dziImages[index] = dziImage;
         dziImageBoundsUpdatesInProgressNums[index] = 0;
-        that.drawer.addDziImage(dziImage, index);
+        that.drawer.registerDziImage(dziImage, index);
 
-        maxLevel = Math.max(maxLevel, dziImage.maxLevel);
-        that.viewport.maxLevelScale = Math.pow(2, maxLevel);
-        that.drawer.maxLevel = maxLevel;
+        that.viewport.maxLevel = Math.max(that.viewport.maxLevel, dziImage.maxLevel);
+        that.viewport.maxLevelExp = Math.pow(2, that.viewport.maxLevel);
 
         dziImagesToHandle--;
 
-        $container.trigger('seadragon:loadeddzi.seadragon');
+        that.$container.trigger('seadragon:loadeddzi.seadragon');
         if (dziImagesToHandle === 0) {
-            $container.trigger('seadragon:loadeddziarray.seadragon');
+            that.$container.trigger('seadragon:loadeddziarray.seadragon');
         }
-        restoreUpdating();
+        that.restoreUpdating();
     }
 
     /**
@@ -373,7 +308,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      */
     function scheduleUpdate() {
         if (!lockOnUpdates) {
-            if (isLoading()) {
+            if (that.isLoading()) {
                 setTimeout(scheduleUpdate, 1);
                 return;
             }
@@ -381,19 +316,17 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         }
     }
 
-    function restoreUpdating() {
+    /**
+     * Unblock updates stopped by a lack of action. Invoked by single actions expecting redrawing.
+     */
+    this.restoreUpdating = function restoreUpdating() {
         forceRedraw = true;
         if (lockOnUpdates) {
             lockOnUpdates = false;
             scheduleUpdate();
         }
-    }
-
-    /**
-     * Unblock updates stopped by a lack of action. Invoked by single actions expecting redrawing.
-     * @function
-     */
-    this.restoreUpdating = restoreUpdating;
+        return this;
+    };
 
     /**
      * Updates bounds of a Seadragon image; usually used during aligning (so not too often).
@@ -407,7 +340,7 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
     function updateDziImageBounds(whichImage, decreaseCounter) {
         var dziImage = that.dziImages[whichImage];
         forceAlign = dziImage.bounds.update() || forceAlign;
-        restoreUpdating();
+        that.restoreUpdating();
         if (decreaseCounter) {
             dziImageBoundsUpdatesInProgressNums[whichImage]--;
         }
@@ -459,13 +392,13 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @private
      */
     function update() {
-        var containerCss = $container.css(['width', 'height']);
+        var containerCss = that.$container.css(['width', 'height']);
         var newContainerSize = new Seadragon.Point(parseFloat(containerCss.width), parseFloat(containerCss.height));
 
         if (!newContainerSize.equals(containerSize)) {
             // Maintain image position:
             forceRedraw = true; // canvas needs it
-            containerSize = newContainerSize;
+            containerSize = newContainerSize; // TODO maybe keep it as a Seadragon parameter?
             that.viewport.resize(newContainerSize);
         }
 
@@ -489,14 +422,14 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         // Triger proper events.
         if (!animated && animating) {
             // We weren't animating, and now we did ==> animation start.
-            $container.trigger('seadragon:animationstart.seadragon');
-            $container.trigger('seadragon:animation.seadragon');
+            that.$container.trigger('seadragon:animationstart.seadragon');
+            that.$container.trigger('seadragon:animation.seadragon');
         } else if (animating) {
             // We're in the middle of animating.
-            $container.trigger('seadragon:animation.seadragon');
+            that.$container.trigger('seadragon:animation.seadragon');
         } else if (animated) {
             // We were animating, and now we're not anymore ==> animation finish.
-            $container.trigger('seadragon:animationend.seadragon');
+            that.$container.trigger('seadragon:animationend.seadragon');
         }
 
         // For the next update check.
@@ -504,6 +437,98 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
 
         scheduleUpdate();
     }
+
+    /**
+     * Processes a DZI file, creating a <code>DziImage</code> instance.
+     *
+     * @param {Object} options An object containing all given options.
+     * @param {Document} options.data An object representing a DZI file.
+     * @param {string} options.dziUrl See <a href="#createFromDzi"><code>Seadragon.DziImage.createFromDzi</code></a>.
+     * @param {jQuery} options.$container See <a href="#createFromDzi">
+     *                                    <code>Seadragon.DziImage.createFromDzi</code></a>.
+     * @param {Document} [options.bounds] Bounds in which an image must fit. If not given, we assume the rectangle
+     *                                    <code>[0, 0, width x height]</code> where <code>width</code> and
+     *                                    <code>height</code> are taken from DZI.
+     * @param {boolean} [options.shown] See <a href="#createFromDzi"><code>Seadragon.DziImage.createFromDzi</code></a>.
+     * @return {Seadragon.DziImage}
+     *
+     * @memberof Seadragon.Controller~
+     * @private
+     */
+    function processDzi(options) {
+        var imageNode = $(options.data.documentElement);
+        if (!imageNode || imageNode.prop('tagName') !== 'Image') {
+            throw new Error('Sorry, we only support Deep Zoom Image!');
+        }
+
+        var fileFormat = imageNode.attr('Format');
+
+        var sizeNode = imageNode.children('size');
+
+        var invalidFormatMessage = 'This doesn\'t appear to be a valid Deep Zoom Image.';
+        if (!sizeNode) {
+            throw new Error(invalidFormatMessage);
+        }
+
+        var width = parseInt(sizeNode.attr('Width'), 10);
+        var height = parseInt(sizeNode.attr('Height'), 10);
+        var tileSize = parseInt(imageNode.attr('TileSize'), 10);
+        var tileOverlap = parseInt(imageNode.attr('Overlap'), 10);
+
+        if (!width || !height || !tileSize) {
+            throw new Error(invalidFormatMessage);
+        }
+
+        // If tilesUrl were not provided, the default path is the same as dziUrl with ".dzi" changed into "_files".
+        var tilesUrl = options.tilesUrl || options.dziUrl.replace(/\.dzi$/, '_files/');
+
+        if (!options.bounds) {
+            options.bounds = new Seadragon.Rectangle(0, 0, width, height); // default bounds copied from DZI
+        }
+
+        return that.DziImage({
+            width: width,
+            height: height,
+            tileSize: tileSize,
+            tileOverlap: tileOverlap,
+            tilesUrl: tilesUrl,
+            fileFormat: fileFormat,
+            bounds: options.bounds,
+            shown: options.shown
+        });
+    }
+
+
+    /**
+     * Creates a DziImage instance from the DZI file.
+     *
+     * @param {Object} options  An object containing all given options.
+     * @param {string} options.dziUrl  An URL/path to the DZI file.
+     * @param {function} options.callback  Function invoked when DZI is fully processed.
+     * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
+     *                                                Seadragon plane.
+     * @param {number} [options.index]  If specified, an image is loaded into <code>controller.dziImages[index]</code>.
+     *                                  Otherwise it's put at the end of the table.
+     * @param {boolean} [options.shown=true]  If false, image is not drawn. It can be made visible later.
+     */
+    this.createFromDzi = function createFromDzi(options) {
+        this.ensureOptions(options, 'DziImage.createFromDzi', ['dziUrl', 'callback']);
+
+        $.ajax({
+            type: 'GET',
+            url: options.dziUrl,
+            dataType: 'xml',
+            success: function (data) {
+                options.data = data;
+                options.callback(processDzi(options), options.index);
+            },
+            error: function (_, statusText) {
+                throw new Error('Unable to retrieve the given DZI file, does it really exist? ', statusText);
+            }
+        });
+
+        return this;
+    };
 
     // TODO this should probably just parse a properly structured JSON, current approach is not extensible.
     /**
@@ -523,10 +548,9 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
             dziImagesToHandle++;
         }
         try {
-            Seadragon.DziImage.createFromDzi({
+            this.createFromDzi({
                 dziUrl: dziUrl,
                 tilesUrl: tilesUrl,
-                $container: $container,
                 bounds: bounds,
                 index: index,
                 shown: shown,
@@ -535,8 +559,10 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         } catch (error) {
             // We try to keep working even after a failed attempt to load a new DZI.
             dziImagesToHandle--;
-            console.error('DZI failed to load.');
+            console.error('DZI failed to load.', error);
         }
+
+        return this;
     };
 
     /**
@@ -549,20 +575,18 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         dziDataArray.forEach(function (dziData, index) {
             that.openDzi(dziData.dziUrl, dziData.tilesUrl, index, !hideByDefault, dziData.boundsArray, true);
         });
+        return this;
     };
-
-    function isLoading() {
-        return dziImagesToHandle > 0;
-    }
 
     /**
      * Checks if controller is in progress of loading/processing new DZIs. Some actions are halted
      * for these short periods.
      *
      * @return {boolean}
-     * @function
      */
-    this.isLoading = isLoading;
+    this.isLoading = function isLoading() {
+        return dziImagesToHandle > 0;
+    };
 
     /**
      * TODO document.
@@ -571,16 +595,17 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
         that.dziImages = [];
         dziImageBoundsUpdatesInProgressNums = [];
 
-        magnifierShown = pickerShown = false;
+        that.config.enableMagnifier = that.config.enablePicker = false;
         lockOnUpdates = true; // 'seadragon:forcealign.seadragon' handler will resume updating
 
-        maxLevel = 0; // No DZIs loaded yet.
+        that.viewport.maxLevel = 0; // No DZIs loaded yet.
 
         dziImagesToHandle = 0;
 
         // Reset the drawer (at the end it triggers the <code>seadragon:forcealign.seadragon</code> event)
         // so controller will know when to force re-draw.
         that.drawer.reset();
+        return this;
     };
 
     /**
@@ -589,14 +614,10 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * When there's a need to re-initialize Seadragon, a new <code>Controller</code> object should be created.
      */
     this.destroy = function destroy() {
-        $(window, document, $container).off('.seadragon');
-        $container.empty();
+        $(window, document, this.$container).off('.seadragon');
+        this.$container.empty();
+        return this;
     };
-
-
-    function dziImageBoundsInPoints(whichImage, current) {
-        return that.dziImages[whichImage].bounds.getRectangle(current);
-    }
 
     /**
      * Returns bounds of the given image in points.
@@ -604,14 +625,10 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @param {number} whichImage We get bounds of the <code>this.dziImages[whichImage]</code> image
      * @param {boolean} [current=false]
      * @return {Seadragon.Rectangle}
-     * @function
      */
-    this.dziImageBoundsInPoints = dziImageBoundsInPoints;
-
-    function dziImageBoundsInPixels(whichImage, current) {
-        var pointBounds = dziImageBoundsInPoints(whichImage, current);
-        return that.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
-    }
+    this.dziImageBoundsInPoints = function dziImageBoundsInPoints(whichImage, current) {
+        return this.dziImages[whichImage].bounds.getRectangle(current);
+    };
 
     /**
      * Returns bounds of the given image in pixels.
@@ -619,7 +636,13 @@ Seadragon.Controller = function Controller(containerSelectorOrElement) {
      * @param {number} whichImage We get bounds of the <code>this.dziImages[whichImage]</code> image
      * @param {boolean} [current=false]
      * @return {Seadragon.Rectangle}
-     * @function
      */
-    this.dziImageBoundsInPixels = dziImageBoundsInPixels;
+    this.dziImageBoundsInPixels = function dziImageBoundsInPixels(whichImage, current) {
+        var pointBounds = this.dziImageBoundsInPoints(whichImage, current);
+        return this.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
+    };
+
+    init();
 };
+
+Seadragon.Controller.prototype = Object.create(seadragonBasePrototype);

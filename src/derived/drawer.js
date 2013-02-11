@@ -14,20 +14,12 @@
  *
  * @see Seadragon.Viewport
  *
- * @param {Object} options An object containing all given options.
- * @param {Seadragon.Viewport} options.viewport
- * @param {jQuery} options.$container A jQuery object representing the DOM element containing
- *                                           all the HTML structure of Seadragon.
- * @param {Seadragon.Magnifier} [options.magnifier]
+ * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.Drawer = function Drawer(options) {
+Seadragon.Drawer = function Drawer(seadragon) {
+    this.ensureArguments(arguments, 'Drawer');
+
     var that = this;
-
-    var dziImages, viewport, magnifier;
-    var $container, canvas, context;
-
-    var imageLoader;
-    var magnifierShown;
 
     var cacheNumTiles; // 1d dictionary [whichImage][level] --> Point
     var cachePixelOnImageSizeMax; // 1d dictionary [whichImage][level] --> max(point.x, point.y)
@@ -43,84 +35,33 @@ Seadragon.Drawer = function Drawer(options) {
     var lastResetTime;
     var midUpdate;
 
-    var QUOTA = 500; // the max number of images we should keep in memory
-    var MIN_PIXEL_RATIO = 0.5; // the most shrunk a tile should be
-
-    (function init() {
-        if (options == null || options.viewport == null || options.$container == null) {
-            console.info('Received options: ', options);
-            throw new Error('Seadragon.Drawer needs a JSON parameter with at least the following fields: ' +
-                'viewport, $container.\n' +
-                'Parameter magnifier is optional.');
-        }
-
-        viewport = options.viewport;
-        magnifier = options.magnifier;
-
-        $container = $(options.$container);
-        canvas = $container.find('canvas').get(0);
-        context = canvas.getContext('2d');
-        // One layer for a magnifier:
-        that.canvasLayersManager = new Seadragon.CanvasLayersManager(viewport, context, magnifier);
-
-        that.element = $container;
-        $container.append($(canvas));
-
-        imageLoader = new Seadragon.ImageLoader(Seadragon.Config.imageLoaderLimit);
-
-        reset();
-    })();
-
     /**
      * "Registers" a new DZI image at a given index. We assume <code>dziImage = controller.dziImages[index]</code>.
      *
      * @param {Seadragon.DziImage} dziImage
      * @param {number} index
      */
-    this.addDziImage = function addDziImage(dziImage, index) {
+    this.registerDziImage = function registerDziImage(dziImage, index) {
         if (midUpdate) { // We don't want to add a new image during the update process, deferring.
             console.log('Deferred adding a DZI to Drawer');
             var that = this;
             setTimeout(function () {
-                that.addDziImage(dziImage, index);
+                that.registerDziImage(dziImage, index);
             }, 100);
-            return;
+            return this;
         }
         if (!dziImage) {
-            console.error('No DZI Image given to Drawer\'s addDziImage method!');
-            return;
+            console.error('No DZI Image given to Drawer\'s registerDziImage method!');
+            return this;
         }
 
-        // Add an image.
-        if (typeof index === 'number') {
-            dziImages[index] = dziImage;
-        } else {
-            index = dziImage.length;
-            dziImages.push(dziImage);
-        }
         cacheNumTiles[index] = [];
         cachePixelOnImageSizeMax[index] = [];
         tilesMatrix[index] = [];
         coverage[index] = [];
+
+        return this;
     };
-
-    function setMagnifier(enable) {
-        if (enable) {
-            document.body.style.cursor = 'none';
-            magnifierShown = true;
-        } else {
-            document.body.style.cursor = '';
-            magnifierShown = false;
-        }
-    }
-
-    /**
-     * If <code>enable</code> is true, shows the magnifier; otherwise hides it.
-     *
-     * @param {boolean} enable
-     * @function
-     */
-    this.setMagnifier = setMagnifier;
 
     /**
      * Returns number of tiles for the image at a given level.
@@ -133,7 +74,7 @@ Seadragon.Drawer = function Drawer(options) {
      */
     function getNumTiles(whichImage, level) {
         if (!cacheNumTiles[whichImage][level]) {
-            cacheNumTiles[whichImage][level] = dziImages[whichImage].getNumTiles(level);
+            cacheNumTiles[whichImage][level] = that.dziImages[whichImage].getNumTiles(level);
         }
 
         return cacheNumTiles[whichImage][level];
@@ -150,7 +91,7 @@ Seadragon.Drawer = function Drawer(options) {
      */
     function getPixelOnImageSizeMax(whichImage, level) {
         if (!cachePixelOnImageSizeMax[whichImage][level]) {
-            var pixelOnImageSize = dziImages[whichImage].getScaledDimensions(level).invert();
+            var pixelOnImageSize = that.dziImages[whichImage].getScaledDimensions(level).invert();
             cachePixelOnImageSizeMax[whichImage][level] = Math.max(pixelOnImageSize.x, pixelOnImageSize.y);
         }
 
@@ -176,7 +117,7 @@ Seadragon.Drawer = function Drawer(options) {
         var boundsAlreadyUpdated = false;
 
         tileMatrix = tilesMatrix[whichImage];
-        dziImage = dziImages[whichImage];
+        dziImage = that.dziImages[whichImage];
 
         if (!tileMatrix[level]) {
             tileMatrix[level] = [];
@@ -187,12 +128,10 @@ Seadragon.Drawer = function Drawer(options) {
 
         // Initialize tile object if first time.
         if (!tileMatrix[level][x][y]) {
-            // Where applicable, adjust x and y to support
-            // Seadragon.Config.wrapping.
             bounds = dziImage.getTileBounds(level, x, y, current);
             url = dziImage.getTileUrl(level, x, y);
 
-            tileMatrix[level][x][y] = new Seadragon.Tile({
+            tileMatrix[level][x][y] = that.Tile({
                 level: level,
                 x: x,
                 y: y,
@@ -225,7 +164,7 @@ Seadragon.Drawer = function Drawer(options) {
      * @private
      */
     function loadTile(tile, time) {
-        tile.loading = imageLoader.loadImage(tile.url, function (image) {
+        tile.loading = that.imageLoader.loadImage(tile.url, function (image) {
             onTileLoad(tile, time, image);
         });
     }
@@ -233,8 +172,8 @@ Seadragon.Drawer = function Drawer(options) {
     /**
      * Handles actions performed on tile image file load. Sets tile's <code>image</code> parameter, marks it as loaded
      * (unless an error occured) and adds the tile to a table of tiles to draw. If the table exceedes the
-     * given <code>QUOTA</code> length, one of existing tiles is removed from the table. This is determined
-     * by tiles' levels and times they were "touched" for the last time.
+     * given <code>that.config.imageCacheSize</code> length, one of existing tiles is removed from the table.
+     * This is determined by tiles' levels and times they were "touched" for the last time.
      *
      * @param {Seadragon.Tile} tile
      * @param {number} time
@@ -263,7 +202,7 @@ Seadragon.Drawer = function Drawer(options) {
 
         var insertionIndex = tilesLoaded.length;
 
-        if (tilesLoaded.length >= QUOTA) {
+        if (tilesLoaded.length >= that.config.imageCacheSize) {
             var worstTile = null;
             var worstTileIndex = -1;
 
@@ -298,7 +237,7 @@ Seadragon.Drawer = function Drawer(options) {
         }
 
         tilesLoaded[insertionIndex] = tile;
-        $container.trigger('seadragon:forceredraw.seadragon');
+        that.$container.trigger('seadragon:forceredraw.seadragon');
     }
 
     /**
@@ -386,7 +325,7 @@ Seadragon.Drawer = function Drawer(options) {
      */
     function setCoverage(whichImage, level, x, y, covers) {
         if (!coverage[whichImage][level]) {
-            console.error('Setting coverage for a tile before its level\'s coverage has been reset: ' + level);
+            console.error('Setting coverage for a tile before its level\'s coverage has been reset: ', level);
             return;
         }
         if (!coverage[whichImage][level][x]) {
@@ -450,10 +389,10 @@ Seadragon.Drawer = function Drawer(options) {
      * @private
      */
     function showOrHideDzi(whichImage, hide, immediately) {
-        var dziImage = dziImages[whichImage];
+        var dziImage = that.dziImages[whichImage];
         if (!(dziImage instanceof Seadragon.DziImage)) {
             console.error('Can\'t ' + (hide ? 'hide' : 'show') +
-                ' DZI of number ' + whichImage + ', there is no such DZI.');
+                ' DZI of number ' + whichImage + '; there is no such DZI.');
             return;
         }
         var opacityTarget = hide ? 0 : 1;
@@ -467,15 +406,11 @@ Seadragon.Drawer = function Drawer(options) {
         dziImage.hiding = hide;
         dziImage.blendStart = Date.now();
         if (dziImage.blending) { // Fake that we started blending earlier.
-            dziImage.blendStart -= (1 - Math.abs(opacityTarget - dziImage.opacity)) * Seadragon.Config.blendTime;
+            dziImage.blendStart -= (1 - Math.abs(opacityTarget - dziImage.opacity)) * that.config.blendTime;
         }
         dziImage.blending = true;
 
-        update();
-    }
-
-    function showDzi(whichImage, immediately) {
-        showOrHideDzi(whichImage, false, immediately);
+        that.update();
     }
 
     /**
@@ -483,29 +418,38 @@ Seadragon.Drawer = function Drawer(options) {
      *
      * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
      * @param {boolean} [immediately=false]
-     * @function
      */
-    this.showDzi = showDzi;
-
-    function hideDzi(whichImage, immediately) {
-        showOrHideDzi(whichImage, true, immediately);
-    }
+    this.showDzi = function showDzi(whichImage, immediately) {
+        showOrHideDzi(whichImage, false, immediately);
+        return this;
+    };
 
     /**
      * Hides the image.
      *
      * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
      * @param {boolean} [immediately=false]
-     * @function
      */
-    this.hideDzi = hideDzi;
+    this.hideDzi = function hideDzi(whichImage, immediately) {
+        showOrHideDzi(whichImage, true, immediately);
+        return this;
+    };
 
 
-    // See this.update description.
     // TODO this function is too large
-    function update() {
+    /**
+     * The main update function.
+     *
+     * @return {boolean} Are there some actions left to perform (like showing a tile, blurring it in/out etc.)?
+     *                   In such a case the function must be invoked again.
+     */
+    this.update = function update() {
         var dziImage, tile, zeroDimensionMax, deltaTime, opacity;
         var i, j, x, y, level; // indexes for loops
+
+        // Caching Seadragon.[a-zA-Z]* instances.
+        var viewport = that.viewport,
+            magnifier = that.magnifier;
 
         if (midUpdate) {
             // We don't want to run two updates at the same time but we do want to indicate
@@ -532,8 +476,8 @@ Seadragon.Drawer = function Drawer(options) {
         // Clear canvas, whether in <canvas> mode or HTML mode.
         // This is important as scene may be empty this frame.
         var viewportSize = viewport.containerSize;
-        canvas.width = viewportSize.x;
-        canvas.height = viewportSize.y;
+        that.$canvas.attr('width', viewportSize.x);
+        that.$canvas.attr('height', viewportSize.y);
 
         that.canvasLayersManager.clear();
 
@@ -558,7 +502,7 @@ Seadragon.Drawer = function Drawer(options) {
         currentTime = Date.now();
 
         // Drawing all images.
-        dziImages.forEach(function (dziImage, whichImage) {
+        that.dziImages.forEach(function (dziImage, whichImage) {
             if (!(dziImage instanceof Seadragon.DziImage) || dziImage.isHidden()) {
                 return;
             }
@@ -589,7 +533,7 @@ Seadragon.Drawer = function Drawer(options) {
                 updateAgain = true;
 
                 deltaTime = currentTime - dziImage.blendStart;
-                opacity = Math.min(1, deltaTime / Seadragon.Config.blendTime);
+                opacity = Math.min(1, deltaTime / that.config.blendTime);
                 dziImage.opacity = dziImage.hiding ? 1 - opacity : opacity;
                 if ((dziImage.isHiding() && dziImage.opacity === 0) ||
                     (dziImage.isShowing() && dziImage.opacity === 1)) {
@@ -607,13 +551,13 @@ Seadragon.Drawer = function Drawer(options) {
             drawnImageNumbers.push(whichImage);
         });
 
-        function updateBestTileForImageAtCurrentLevel(whichImage) {
+        function updateBestTileForImageAtCurrentLevel(whichImage) { // TODO put it out of update()?
             if (drawingEnded[whichImage]) {
                 return; // We could delete whichImage from drawnImageNumbers but cost would be higher.
             }
 
-            dziImage = dziImages[whichImage];
-            var adjustedLevel = dziImage.getAdjustedLevel(level);
+            dziImage = that.dziImages[whichImage];
+            var adjustedLevel = dziImage.getTiledImageLevel(level);
 
             viewportTL = viewportTLs[whichImage];
             viewportBR = viewportBRs[whichImage];
@@ -625,9 +569,9 @@ Seadragon.Drawer = function Drawer(options) {
             }
 
             var drawLevel = false;
-            var renderPixelDimensionC = viewportZoom / dziImage.getLevelScale(level);
+            var renderPixelDimensionC = viewportZoom / dziImage.getScaledLevel(level);
 
-            if (magnifierShown) {
+            if (that.config.enableMagnifier) {
                 // We need to load higher-level tiles as we need them
                 // for the magnifier. Notice that we load these higher
                 // levels for the whole space inside the viewport, not
@@ -636,11 +580,11 @@ Seadragon.Drawer = function Drawer(options) {
                 // don't need to worry about the additional tiles to load
                 // since before they're loaded we still see tiles from lower
                 // levels so transitions are smooth.
-                renderPixelDimensionC *= Seadragon.Config.magnifierZoom;
+                renderPixelDimensionC *= that.config.magnifierZoom;
             }
 
             // If we haven't drawn yet, only draw level if tiles are big enough.
-            if ((!haveDrawns[whichImage] && renderPixelDimensionC >= MIN_PIXEL_RATIO) ||
+            if ((!haveDrawns[whichImage] && renderPixelDimensionC >= that.config.minPixelRatio) ||
                 adjustedLevel === dziImage.minLevel) {
                 drawLevel = true;
                 haveDrawns[whichImage] = true;
@@ -701,7 +645,7 @@ Seadragon.Drawer = function Drawer(options) {
                     var positionC = viewport.pixelFromPoint(boundsTL, true);
                     var sizeC = viewport.deltaPixelsFromPoints(boundsSize, true);
 
-                    var drawOnMagnifier = magnifierShown && magnifier != null &&
+                    var drawOnMagnifier = that.config.enableMagnifier && magnifier &&
                         magnifier.intersectsRectangle(new Seadragon.Rectangle(
                             positionC.x, positionC.y, sizeC.x, sizeC.y));
 
@@ -724,7 +668,7 @@ Seadragon.Drawer = function Drawer(options) {
                         }
 
                         deltaTime = currentTime - tile.blendStart;
-                        opacity = Math.min(1, deltaTime / Seadragon.Config.blendTime);
+                        opacity = Math.min(1, deltaTime / that.config.blendTime);
 
                         tile.opacity = opacity * dziImage.opacity;
 
@@ -742,7 +686,7 @@ Seadragon.Drawer = function Drawer(options) {
                     } else if (!tile.loading) {
                         // Means tile isn't loaded yet, so score it.
                         var interestingPoint;
-                        if (magnifierShown) { // if magnifier shown, draw tiles close to its center
+                        if (that.config.enableMagnifier) { // if magnifier shown, draw tiles close to its center
                             interestingPoint = magnifier.center;
                         } else { // otherwise prefer the middle of the screen
                             interestingPoint = viewportCenter;
@@ -759,7 +703,7 @@ Seadragon.Drawer = function Drawer(options) {
         }
 
 
-        for (level = that.maxLevel; level >= 0; level--) {
+        for (level = that.viewport.maxLevel; level >= 0; level--) {
             drawnImageNumbers.forEach(updateBestTileForImageAtCurrentLevel);
         }
 
@@ -780,25 +724,20 @@ Seadragon.Drawer = function Drawer(options) {
             }
             tile.beingDrawn = true;
         }
-        that.canvasLayersManager.drawCanvas();
+        that.canvasLayersManager.draw();
 
         midUpdate = false;
 
         return updateAgain;
-    }
+    };
+
 
     /**
-     * The main update function.
-     *
-     * @return {boolean} Are there some actions left to perform (like showing a tile, blurring it in/out etc.)?
-     *                   In such a case the function must be invoked again.
-     * @function
+     * Resets drawer state: clears all tiles, sets <code>lastResetTime</code> to now and
+     * triggers the <code>seadragon:forceredraw.seadragon</code> event.
+     * Restores drawer to its initial state.
      */
-    this.update = update;
-
-    function refreshAll() {
-        magnifierShown = false;
-
+    this.reset = function reset() {
         cacheNumTiles = [];
         cachePixelOnImageSizeMax = [];
         coverage = [];
@@ -809,30 +748,15 @@ Seadragon.Drawer = function Drawer(options) {
         tilesDrawnLastFrame = [];
         tilesDrawnLastFrameLayers = [];
 
-        that.maxLevel = 0; // It needs to be passed by controller.
-
         currentTime = Date.now();
         lastResetTime = 0;
         midUpdate = false;
 
-        $container.trigger('seadragon:forceredraw.seadragon');
-    }
+        that.$container.trigger('seadragon:forceredraw.seadragon');
+        return this;
+    };
 
-    /**
-     * Resets drawer state: clears all tiles, sets <code>lastResetTime</code> to now and
-     * triggers the <code>seadragon:forceredraw.seadragon</code> event.
-     * @function
-     */
-    this.refreshAll = refreshAll;
-
-    function reset() {
-        dziImages = [];
-        refreshAll();
-    }
-
-    /**
-     * Restores drawer to its initial state.
-     * @function
-     */
-    this.reset = reset;
+    this.reset(); // initialize fields
 };
+
+Seadragon.Drawer.prototype = Object.create(seadragonBasePrototype);

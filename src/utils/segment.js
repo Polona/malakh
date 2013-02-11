@@ -55,25 +55,30 @@ Seadragon.Segment = function Segment() {
     }
 };
 
-Seadragon.Segment.prototype = {
+$.extend(Seadragon.Segment.prototype,
     /**
-     * Checks if another segment is equal to the current one.
-     *
-     * @param {Seadragon.Segment} segment
-     * @return {boolean}
+     * @lends Seadragon.Segment.prototype
      */
-    equals: function equals(segment) {
-        return segment instanceof Seadragon.Segment &&
-            this.x1 === segment.x1 && segment.y1 === segment.y1 &&
-            this.x2 === segment.x2 && segment.y2 === segment.y2;
-    },
+    {
+        /**
+         * Checks if another segment is equal to the current one.
+         *
+         * @param {Seadragon.Segment} segment
+         * @return {boolean}
+         */
+        equals: function equals(segment) {
+            return segment instanceof Seadragon.Segment &&
+                this.x1 === segment.x1 && segment.y1 === segment.y1 &&
+                this.x2 === segment.x2 && segment.y2 === segment.y2;
+        },
 
-    /**
-     * Returns a <code>string</code> representing the segment.
-     *
-     * @return {string}
-     */
-    toString: function toString() {
-        return '[(' + this.x1 + ', ' + this.y1 + '), ' + '(' + this.x2 + ', ' + this.y2 + ')]';
+        /**
+         * Returns a <code>string</code> representing the segment.
+         *
+         * @return {string}
+         */
+        toString: function toString() {
+            return '[(' + this.x1 + ', ' + this.y1 + '), ' + '(' + this.x2 + ', ' + this.y2 + ')]';
+        }
     }
-};
+);
