@@ -32,11 +32,11 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         };
     });
     seadragon.openDziArray(dziDataArray);
-    seadragon.layoutManager.alignRows(4920, 0, Infinity, true);
+    seadragon.layoutManager.alignRows(6000, 0, Infinity, true);
 
     // Adjust -- not necessary, just removes the need to do it by ourselves.
     seadragon.viewport.zoomTo(0.1, true);
-    seadragon.viewport.panTo(new Seadragon.Point(7000, 2500), true);
+    seadragon.viewport.panTo(new Seadragon.Point(7000, 3000), true);
 
 
     // Buttons.
