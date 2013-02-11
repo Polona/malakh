@@ -142,7 +142,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          */
         panTo: function panTo(center, immediately, /* internal */ dontApplyConstraints) {
-            Seadragon.AnimatedRectangle.prototype.panTo.call(this, center, immediately);
+            Object.getPrototypeOf(Seadragon.Viewport.prototype).panTo.call(this, center, immediately);
             if (!dontApplyConstraints) {
                 this.applyConstraints(false);
             }
@@ -187,7 +187,7 @@ $.extend(Seadragon.Viewport.prototype,
                 newBounds.x = center.x - newBounds.width / 2;
             }
 
-            Seadragon.AnimatedRectangle.prototype.fitBounds.call(this, newBounds, immediately);
+            Object.getPrototypeOf(Seadragon.Viewport.prototype).fitBounds.call(this, newBounds, immediately);
 
             this.$container.trigger('seadragon:forcealign.seadragon');
         },
