@@ -35,8 +35,6 @@ Seadragon.Drawer = function Drawer(seadragon) {
     var lastResetTime;
     var midUpdate;
 
-    this.reset(); // initialize fields
-
     /**
      * "Registers" a new DZI image at a given index. We assume <code>dziImage = controller.dziImages[index]</code>.
      *
@@ -757,6 +755,8 @@ Seadragon.Drawer = function Drawer(seadragon) {
         that.$container.trigger('seadragon:forceredraw.seadragon');
         return this;
     };
+
+    this.reset(); // initialize fields
 };
 
 Seadragon.Drawer.prototype = Object.create(seadragonBasePrototype);

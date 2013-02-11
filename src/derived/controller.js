@@ -29,8 +29,7 @@ Seadragon.Controller = function Controller(seadragon) {
         containerSize,
         lockOnUpdates;
 
-    // Initialization
-    (function init() {
+    function init() {
         dziImageBoundsUpdatesInProgressNums = [];
         lockOnUpdates = false;
 
@@ -45,7 +44,7 @@ Seadragon.Controller = function Controller(seadragon) {
         animated = false;
         forceAlign = forceRedraw = true;
         scheduleUpdate();
-    })();
+    }
 
     if (Seadragon.Magnifier) {
         /**
@@ -642,6 +641,8 @@ Seadragon.Controller = function Controller(seadragon) {
         var pointBounds = this.dziImageBoundsInPoints(whichImage, current);
         return this.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
     };
+
+    init();
 };
 
 Seadragon.Controller.prototype = Object.create(seadragonBasePrototype);
