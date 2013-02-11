@@ -31,7 +31,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             bounds: new Seadragon.Rectangle(1000000, 1000000, 1000, 1000)
         };
     });
-    seadragon.controller.openDziArray(dziDataArray);
+    seadragon.openDziArray(dziDataArray);
     seadragon.layoutManager.alignRows(4920, 0, Infinity, true);
 
     // Adjust -- not necessary, just removes the need to do it by ourselves.
@@ -66,7 +66,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
                 if (pickerOn) {
                     $('#picker').trigger(event); // turn off the picker
                 }
-                seadragon.controller.toggleMagnifier();
+                seadragon.toggleMagnifier();
                 magnifierOn = !magnifierOn;
                 $(this).css('background-color', buttonColors[magnifierOn]);
                 return false;
@@ -86,7 +86,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
                 if (magnifierOn) {
                     $('#magnifier').trigger(event); // turn off the magnifier
                 }
-                seadragon.controller.togglePicker();
+                seadragon.togglePicker();
                 pickerOn = !pickerOn;
                 $(this).css('background-color', buttonColors[pickerOn]);
                 return false;

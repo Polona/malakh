@@ -232,6 +232,27 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
      * @type Seadragon.Controller
      */
     this.controller = this.Controller();
+
+    function defineControllerProxyForField(field) {
+        (function (field) {
+            Object.defineProperty(seadragon, field, {
+                get: function () {
+                    return this.controller[field];
+                },
+                set: function (value) {
+                    this.controller[field] = value;
+                }
+            });
+        })(field);
+    }
+
+    // From user perspective controller is no different from seadragon itself so
+    // we're propagating its methods/fields.
+    for (var field in this.controller) {
+        if (this.controller.hasOwnProperty(field)) {
+            defineControllerProxyForField(field);
+        }
+    }
 }
 
 // Export Seadragon global.
