@@ -36,7 +36,8 @@ Seadragon.Drawer = function Drawer(seadragon) {
     var midUpdate;
 
     /**
-     * "Registers" a new tiled image at a given index. We assume <code>tiledImage = controller.tiledImages[index]</code>.
+     * 'Registers' a new tiled image at a given index. We assume
+     * <code>tiledImage = controller.tiledImages[index]</code>.
      *
      * @param {Seadragon.TiledImage} tiledImage
      * @param {number} index
