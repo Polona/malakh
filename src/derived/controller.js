@@ -341,7 +341,7 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function updateTiledImageBounds(whichImage, decreaseCounter) {
         var tiledImage = that.tiledImages[whichImage];
-        forceAlign = tiledImage.bounds.update() || forceAlign;
+        forceAlign = tiledImage.boundsSprings.update() || forceAlign;
         that.restoreUpdating();
         if (decreaseCounter) {
             tiledImageBoundsUpdatesInProgressNums[whichImage]--;
@@ -677,7 +677,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @return {Seadragon.Rectangle}
      */
     this.tiledImageBoundsInPoints = function tiledImageBoundsInPoints(whichImage, current) {
-        return this.tiledImages[whichImage].bounds.getRectangle(current);
+        return this.tiledImages[whichImage].boundsSprings.getRectangle(current);
     };
 
     /**

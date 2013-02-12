@@ -106,7 +106,7 @@ $.extend(Seadragon.LayoutManager.prototype,
          * @param {number} maxColumnHeight
          * @param {boolean} [immediately=false]
          */
-        alignColumns: function _alignColumns(width, spaceBetweenImages, maxColumnHeight, immediately) {
+        alignColumns: function alignColumns(width, spaceBetweenImages, maxColumnHeight, immediately) {
             return this._alignRowsOrColumns(false, width, spaceBetweenImages, maxColumnHeight, immediately);
         },
 
@@ -123,7 +123,7 @@ $.extend(Seadragon.LayoutManager.prototype,
                 console.error('No image with number ' + whichImage);
                 return this;
             }
-            this.viewport.fitBounds(tiledImage.bounds.getRectangle(current));
+            this.viewport.fitBounds(tiledImage.boundsSprings.getRectangle(current));
             return this;
         }
     }

@@ -29,11 +29,10 @@
  * @param {number} options.height  Sets <code>this.height</code>.
  * @param {number} options.tileSize  Sets <code>this.tileSize</code>.
  * @param {number} [options.tileOverlap]  Sets <code>this.tileOverlap</code>.
- * @param {number} [options.bounds=new Seadragon.Rectangle(0, 0, options.width, options.height)]
- *                 Sets <code>this.bounds</code>.
+ * @param {Seadragon.Rectangle} [options.bounds=new Seadragon.Rectangle(0, 0, options.width, options.height)]
+ *                              Sets the initial value of <code>this.boundsSprings</code>.
  * @param {number} [options.minLevel=this.config.minLevelToDraw]  Sets <code>this.minLevel</code>.
  * @param {number} [options.maxLevel=maximum image level]  Sets <code>this.maxLevel</code>.
- * @param {number} [options.shown=true]  If true, an image is hidden.
  */
 Seadragon.TiledImage = function TiledImage(seadragon, options) {
     this.ensureArguments(arguments, 'TiledImage', [options]);
@@ -85,7 +84,7 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
      * Seadragon plane.
      * @type Seadragon.AnimatedRectangle
      */
-    this.bounds = this.AnimatedRectangle(options.bounds);
+    this.boundsSprings = this.AnimatedRectangle(options.bounds);
 
     // For hiding/showing an image with animation:
     /**
@@ -197,7 +196,7 @@ $.extend(Seadragon.TiledImage.prototype,
          */
         getDimensionsScale: function getDimensionsScale(current) {
             var bounds;
-            bounds = this.bounds.getRectangle(current);
+            bounds = this.boundsSprings.getRectangle(current);
             return new Seadragon.Point(
                 bounds.width / this.width,
                 bounds.height / this.height
@@ -237,7 +236,7 @@ $.extend(Seadragon.TiledImage.prototype,
          * @return {Seadragon.Point}
          */
         getScaledDimensions: function getScaledDimensions(level, current) {
-            var bounds = this.bounds.getRectangle(current);
+            var bounds = this.boundsSprings.getRectangle(current);
             return new Seadragon.Point(bounds.width, bounds.height).multiply(this.getScaledLevel(level));
         },
 
@@ -251,7 +250,7 @@ $.extend(Seadragon.TiledImage.prototype,
          */
         getTileAtPoint: function getTileAtPoint(level, point, current) {
             var scale = this.getDimensionsScale(current);
-            var bounds = this.bounds.getRectangle(current);
+            var bounds = this.boundsSprings.getRectangle(current);
 
             point = point.minus(new Seadragon.Point(bounds.x, bounds.y));
             point.x /= scale.x;
@@ -277,7 +276,7 @@ $.extend(Seadragon.TiledImage.prototype,
             var scale, bounds, px, py, sx, sy, scaledLevel;
 
             scale = this.getDimensionsScale(current);
-            bounds = this.bounds.getRectangle(current);
+            bounds = this.boundsSprings.getRectangle(current);
 
             // Find position, adjust for no overlap data on top and left edges.
             px = x === 0 ? 0 : this.tileSize * x - this.tileOverlap;
@@ -330,7 +329,7 @@ $.extend(Seadragon.TiledImage.prototype,
          * @param {boolean} [immediately=false]
          */
         fitBounds: function fitBounds(bounds, immediately) {
-            this.bounds.fitBounds(bounds, immediately);
+            this.boundsSprings.fitBounds(bounds, immediately);
             this.$container.trigger('seadragon:forcealign');
             return this;
         }

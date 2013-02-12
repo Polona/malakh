@@ -144,7 +144,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
         tile = tileMatrix[level][x][y];
 
-        if (!boundsAlreadyUpdated && tiledImage.bounds.version > tile.version) {
+        if (!boundsAlreadyUpdated && tiledImage.boundsSprings.version > tile.version) {
             bounds = tiledImage.getTileBounds(level, x, y, current);
             tile.bounds = bounds;
             tile.updateVersion();
@@ -510,8 +510,8 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
             // We don't need to compute these two things on each update but filtering out cases where it's not needed
             // would create a little overhead on its own so it's probably not worth doing that.
-            tiledImageTLs[whichImage] = tiledImage.bounds.getTopLeft();
-            tiledImageBRs[whichImage] = tiledImage.bounds.getBottomRight();
+            tiledImageTLs[whichImage] = tiledImage.boundsSprings.getTopLeft();
+            tiledImageBRs[whichImage] = tiledImage.boundsSprings.getBottomRight();
 
             var tiledImageTL = tiledImageTLs[whichImage];
             var tiledImageBR = tiledImageBRs[whichImage];
