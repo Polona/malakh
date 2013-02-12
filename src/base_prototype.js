@@ -52,7 +52,7 @@ var seadragonBasePrototype = {
     // properties
     'config',
     '$container', '$canvas', 'canvasContext',
-    'dziImages', 'viewport', 'canvasLayersManager',
+    'tiledImages', 'viewport', 'canvasLayersManager',
     'magnifier', 'picker', 'markers',
     'imageLoader', 'drawer', 'controller',
     // constructors

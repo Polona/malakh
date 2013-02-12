@@ -23,19 +23,19 @@ Seadragon.Controller = function Controller(seadragon) {
     var that = this,
         animated,
         forceAlign, forceRedraw,
-        dziLoaded, // map: dziNumber -> has the DZI file been already downloaded & processed?
-        dziOptions, // map: dziNumber -> options needed to load DZIs; relevant for ones not yet loaded
-        dziImageBoundsUpdatesInProgressNums,
-        dziImagesToHandle,
+        tiledImagesLoaded, // map: imageNumber -> has the data file been already downloaded & processed?
+        tiledImagesOptions, // map: imageNumber -> options needed to load the image; relevant for ones not yet loaded
+        tiledImageBoundsUpdatesInProgressNums,
+        tiledImagesToHandle,
         lastPosition,
         containerSize,
         lockOnUpdates;
 
     function init() {
-        dziLoaded = dziOptions = dziImageBoundsUpdatesInProgressNums = [];
+        tiledImagesLoaded = tiledImagesOptions = tiledImageBoundsUpdatesInProgressNums = [];
         lockOnUpdates = false;
 
-        dziImagesToHandle = 0;
+        tiledImagesToHandle = 0;
 
         bindEvents();
 
@@ -256,7 +256,7 @@ Seadragon.Controller = function Controller(seadragon) {
 
     /**
      * Computes maximum level to be drawn on canvas. Note that it's not simply
-     * maximum of all <code>dziImage.maxLevel<code>s - their levels all scaled so that
+     * maximum of all <code>tiledImage.maxLevel<code>s - their levels all scaled so that
      * they match "virtual" levels with regards to their representation on canvas.
      *
      * @see Seadragon.TiledImage#getTiledImageLevel
@@ -264,8 +264,8 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function recalculateMaxLevel() {
         that.viewport.maxLevel = 0;
-        that.dziImages.forEach(function (dziImage) {
-            that.viewport.maxLevel = Math.max(that.viewport.maxLevel, dziImage.getViewportLevel(dziImage.maxLevel));
+        that.tiledImages.forEach(function (tiledImage) {
+            that.viewport.maxLevel = Math.max(that.viewport.maxLevel, tiledImage.getViewportLevel(tiledImage.maxLevel));
         });
         that.viewport.maxLevelExp = Math.pow(2, that.viewport.maxLevel); // TODO shouldn't this be in Seadragon?
     }
@@ -273,32 +273,32 @@ Seadragon.Controller = function Controller(seadragon) {
     /**
      * Registers a new open image.
      *
-     * @param {Seadragon.DziImage} dziImage
-     * @param {number} index  Index in the <code>this.dziImages</code> table where <code>dziImage</code> is put.
+     * @param {Seadragon.TiledImage} tiledImage
+     * @param {number} index  Index in the <code>this.tiledImages</code> table where <code>tiledImage</code> is put.
      * @private
      */
-    function onOpen(dziImage, index) {
-        if (!dziImage) {
-            console.error('No DZI Image given to Controller\'s onOpen()!');
+    function onOpen(tiledImage, index) {
+        if (!tiledImage) {
+            console.error('No TiledImage given to Controller\'s onOpen()!');
             return;
         }
 
-        // Delete loading options for the current DZI.
-        delete dziOptions[index];
+        // Delete loading options for the current TiledImage.
+        delete tiledImagesOptions[index];
 
         // Adding a new image.
-        that.dziImages[index] = dziImage;
-        dziImageBoundsUpdatesInProgressNums[index] = 0;
-        that.drawer.registerDziImage(dziImage, index);
+        that.tiledImages[index] = tiledImage;
+        tiledImageBoundsUpdatesInProgressNums[index] = 0;
+        that.drawer.registerTiledImage(tiledImage, index);
 
-        that.viewport.maxLevel = Math.max(that.viewport.maxLevel, dziImage.maxLevel);
+        that.viewport.maxLevel = Math.max(that.viewport.maxLevel, tiledImage.maxLevel);
         that.viewport.maxLevelExp = Math.pow(2, that.viewport.maxLevel);
 
-        dziImagesToHandle--;
+        tiledImagesToHandle--;
 
-        that.$container.trigger('seadragon:loadeddzi');
-        if (dziImagesToHandle === 0) {
-            that.$container.trigger('seadragon:loadeddziarray');
+        that.$container.trigger('seadragon:loadedtiledimage');
+        if (tiledImagesToHandle === 0) {
+            that.$container.trigger('seadragon:loadedtiledimagearray');
         }
         that.restoreUpdating();
     }
@@ -332,57 +332,58 @@ Seadragon.Controller = function Controller(seadragon) {
     /**
      * Updates bounds of a Seadragon image; usually used during aligning (so not too often).
      *
-     * @param {number} whichImage  Image index of <code>dziImage</code> in <code>this.dziImages</code> table.
-     * @param {boolean} decreaseCounter  If provided, decreases the counted number of <code>updateDziImageBounds</code>
-     *                                   invocations on the <code>dziImage</code> with a given index. Parameter used
-     *                                   only by the <code>scheduleUpdateDziImageBounds</code> function.
+     * @param {number} whichImage  Image index of <code>tiledImage</code> in <code>this.tiledImages</code> table.
+     * @param {boolean} decreaseCounter  If provided, decreases the counted number of
+     *                                   <code>updateTiledImageBounds</code> invocations on the <code>tiledImage</code>
+     *                                   with a given index. Parameter used only by the
+     *                                   <code>scheduleUpdateDziImageBounds</code> function.
      * @private
      */
-    function updateDziImageBounds(whichImage, decreaseCounter) {
-        var dziImage = that.dziImages[whichImage];
-        forceAlign = dziImage.bounds.update() || forceAlign;
+    function updateTiledImageBounds(whichImage, decreaseCounter) {
+        var tiledImage = that.tiledImages[whichImage];
+        forceAlign = tiledImage.bounds.update() || forceAlign;
         that.restoreUpdating();
         if (decreaseCounter) {
-            dziImageBoundsUpdatesInProgressNums[whichImage]--;
+            tiledImageBoundsUpdatesInProgressNums[whichImage]--;
         }
     }
 
     /**
-     * <p>Schedules the <code>updateDziImageBounds</code> function on the <code>dziImage</code> with index
+     * <p>Schedules the <code>updateTiledImageBounds</code> function on the <code>tiledImage</code> with index
      * <code>whichImage</code>. The whole idea behind this function is to not allow more than one invocation of
-     * <code>updateDziImageBounds</code> to wait on <code>setTimeout</code>s; it increases performance on weaker
+     * <code>updateTiledImageBounds</code> to wait on <code>setTimeout</code>s; it increases performance on weaker
      * computers.
      *
-     * <p>If the <code>dziImageBoundsUpdatesInProgressNums[whichImage]</code> value is:
+     * <p>If the <code>tiledImageBoundsUpdatesInProgressNums[whichImage]</code> value is:
      * <ul>
      *     <li><code>0</code> (or <code>1</code> if <code>forceExecution</code> is true), then we invoke the
-     *         <code>updateDziImageBounds</code> asynchronously.</li>
+     *         <code>updateTiledImageBounds</code> asynchronously.</li>
      *     <li><code>1</code>, then we wait a short time before trying again.</li>
      *     <li><code>>=2</code>, then we abort since one other instance is already waiting.</li>
      * </ul>
-     * If the flag <code>forceExecution</code> is true, we invoke <code>updateDziImageBounds</code>
-     * if only <code>dziImageBoundsUpdatesInProgressNums[whichImage] < 2</code>. This is necessary
+     * If the flag <code>forceExecution</code> is true, we invoke <code>updateTiledImageBounds</code>
+     * if only <code>tiledImageBoundsUpdatesInProgressNums[whichImage] < 2</code>. This is necessary
      * because when counter increases by 1, the invocation which triggered the increase waits on
      * <code>setTimeout</code> and needs to be invoked when it remains the only waiting instance.
      *
-     * @param {number} whichImage  Image index of <code>dziImage</code> in <code>this.dziImages</code> table.
+     * @param {number} whichImage  Image index of <code>tiledImage</code> in <code>this.tiledImages</code> table.
      * @param {boolean} [forceExecution=false]
      * @private
      */
     function scheduleUpdateDziImageBounds(whichImage, forceExecution) {
-        var dziImageBoundsUpdatesInProgressNum = dziImageBoundsUpdatesInProgressNums[whichImage];
+        var tiledImageBoundsUpdatesInProgressNum = tiledImageBoundsUpdatesInProgressNums[whichImage];
 
-        if (dziImageBoundsUpdatesInProgressNum === 0 ||
-            (forceExecution && dziImageBoundsUpdatesInProgressNum === 1)) {
-            // no other instance of this function was dispatched on dziImage
+        if (tiledImageBoundsUpdatesInProgressNum === 0 ||
+            (forceExecution && tiledImageBoundsUpdatesInProgressNum === 1)) {
+            // no other instance of this function was dispatched on tiledImage
             if (!forceExecution) { // otherwise counter already increased
-                dziImageBoundsUpdatesInProgressNums[whichImage]++;
+                tiledImageBoundsUpdatesInProgressNums[whichImage]++;
             }
-            setTimeout(updateDziImageBounds, 0, whichImage, true); // invoke asynchronously
+            setTimeout(updateTiledImageBounds, 0, whichImage, true); // invoke asynchronously
         }
-        else if (dziImageBoundsUpdatesInProgressNum === 1) {
-            // one function instance was dispatched on dziImage, trying in a moment
-            dziImageBoundsUpdatesInProgressNums[whichImage]++;
+        else if (tiledImageBoundsUpdatesInProgressNum === 1) {
+            // one function instance was dispatched on tiledImage, trying in a moment
+            tiledImageBoundsUpdatesInProgressNums[whichImage]++;
             setTimeout(scheduleUpdateDziImageBounds, 100, whichImage, true);
         }
         /* else {} // one function instance already waits, no need for a new one */
@@ -408,7 +409,7 @@ Seadragon.Controller = function Controller(seadragon) {
         if (forceAlign) {
             forceAlign = false;
             setTimeout(function () { // Making it more asynchronous.
-                that.dziImages.forEach(function (dziImage, whichImage) {
+                that.tiledImages.forEach(function (tiledImage, whichImage) {
                     scheduleUpdateDziImageBounds(whichImage);
                 });
             }, 0);
@@ -507,7 +508,8 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {function} options.callback  Function invoked when DZI is fully processed.
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
-     * @param {number} [options.index]  If specified, an image is loaded into <code>controller.dziImages[index]</code>.
+     * @param {number} [options.index]  If specified, an image is loaded into
+     *                                  <code>controller.tiledImages[index]</code>.
      *                                  Otherwise it's put at the end of the table.
      * @param {boolean} [options.shown=true]  If false, image is not drawn. It can be made visible later.
      */
@@ -537,30 +539,30 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {string} options.dziUrl  The URL/path to the DZI file.
      * @param {string} options.tilesUrl  The URL/path to the tiles directory; by default it's the same
      *                                   as <code>dziUrl<code> with '.dzi' changed to '_files'.
-     * @param {number} options.index  If specified, an image is loaded into <code>controller.dziImages[index]</code>.
+     * @param {number} options.index  If specified, an image is loaded into <code>controller.tiledImages[index]</code>.
      *                                Otherwise it's put at the end of the table.
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
      */
     this.openDzi = function openDzi(options) {
         if (!options.dontIncrementCounter) {
-            dziImagesToHandle++;
+            tiledImagesToHandle++;
         }
         options.callback = onOpen;
         if (options.index == null) {
-            options.index = this.dziImages.length;
+            options.index = this.tiledImages.length;
         }
-        dziLoaded[options.index] = true; // prevent loading the same image twice
-        that.dziImages[options.index] = null; // keep space for the image
+        tiledImagesLoaded[options.index] = true; // prevent loading the same image twice
+        that.tiledImages[options.index] = null; // keep space for the image
 
         try {
             this.createFromDzi(options);
         } catch (error) {
             // We try to keep working even after a failed attempt to load a new DZI.
-            dziImagesToHandle--;
-            delete that.dziImages[options.index];
-            delete dziLoaded[options.index];
-            delete dziOptions[options.index];
+            tiledImagesToHandle--;
+            delete that.tiledImages[options.index];
+            delete tiledImagesLoaded[options.index];
+            delete tiledImagesOptions[options.index];
             console.error('DZI failed to load.', error);
         }
 
@@ -573,7 +575,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {Array.<string>} optionsArray Array of objects containing data of particular DZIs.
      */
     this.openDziArray = function openDziArray(optionsArray, hideByDefault) {
-        dziImagesToHandle += optionsArray.length;
+        tiledImagesToHandle += optionsArray.length;
 
         optionsArray.forEach(function (options, index) {
             var shown = options.shown == null ? !hideByDefault : options.shown;
@@ -589,10 +591,10 @@ Seadragon.Controller = function Controller(seadragon) {
             }
             else { // register image options to show later
                 if (options.index == null) { // if index not provided, put the image at the end
-                    options.index = that.dziImages.length;
+                    options.index = that.tiledImages.length;
                 }
-                that.dziImages[index] = null;
-                dziOptions[index] = options;
+                that.tiledImages[index] = null;
+                tiledImagesOptions[index] = options;
             }
         });
         return this;
@@ -602,26 +604,26 @@ Seadragon.Controller = function Controller(seadragon) {
     /**
      * Shows the given image.
      *
-     * @param {number} whichImage We show the <code>this.dziImages[whichImage]</code> image
+     * @param {number} whichImage We show the <code>this.tiledImages[whichImage]</code> image
      * @param {boolean} [immediately=false]
      */
-    this.showDzi = function showDzi(whichImage, immediately) {
-        if (!dziLoaded[whichImage]) {
+    this.showImage = function showDzi(whichImage, immediately) {
+        if (!tiledImagesLoaded[whichImage]) {
             // We have to load the image; it'll be shown automatically.
-            return this.openDzi(dziOptions[whichImage]);
+            return this.openDzi(tiledImagesOptions[whichImage]);
         }
-        this.drawer.showDzi(whichImage, immediately);
+        this.drawer.showImage(whichImage, immediately);
         return this.restoreUpdating();
     };
 
     /**
      * Hides the given image.
      *
-     * @param {number} whichImage We hide the <code>this.dziImages[whichImage]</code> image
+     * @param {number} whichImage We hide the <code>this.tiledImages[whichImage]</code> image
      * @param {boolean} [immediately=false]
      */
-    this.hideDzi = function hideDzi(whichImage, immediately) {
-        this.drawer.hideDzi(whichImage, immediately);
+    this.hideImage = function hideDzi(whichImage, immediately) {
+        this.drawer.hideImage(whichImage, immediately);
         return this.restoreUpdating();
     };
 
@@ -633,22 +635,22 @@ Seadragon.Controller = function Controller(seadragon) {
      * @return {boolean}
      */
     this.isLoading = function isLoading() {
-        return dziImagesToHandle > 0;
+        return tiledImagesToHandle > 0;
     };
 
     /**
      * TODO document.
      */
     this.reset = function close() {
-        that.dziImages = [];
-        dziImageBoundsUpdatesInProgressNums = [];
+        that.tiledImages = [];
+        tiledImageBoundsUpdatesInProgressNums = [];
 
         that.config.enableMagnifier = that.config.enablePicker = false;
         lockOnUpdates = true; // 'seadragon:forcealign.seadragon' handler will resume updating
 
         that.viewport.maxLevel = 0; // No DZIs loaded yet.
 
-        dziImagesToHandle = 0;
+        tiledImagesToHandle = 0;
 
         // Reset the drawer (at the end it triggers the <code>seadragon:forcealign.seadragon</code> event)
         // so controller will know when to force re-draw.
@@ -670,23 +672,23 @@ Seadragon.Controller = function Controller(seadragon) {
     /**
      * Returns bounds of the given image in points.
      *
-     * @param {number} whichImage We get bounds of the <code>this.dziImages[whichImage]</code> image
+     * @param {number} whichImage We get bounds of the <code>this.tiledImages[whichImage]</code> image
      * @param {boolean} [current=false]
      * @return {Seadragon.Rectangle}
      */
-    this.dziImageBoundsInPoints = function dziImageBoundsInPoints(whichImage, current) {
-        return this.dziImages[whichImage].bounds.getRectangle(current);
+    this.tiledImageBoundsInPoints = function tiledImageBoundsInPoints(whichImage, current) {
+        return this.tiledImages[whichImage].bounds.getRectangle(current);
     };
 
     /**
      * Returns bounds of the given image in pixels.
      *
-     * @param {number} whichImage We get bounds of the <code>this.dziImages[whichImage]</code> image
+     * @param {number} whichImage We get bounds of the <code>this.tiledImages[whichImage]</code> image
      * @param {boolean} [current=false]
      * @return {Seadragon.Rectangle}
      */
-    this.dziImageBoundsInPixels = function dziImageBoundsInPixels(whichImage, current) {
-        var pointBounds = this.dziImageBoundsInPoints(whichImage, current);
+    this.tiledImageBoundsInPixels = function tiledImageBoundsInPixels(whichImage, current) {
+        var pointBounds = this.tiledImageBoundsInPoints(whichImage, current);
         return this.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
     };
 

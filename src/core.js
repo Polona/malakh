@@ -177,7 +177,7 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
     $.extend(this.config, configOverrides);
 
     // No DZIs loaded yet.
-    this.dziImages = [];
+    this.tiledImages = [];
 
     this.$container = $(containerSelectorOrElement);
     if (this.$container.length === 0) {

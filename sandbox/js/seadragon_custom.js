@@ -189,7 +189,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             $('#constrainImage17').css('background-color', buttonColors[false]);
             seadragon.config.constraintViewport = constrainImage3;
             seadragon.viewport.constraintBounds = new Seadragon.Rectangle(
-                seadragon.dziImages[2].bounds.getRectangle()); // TODO better API
+                seadragon.tiledImages[2].bounds.getRectangle()); // TODO better API
             seadragon.viewport.fitConstraintBounds();
             seadragon.viewport.applyConstraints();
             return false;
@@ -210,7 +210,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             $('#constrainImage3').css('background-color', buttonColors[false]);
             seadragon.config.constraintViewport = constrainImage17;
             seadragon.viewport.constraintBounds = new Seadragon.Rectangle(
-                seadragon.dziImages[16].bounds.getRectangle()); // TODO better API
+                seadragon.tiledImages[16].bounds.getRectangle()); // TODO better API
             seadragon.viewport.fitConstraintBounds();
             seadragon.viewport.applyConstraints();
             return false;

@@ -36,21 +36,21 @@ Seadragon.Drawer = function Drawer(seadragon) {
     var midUpdate;
 
     /**
-     * "Registers" a new DZI image at a given index. We assume <code>dziImage = controller.dziImages[index]</code>.
+     * "Registers" a new tiled image at a given index. We assume <code>tiledImage = controller.tiledImages[index]</code>.
      *
-     * @param {Seadragon.DziImage} dziImage
+     * @param {Seadragon.TiledImage} tiledImage
      * @param {number} index
      */
-    this.registerDziImage = function registerDziImage(dziImage, index) {
+    this.registerTiledImage = function registerTiledImage(tiledImage, index) {
         if (midUpdate) { // We don't want to add a new image during the update process, deferring.
             console.log('Deferred adding a DZI to Drawer');
             var that = this;
             setTimeout(function () {
-                that.registerDziImage(dziImage, index);
+                that.registerTiledImage(tiledImage, index);
             }, 100);
             return this;
         }
-        if (!dziImage) {
+        if (!tiledImage) {
             console.error('No DZI Image given to Drawer\'s registerDziImage method!');
             return this;
         }
@@ -67,14 +67,14 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * Returns number of tiles for the image at a given level.
      * Results are cached.
      *
-     * @param {number} whichImage Index of an image in the <code>controller.dziImages</code> table.
+     * @param {number} whichImage Index of an image in the <code>controller.tiledImages</code> table.
      * @param {number} level
      * @return {number}
      * @private
      */
     function getNumTiles(whichImage, level) {
         if (!cacheNumTiles[whichImage][level]) {
-            cacheNumTiles[whichImage][level] = that.dziImages[whichImage].getNumTiles(level);
+            cacheNumTiles[whichImage][level] = that.tiledImages[whichImage].getNumTiles(level);
         }
 
         return cacheNumTiles[whichImage][level];
@@ -84,14 +84,14 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * Says how many real pixels horizontally/vertically are covered by one pixel for the image at a given level.
      * Results are cached.
      *
-     * @param {number} whichImage Index of an image in the <code>controller.dziImages</code> table.
+     * @param {number} whichImage Index of an image in the <code>controller.tiledImages</code> table.
      * @param {number} level
      * @return {number}
      * @private
      */
     function getPixelOnImageSizeMax(whichImage, level) {
         if (!cachePixelOnImageSizeMax[whichImage][level]) {
-            var pixelOnImageSize = that.dziImages[whichImage].getScaledDimensions(level).invert();
+            var pixelOnImageSize = that.tiledImages[whichImage].getScaledDimensions(level).invert();
             cachePixelOnImageSizeMax[whichImage][level] = Math.max(pixelOnImageSize.x, pixelOnImageSize.y);
         }
 
@@ -102,7 +102,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * Returns a tile given by parameters.
      * Results are cached.
      *
-     * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
+     * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {number} level Tile's level.
      * @param {number} x Tile's column.
      * @param {number} y Tile's row.
@@ -113,11 +113,11 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @private
      */
     function getTile(whichImage, level, x, y, time, current) {
-        var tileMatrix, dziImage, bounds, url, tile;
+        var tileMatrix, tiledImage, bounds, url, tile;
         var boundsAlreadyUpdated = false;
 
         tileMatrix = tilesMatrix[whichImage];
-        dziImage = that.dziImages[whichImage];
+        tiledImage = that.tiledImages[whichImage];
 
         if (!tileMatrix[level]) {
             tileMatrix[level] = [];
@@ -128,8 +128,8 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
         // Initialize tile object if first time.
         if (!tileMatrix[level][x][y]) {
-            bounds = dziImage.getTileBounds(level, x, y, current);
-            url = dziImage.getTileUrl(level, x, y);
+            bounds = tiledImage.getTileBounds(level, x, y, current);
+            url = tiledImage.getTileUrl(level, x, y);
 
             tileMatrix[level][x][y] = that.Tile({
                 level: level,
@@ -143,8 +143,8 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
         tile = tileMatrix[level][x][y];
 
-        if (!boundsAlreadyUpdated && dziImage.bounds.version > tile.version) {
-            bounds = dziImage.getTileBounds(level, x, y, current);
+        if (!boundsAlreadyUpdated && tiledImage.bounds.version > tile.version) {
+            bounds = tiledImage.getTileBounds(level, x, y, current);
             tile.bounds = bounds;
             tile.updateVersion();
         }
@@ -256,7 +256,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * there's no content needed to be covered). And if every tile that is found
      * does provide coverage, the entire visible level provides coverage.
      *
-     * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
+     * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {number} level Tile's level.
      * @param {number} x Tile's column.
      * @param {number} y Tile's row.
@@ -295,7 +295,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * tiles of higher resolution representing the same content. If neither x
      * nor y is given, returns true if the entire visible level is covered.
      *
-     * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
+     * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {number} level Tile's level.
      * @param {number} x Tile's column.
      * @param {number} y Tile's row.
@@ -316,7 +316,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
     /**
      * Sets whether the given tile provides coverage or not.
      *
-     * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
+     * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {number} level Tile's level.
      * @param {number} x Tile's column.
      * @param {number} y Tile's row.
@@ -339,7 +339,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * after every draw routine. Note that at the beginning of the next draw
      * routine, coverage for every visible tile should be explicitly set.
      *
-     * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
+     * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {number} level Tile's level.
      * @private
      */
@@ -383,14 +383,14 @@ Seadragon.Drawer = function Drawer(seadragon) {
     /**
      * Hides the image if <code>hide</code> is true, shows it otherwise.
      *
-     * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
+     * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {boolean} [hide=false]
      * @param {boolean} [immediately=false]
      * @private
      */
     function showOrHideDzi(whichImage, hide, immediately) {
-        var dziImage = that.dziImages[whichImage];
-        if (!(dziImage instanceof Seadragon.DziImage)) {
+        var tiledImage = that.tiledImages[whichImage];
+        if (!(tiledImage instanceof Seadragon.DziImage)) {
             console.error('Can\'t ' + (hide ? 'hide' : 'show') +
                 ' DZI of number ' + whichImage + '; there is no such DZI.');
             return;
@@ -398,17 +398,17 @@ Seadragon.Drawer = function Drawer(seadragon) {
         var opacityTarget = hide ? 0 : 1;
 
         if (immediately) {
-            dziImage.opacity = opacityTarget;
-        } else if (!dziImage.blending) { // Otherwise we leave it where it was before updating.
-            dziImage.opacity = hide ? 1 : 0;
+            tiledImage.opacity = opacityTarget;
+        } else if (!tiledImage.blending) { // Otherwise we leave it where it was before updating.
+            tiledImage.opacity = hide ? 1 : 0;
         }
 
-        dziImage.hiding = hide;
-        dziImage.blendStart = Date.now();
-        if (dziImage.blending) { // Fake that we started blending earlier.
-            dziImage.blendStart -= (1 - Math.abs(opacityTarget - dziImage.opacity)) * that.config.blendTime;
+        tiledImage.hiding = hide;
+        tiledImage.blendStart = Date.now();
+        if (tiledImage.blending) { // Fake that we started blending earlier.
+            tiledImage.blendStart -= (1 - Math.abs(opacityTarget - tiledImage.opacity)) * that.config.blendTime;
         }
-        dziImage.blending = true;
+        tiledImage.blending = true;
 
         that.update();
     }
@@ -416,10 +416,10 @@ Seadragon.Drawer = function Drawer(seadragon) {
     /**
      * Shows the image.
      *
-     * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
+     * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {boolean} [immediately=false]
      */
-    this.showDzi = function showDzi(whichImage, immediately) {
+    this.showImage = function showDzi(whichImage, immediately) {
         showOrHideDzi(whichImage, false, immediately);
         return this;
     };
@@ -427,10 +427,10 @@ Seadragon.Drawer = function Drawer(seadragon) {
     /**
      * Hides the image.
      *
-     * @param {number} whichImage Index of an image in the <code>controller.dziImage</code> table.
+     * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {boolean} [immediately=false]
      */
-    this.hideDzi = function hideDzi(whichImage, immediately) {
+    this.hideImage = function hideDzi(whichImage, immediately) {
         showOrHideDzi(whichImage, true, immediately);
         return this;
     };
@@ -444,7 +444,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      *                   In such a case the function must be invoked again.
      */
     this.update = function update() {
-        var dziImage, tile, zeroDimensionMax, deltaTime, opacity;
+        var tiledImage, tile, zeroDimensionMax, deltaTime, opacity;
         var i, j, x, y, level; // indexes for loops
 
         // Caching Seadragon.[a-zA-Z]* instances.
@@ -487,8 +487,8 @@ Seadragon.Drawer = function Drawer(seadragon) {
         var viewportCenter = viewport.pixelFromPoint(viewport.getCenter());
         var viewportZoom = viewport.getZoom(true);
 
-        var dziImageTLs = [];
-        var dziImageBRs = [];
+        var tiledImageTLs = [];
+        var tiledImageBRs = [];
         var viewportTLs = [];
         var viewportBRs = [];
 
@@ -502,42 +502,42 @@ Seadragon.Drawer = function Drawer(seadragon) {
         currentTime = Date.now();
 
         // Drawing all images.
-        that.dziImages.forEach(function (dziImage, whichImage) {
-            if (!(dziImage instanceof Seadragon.DziImage) || dziImage.isHidden()) {
+        that.tiledImages.forEach(function (tiledImage, whichImage) {
+            if (!(tiledImage instanceof Seadragon.DziImage) || tiledImage.isHidden()) {
                 return;
             }
 
             // We don't need to compute these two things on each update but filtering out cases where it's not needed
             // would create a little overhead on its own so it's probably not worth doing that.
-            dziImageTLs[whichImage] = dziImage.bounds.getTopLeft();
-            dziImageBRs[whichImage] = dziImage.bounds.getBottomRight();
+            tiledImageTLs[whichImage] = tiledImage.bounds.getTopLeft();
+            tiledImageBRs[whichImage] = tiledImage.bounds.getBottomRight();
 
-            var dziImageTL = dziImageTLs[whichImage];
-            var dziImageBR = dziImageBRs[whichImage];
+            var tiledImageTL = tiledImageTLs[whichImage];
+            var tiledImageBR = tiledImageBRs[whichImage];
 
             // If image is off image entirely, don't bother drawing.
-            if (dziImageBR.x < viewportTL.x || dziImageBR.y < viewportTL.y ||
-                dziImageTL.x > viewportBR.x || dziImageTL.y > viewportBR.y) {
+            if (tiledImageBR.x < viewportTL.x || tiledImageBR.y < viewportTL.y ||
+                tiledImageTL.x > viewportBR.x || tiledImageTL.y > viewportBR.y) {
                 return;
             }
 
             // Restrain bounds of viewport relative to image.
             viewportTLs[whichImage] = new Seadragon.Point(
-                Math.max(viewportTL.x, dziImageTL.x),
-                Math.max(viewportTL.y, dziImageTL.y));
+                Math.max(viewportTL.x, tiledImageTL.x),
+                Math.max(viewportTL.y, tiledImageTL.y));
             viewportBRs[whichImage] = new Seadragon.Point(
-                Math.min(viewportBR.x, dziImageBR.x),
-                Math.min(viewportBR.y, dziImageBR.y));
+                Math.min(viewportBR.x, tiledImageBR.x),
+                Math.min(viewportBR.y, tiledImageBR.y));
 
-            if (dziImage.blending) {
+            if (tiledImage.blending) {
                 updateAgain = true;
 
-                deltaTime = currentTime - dziImage.blendStart;
+                deltaTime = currentTime - tiledImage.blendStart;
                 opacity = Math.min(1, deltaTime / that.config.blendTime);
-                dziImage.opacity = dziImage.hiding ? 1 - opacity : opacity;
-                if ((dziImage.isHiding() && dziImage.opacity === 0) ||
-                    (dziImage.isShowing() && dziImage.opacity === 1)) {
-                    dziImage.blending = false; // We finished blending.
+                tiledImage.opacity = tiledImage.hiding ? 1 - opacity : opacity;
+                if ((tiledImage.isHiding() && tiledImage.opacity === 0) ||
+                    (tiledImage.isShowing() && tiledImage.opacity === 1)) {
+                    tiledImage.blending = false; // We finished blending.
                 }
             }
 
@@ -556,20 +556,20 @@ Seadragon.Drawer = function Drawer(seadragon) {
                 return; // We could delete whichImage from drawnImageNumbers but cost would be higher.
             }
 
-            dziImage = that.dziImages[whichImage];
-            var adjustedLevel = dziImage.getTiledImageLevel(level);
+            tiledImage = that.tiledImages[whichImage];
+            var adjustedLevel = tiledImage.getTiledImageLevel(level);
 
             viewportTL = viewportTLs[whichImage];
             viewportBR = viewportBRs[whichImage];
 
             zeroDimensionMax = zeroDimensionsMax[whichImage];
 
-            if (adjustedLevel > dziImage.maxLevel || adjustedLevel < dziImage.minLevel) {
+            if (adjustedLevel > tiledImage.maxLevel || adjustedLevel < tiledImage.minLevel) {
                 return;
             }
 
             var drawLevel = false;
-            var renderPixelDimensionC = viewportZoom / dziImage.getScaledLevel(level);
+            var renderPixelDimensionC = viewportZoom / tiledImage.getScaledLevel(level);
 
             if (that.config.enableMagnifier) {
                 // We need to load higher-level tiles as we need them
@@ -585,7 +585,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
             // If we haven't drawn yet, only draw level if tiles are big enough.
             if ((!haveDrawns[whichImage] && renderPixelDimensionC >= that.config.minPixelRatio) ||
-                adjustedLevel === dziImage.minLevel) {
+                adjustedLevel === tiledImage.minLevel) {
                 drawLevel = true;
                 haveDrawns[whichImage] = true;
             } else if (!haveDrawns[whichImage]) {
@@ -600,8 +600,8 @@ Seadragon.Drawer = function Drawer(seadragon) {
             var levelVisibility = zeroDimensionMax / Math.abs(zeroDimensionMax - renderPixelDimensionTMax);
 
             // Only iterate over visible tiles.
-            var tileTL = dziImage.getTileAtPoint(adjustedLevel, viewportTL, true);
-            var tileBR = dziImage.getTileAtPoint(adjustedLevel, viewportBR, true);
+            var tileTL = tiledImage.getTileAtPoint(adjustedLevel, viewportTL, true);
+            var tileBR = tiledImage.getTileAtPoint(adjustedLevel, viewportBR, true);
             var numTiles = getNumTiles(whichImage, adjustedLevel);
             var numTilesX = numTiles.x;
             var numTilesY = numTiles.y;
@@ -670,7 +670,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
                         deltaTime = currentTime - tile.blendStart;
                         opacity = Math.min(1, deltaTime / that.config.blendTime);
 
-                        tile.opacity = opacity * dziImage.opacity;
+                        tile.opacity = opacity * tiledImage.opacity;
 
                         // Queue tile for drawing in reverse order.
                         tilesDrawnLastFrame.push(tile);
