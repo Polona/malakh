@@ -79,6 +79,9 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
     if (!options.bounds) {
         options.bounds = new Seadragon.Rectangle(0, 0, options.width, options.height);
     }
+    // Correct aspect ratio.
+    options.bounds.width = options.bounds.height * options.width / options.height;
+
     /**
      * Animated bounds of the image. They represent position and shape of the image on the virtual
      * Seadragon plane.
