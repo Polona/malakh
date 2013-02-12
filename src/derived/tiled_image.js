@@ -28,7 +28,7 @@
  * @param {number} options.width  Sets <code>this.width</code>.
  * @param {number} options.height  Sets <code>this.height</code>.
  * @param {number} options.tileSize  Sets <code>this.tileSize</code>.
- * @param {number} [options.tileOverlap]  Sets <code>this.tileOverlap</code>.
+ * @param {number} [options.tileOverlap=0]  Sets <code>this.tileOverlap</code>.
  * @param {Seadragon.Rectangle} [options.bounds=new Seadragon.Rectangle(0, 0, options.width, options.height)]
  *                              Sets the initial value of <code>this.boundsSprings</code>.
  * @param {number} [options.minLevel=this.config.minLevelToDraw]  Sets <code>this.minLevel</code>.
@@ -55,13 +55,13 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
      * @see Seadragon#config
      * @default Seadragon#config.minLevelToDraw
      */
-    this.minLevel = options.minLevel ? options.minLevel : this.config.minLevelToDraw;
+    this.minLevel = (options.minLevel != null) ? options.minLevel : this.config.minLevelToDraw;
     /**
      * Maximum level to be drawn.
      * @type number
      * @default maximum image level
      */
-    this.maxLevel = options.maxLevel ? options.maxLevel :
+    this.maxLevel = (options.maxLevel != null) ? options.maxLevel :
         Math.ceil(Math.log(Math.max(options.width, options.height)) / Math.log(2));
 
     /**
@@ -73,7 +73,7 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
      * Number of pixels neighbour tiles overlap.
      * @type number
      */
-    this.tileOverlap = options.tileOverlap ? options.tileOverlap : 1;
+    this.tileOverlap = options.tileOverlap || 0;
 
     // Bounds are coordinates of a Seadragon Image on the virtual plane containing all the images.
     if (!options.bounds) {
