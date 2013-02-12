@@ -419,7 +419,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {boolean} [immediately=false]
      */
-    this.showImage = function showDzi(whichImage, immediately) {
+    this.showTiledImage = function showTiledImage(whichImage, immediately) {
         showOrHideDzi(whichImage, false, immediately);
         return this;
     };
@@ -430,7 +430,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {boolean} [immediately=false]
      */
-    this.hideImage = function hideDzi(whichImage, immediately) {
+    this.hideTiledImage = function hideTiledImage(whichImage, immediately) {
         showOrHideDzi(whichImage, true, immediately);
         return this;
     };

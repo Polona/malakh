@@ -607,12 +607,12 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {number} whichImage We show the <code>this.tiledImages[whichImage]</code> image
      * @param {boolean} [immediately=false]
      */
-    this.showImage = function showDzi(whichImage, immediately) {
+    this.showTiledImage = function showTiledImage(whichImage, immediately) {
         if (!tiledImagesLoaded[whichImage]) {
             // We have to load the image; it'll be shown automatically.
             return this.openDzi(tiledImagesOptions[whichImage]);
         }
-        this.drawer.showImage(whichImage, immediately);
+        this.drawer.showTiledImage(whichImage, immediately);
         return this.restoreUpdating();
     };
 
@@ -622,8 +622,8 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {number} whichImage We hide the <code>this.tiledImages[whichImage]</code> image
      * @param {boolean} [immediately=false]
      */
-    this.hideImage = function hideDzi(whichImage, immediately) {
-        this.drawer.hideImage(whichImage, immediately);
+    this.hideTiledImage = function hideTiledImage(whichImage, immediately) {
+        this.drawer.hideTiledImage(whichImage, immediately);
         return this.restoreUpdating();
     };
 
