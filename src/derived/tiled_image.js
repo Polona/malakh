@@ -106,15 +106,12 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
      */
     this.hiding = false;
 
-    if (options.shown == null) { // True by default.
-        options.shown = true;
-    }
     /**
      * Opacity of the image. Fully opaque by default.
      * @type number
      * @default 1
      */
-    this.opacity = options.shown ? 1 : 0;
+    this.opacity = 1;
 };
 
 Seadragon.TiledImage.prototype = Object.create(seadragonBasePrototype);

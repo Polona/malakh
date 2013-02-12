@@ -17,7 +17,7 @@ $.extend(Seadragon.LayoutManager.prototype,
      */
     {
         /**
-         * Organizes DZIs into a given layout.
+         * Organizes DZIs into a given layout. TODO: currently doesn't work with uninitialized images.
          *
          * @param {boolean} [alingInRows=false] If true, align in rows; otherwise in columns.
          * @param {number} heightOrWidth If <code>alignInRows</code>: height of rows; otherwise width of columns.
@@ -84,7 +84,7 @@ $.extend(Seadragon.LayoutManager.prototype,
         },
 
         /**
-         * Align images in rows.
+         * Align images in rows. TODO: currently doesn't work with uninitialized images.
          *
          * @param {number} height Height of a single row.
          * @param {number} spaceBetweenImages Space between images in a row and between columns.
@@ -97,7 +97,7 @@ $.extend(Seadragon.LayoutManager.prototype,
         },
 
         /**
-         * Align images in columns.
+         * Align images in columns. TODO: currently doesn't work with uninitialized images.
          *
          * @see #alignRows
          *
@@ -124,31 +124,6 @@ $.extend(Seadragon.LayoutManager.prototype,
                 return this;
             }
             this.viewport.fitBounds(dziImage.bounds.getRectangle(current));
-            return this;
-        },
-
-
-        /**
-         * Shows the given image.
-         *
-         * @param {number} whichImage We show the <code>this.dziImages[whichImage]</code> image
-         * @param {boolean} [immediately=false]
-         */
-        showDzi: function showDzi(whichImage, immediately) {
-            this.drawer.showDzi(whichImage, immediately);
-            this.controller.restoreUpdating();
-            return this;
-        },
-
-        /**
-         * Hides the given image.
-         *
-         * @param {number} whichImage We hide the <code>this.dziImages[whichImage]</code> image
-         * @param {boolean} [immediately=false]
-         */
-        hideDzi: function hideDzi(whichImage, immediately) {
-            this.drawer.hideDzi(whichImage, immediately);
-            this.controller.restoreUpdating();
             return this;
         }
     }

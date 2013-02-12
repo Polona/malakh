@@ -23,6 +23,8 @@ Seadragon.Controller = function Controller(seadragon) {
     var that = this,
         animated,
         forceAlign, forceRedraw,
+        dziLoaded, // map: dziNumber -> has the DZI file been already downloaded & processed?
+        dziOptions, // map: dziNumber -> options needed to load DZIs; relevant for ones not yet loaded
         dziImageBoundsUpdatesInProgressNums,
         dziImagesToHandle,
         lastPosition,
@@ -30,7 +32,7 @@ Seadragon.Controller = function Controller(seadragon) {
         lockOnUpdates;
 
     function init() {
-        dziImageBoundsUpdatesInProgressNums = [];
+        dziLoaded = dziOptions = dziImageBoundsUpdatesInProgressNums = [];
         lockOnUpdates = false;
 
         dziImagesToHandle = 0;
@@ -272,8 +274,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * Registers a new open image.
      *
      * @param {Seadragon.DziImage} dziImage
-     * @param {number} [index] If specified, image is put at <code>this.dziImages[index]</code>; otherwise
-     *                         it's put at the end of the table.
+     * @param {number} index  Index in the <code>this.dziImages</code> table where <code>dziImage</code> is put.
      * @private
      */
     function onOpen(dziImage, index) {
@@ -282,10 +283,10 @@ Seadragon.Controller = function Controller(seadragon) {
             return;
         }
 
-        // Add an image.
-        if (index == null) {
-            index = that.dziImages.length;
-        }
+        // Delete loading options for the current DZI.
+        delete dziOptions[index];
+
+        // Adding a new image.
         that.dziImages[index] = dziImage;
         dziImageBoundsUpdatesInProgressNums[index] = 0;
         that.drawer.registerDziImage(dziImage, index);
@@ -493,8 +494,7 @@ Seadragon.Controller = function Controller(seadragon) {
             tileOverlap: tileOverlap,
             tilesUrl: tilesUrl,
             fileFormat: fileFormat,
-            bounds: options.bounds,
-            shown: options.shown
+            bounds: options.bounds
         });
     }
 
@@ -530,35 +530,37 @@ Seadragon.Controller = function Controller(seadragon) {
         return this;
     };
 
-    // TODO this should probably just parse a properly structured JSON, current approach is not extensible.
     /**
      * Opens Deep Zoom Image (DZI).
      *
-     * @param {string} dziUrl  The URL/path to the DZI file.
-     * @param {string} tilesUrl  The URL/path to the tiles directory; by default it's the same as <code>dziUrl<code>
-     *                           with ".dzi" changed to "_files".
-     * @param {number} index  If specified, an image is loaded into <code>controller.dziImages[index]</code>.
-     *                        Otherwise it's put at the end of the table.
-     * @param {boolean} [shown=true]  If false, image is not drawn. It can be made visible later.
-     * @param {Seadragon.Rectangle} [bounds]  Bounds representing position and shape of the image on the virtual
-     *                                        Seadragon plane.
+     * @param {Object} options  An object containing all given options.
+     * @param {string} options.dziUrl  The URL/path to the DZI file.
+     * @param {string} options.tilesUrl  The URL/path to the tiles directory; by default it's the same
+     *                                   as <code>dziUrl<code> with '.dzi' changed to '_files'.
+     * @param {number} options.index  If specified, an image is loaded into <code>controller.dziImages[index]</code>.
+     *                                Otherwise it's put at the end of the table.
+     * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
+     *                                                Seadragon plane.
      */
-    this.openDzi = function openDzi(dziUrl, tilesUrl, index, shown, bounds, /* internal */ dontIncrementCounter) {
-        if (!dontIncrementCounter) {
+    this.openDzi = function openDzi(options) {
+        if (!options.dontIncrementCounter) {
             dziImagesToHandle++;
         }
+        options.callback = onOpen;
+        if (options.index == null) {
+            options.index = this.dziImages.length;
+        }
+        dziLoaded[options.index] = true; // prevent loading the same image twice
+        that.dziImages[options.index] = null; // keep space for the image
+
         try {
-            this.createFromDzi({
-                dziUrl: dziUrl,
-                tilesUrl: tilesUrl,
-                bounds: bounds,
-                index: index,
-                shown: shown,
-                callback: onOpen
-            });
+            this.createFromDzi(options);
         } catch (error) {
             // We try to keep working even after a failed attempt to load a new DZI.
             dziImagesToHandle--;
+            delete that.dziImages[options.index];
+            delete dziLoaded[options.index];
+            delete dziOptions[options.index];
             console.error('DZI failed to load.', error);
         }
 
@@ -568,15 +570,61 @@ Seadragon.Controller = function Controller(seadragon) {
     /**
      * Opens an array of DZIs.
      *
-     * @param {Array.<string>} dziDataArray Array of objects containing data of particular DZIs.
+     * @param {Array.<string>} optionsArray Array of objects containing data of particular DZIs.
      */
-    this.openDziArray = function openDziArray(dziDataArray, hideByDefault) {
-        dziImagesToHandle += dziDataArray.length;
-        dziDataArray.forEach(function (dziData, index) {
-            that.openDzi(dziData.dziUrl, dziData.tilesUrl, index, !hideByDefault, dziData.boundsArray, true);
+    this.openDziArray = function openDziArray(optionsArray, hideByDefault) {
+        dziImagesToHandle += optionsArray.length;
+
+        optionsArray.forEach(function (options, index) {
+            var shown = options.shown == null ? !hideByDefault : options.shown;
+            if (shown) {
+                if (options.index == null) {
+                    options.index = index;
+                }
+
+                // We've already counted the image in the first line of this method.
+                options.dontIncrementCounter = true;
+
+                that.openDzi(options);
+            }
+            else { // register image options to show later
+                if (options.index == null) { // if index not provided, put the image at the end
+                    options.index = that.dziImages.length;
+                }
+                that.dziImages[index] = null;
+                dziOptions[index] = options;
+            }
         });
         return this;
     };
+
+
+    /**
+     * Shows the given image.
+     *
+     * @param {number} whichImage We show the <code>this.dziImages[whichImage]</code> image
+     * @param {boolean} [immediately=false]
+     */
+    this.showDzi = function showDzi(whichImage, immediately) {
+        if (!dziLoaded[whichImage]) {
+            // We have to load the image; it'll be shown automatically.
+            return this.openDzi(dziOptions[whichImage]);
+        }
+        this.drawer.showDzi(whichImage, immediately);
+        return this.restoreUpdating();
+    };
+
+    /**
+     * Hides the given image.
+     *
+     * @param {number} whichImage We hide the <code>this.dziImages[whichImage]</code> image
+     * @param {boolean} [immediately=false]
+     */
+    this.hideDzi = function hideDzi(whichImage, immediately) {
+        this.drawer.hideDzi(whichImage, immediately);
+        return this.restoreUpdating();
+    };
+
 
     /**
      * Checks if controller is in progress of loading/processing new DZIs. Some actions are halted
