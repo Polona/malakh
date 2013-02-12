@@ -151,7 +151,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
             this.springs.y.springTo(center.y - this.springs.height.targetValue / 2, immediately);
 
             this.isAnimating = true;
-            this.$container.trigger('seadragon:forceredraw.seadragon');
+            this.$container.trigger('seadragon:forceredraw');
             return this;
         },
 
@@ -183,7 +183,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
                 this.springs.width.currentValue !== bounds.width ||
                 this.springs.height.currentValue !== bounds.height;
             if (anythingChanged) {
-                this.$container.trigger('seadragon:forceredraw.seadragon');
+                this.$container.trigger('seadragon:forceredraw');
             }
             return anythingChanged;
         },

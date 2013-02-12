@@ -334,7 +334,7 @@ $.extend(Seadragon.TiledImage.prototype,
          */
         fitBounds: function fitBounds(bounds, immediately) {
             this.bounds.fitBounds(bounds, immediately);
-            this.$container.trigger('seadragon:forcealign.seadragon');
+            this.$container.trigger('seadragon:forcealign');
             return this;
         }
     }

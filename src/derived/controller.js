@@ -295,9 +295,9 @@ Seadragon.Controller = function Controller(seadragon) {
 
         dziImagesToHandle--;
 
-        that.$container.trigger('seadragon:loadeddzi.seadragon');
+        that.$container.trigger('seadragon:loadeddzi');
         if (dziImagesToHandle === 0) {
-            that.$container.trigger('seadragon:loadeddziarray.seadragon');
+            that.$container.trigger('seadragon:loadeddziarray');
         }
         that.restoreUpdating();
     }
@@ -422,14 +422,14 @@ Seadragon.Controller = function Controller(seadragon) {
         // Triger proper events.
         if (!animated && animating) {
             // We weren't animating, and now we did ==> animation start.
-            that.$container.trigger('seadragon:animationstart.seadragon');
-            that.$container.trigger('seadragon:animation.seadragon');
+            that.$container.trigger('seadragon:animationstart');
+            that.$container.trigger('seadragon:animation');
         } else if (animating) {
             // We're in the middle of animating.
-            that.$container.trigger('seadragon:animation.seadragon');
+            that.$container.trigger('seadragon:animation');
         } else if (animated) {
             // We were animating, and now we're not anymore ==> animation finish.
-            that.$container.trigger('seadragon:animationend.seadragon');
+            that.$container.trigger('seadragon:animationend');
         }
 
         // For the next update check.

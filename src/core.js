@@ -255,5 +255,5 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
     }
 }
 
-// Export Seadragon global.
+// Export a `Seadragon` global.
 global.Seadragon = Seadragon;
