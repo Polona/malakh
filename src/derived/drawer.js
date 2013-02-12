@@ -237,7 +237,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         }
 
         tilesLoaded[insertionIndex] = tile;
-        that.$container.trigger('seadragon:forceredraw.seadragon');
+        that.$container.trigger('seadragon:forceredraw');
     }
 
     /**
@@ -752,7 +752,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         lastResetTime = 0;
         midUpdate = false;
 
-        that.$container.trigger('seadragon:forceredraw.seadragon');
+        that.$container.trigger('seadragon:forceredraw');
         return this;
     };
 

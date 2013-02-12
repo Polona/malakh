@@ -30,11 +30,12 @@ module.exports = function (grunt) {
                 src: [
                     'src/_intro.js',
 
+                    'src/base_prototype.js',
+                    'src/core.js',
+
                     'src/utils/point.js',
                     'src/utils/segment.js',
                     'src/utils/rectangle.js',
-
-                    'src/base_prototype.js',
 
                     'src/derived/spring.js',
                     'src/derived/image_loader.js',
@@ -50,8 +51,6 @@ module.exports = function (grunt) {
                     'src/derived/drawer.js',
                     {flag: 'layout_manager', src: 'src/derived/layout_manager.js'},
                     'src/derived/controller.js',
-
-                    'src/core.js',
 
                     'src/_outro.js'
                 ]

@@ -1,30 +1,27 @@
 // TODO document all methods
 var seadragonBasePrototype = {
-    throwIncorrectParametersError: function throwIncorrectParametersError(args, className, expectedArguments) {
-        className = className || 'ClassName';
-
-        var names = expectedArguments.join(', ');
-        var errorString = 'Incorrect paremeters! Use:\n' +
-            '    var obj = seadragon.' + className + '(' + names + ')\n';
-
-        expectedArguments.unshift('seadragon');
-        var namesWithSeadragon = expectedArguments.join(', ');
-        errorString += 'or:\n' +
-            '    new Seadragon.' + className + '(' + namesWithSeadragon + ')\n';
-
-        console.info('Received arguments:', [].slice.call(args));
-        throw new Error(errorString);
-    },
-
     ensureArguments: function ensureArgumentsNum(args, className, expectedArguments) {
         expectedArguments = expectedArguments || [];
-        if (args.length < expectedArguments.length + 1) { // +1 because of the `seadragon` parameter
-            return this.throwIncorrectParametersError(args, className, expectedArguments);
-        }
         var firstArg = args[0];
-        if (!firstArg instanceof Seadragon) {
-            return this.throwIncorrectParametersError(args, className, expectedArguments);
+
+        if (!(firstArg instanceof Seadragon) ||
+            args.length < expectedArguments.length + 1) { // +1 because of the `seadragon` parameter
+
+            className = className || 'ClassName';
+
+            var names = expectedArguments.join(', ');
+            var errorString = 'Incorrect paremeters! Use:\n' +
+                '    var obj = seadragon.' + className + '(' + names + ')\n';
+
+            expectedArguments.unshift('seadragon');
+            var namesWithSeadragon = expectedArguments.join(', ');
+            errorString += 'or:\n' +
+                '    new Seadragon.' + className + '(' + namesWithSeadragon + ')\n';
+
+            console.info('Received arguments:', [].slice.call(args));
+            throw new Error(errorString);
         }
+
         /**
          * Main Seadragon instance.
          * @type Seadragon
