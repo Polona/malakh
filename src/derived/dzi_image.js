@@ -20,10 +20,9 @@
  * @param {number} options.tilesURL Sets <code>this.tilesUrl</code>.
  * @param {number} options.tileFormat Sets <code>this.tileFormat</code>.
  * @param {number} [options.tileOverlap] Sets <code>this.tileOverlap</code>.
- * @param {number} [options.bounds] Sets <code>this.bounds</code>.
+ * @param {Seadragon.Rectangle} [options.bounds] Sets <code>this.bounds</code>.
  * @param {number} [options.minLevel] Sets this.minLevel.
  * @param {number} [options.maxLevel] Sets this.maxLevel.
- * @param {number} [options.shown=true] If true, an image is hidden.
  */
 Seadragon.DziImage = function DziImage(seadragon, options) {
     this.ensureArguments(arguments, 'Drawer', ['options']);
