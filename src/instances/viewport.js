@@ -61,10 +61,10 @@ Seadragon.Viewport = function Viewport(seadragon) {
     this.maxLevelExp = Infinity; // We'll change it later.
     /**
      * Viewport can be constrained in a particular rectangle so that a user can't pan or zoom
-     * beyond its visibility. It's done by setting <code>this.config.constraintViewport</code>
+     * beyond its visibility. It's done by setting <code>this.config.constrainViewport</code>
      * to true and then this parameter is used for constraining. If this parameter is not an instance
      * of <code>Seadragon.Rectangle</code>, viewport is not constrained regardless of
-     * <code>this.config.constraintViewport</code> setting.
+     * <code>this.config.constrainViewport</code> setting.
      *
      * @type Seadragon.Rectangle
      */
@@ -232,14 +232,14 @@ $.extend(Seadragon.Viewport.prototype,
          * only from zooming out or dragging the constraints rectangle outside of the viewport. Zooming
          * in has to be handled separately. Thus, it's advised to NOT USE this method directly but
          * to use controller's <code>applyConstraints</code> method instead. This method ignores the
-         * <code>this.config.constraintViewport</code> parameter since it's checked in controller's
+         * <code>this.config.constrainViewport</code> parameter since it's checked in controller's
          * method anyway.
          *
          * @param {boolean} [immediately=false]
          * @param {Seadragon.Point} [refPoint]
          */
         applyConstraints: function applyConstraints(immediately, refPoint) {
-            if (!this.config.constraintViewport) {
+            if (!this.config.constrainViewport) {
                 return this;
             }
             if (!(this.constraintBounds instanceof Seadragon.Rectangle)) { // TODO a Seadragon field?
