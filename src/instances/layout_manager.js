@@ -179,11 +179,11 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * @param {number} [height=500]
      * @param {boolean} [immediately=false]
      */
-    this.alignCenterAndHeight = function alignCenterAndHeight(height, immediately) {
+    this.alignCentersAndHeights = function alignCenterAndHeight(height, immediately) {
         var that = this;
         if (this.controller.isLoading()) {
             setTimeout(function () {
-                that.alignCenterAndHeight(height, immediately);
+                that.alignCentersAndHeights(height, immediately);
             }, 100);
             return this;
         }
