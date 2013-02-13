@@ -25,12 +25,37 @@ Seadragon.Controller = function Controller(seadragon) {
         forceAlign, forceRedraw,
         tiledImagesLoaded, // map: imageNumber -> has the data file been already downloaded & processed?
         tiledImagesOptions, // map: imageNumber -> options needed to load the image; relevant for ones not yet loaded
+        tiledImagesCallbacks, // map: imageNumber -> functions to execute when image is loaded
         tiledImageBoundsUpdatesNums,
         tiledImagesToHandle,
         lastPosition,
         containerSize,
         lockOnUpdates;
 
+    Object.defineProperties(this, {
+        /**
+         * TODO document
+         *
+         * @typeArray.<number>
+         * @memberof Seadragon.Controller#
+         */
+        tiledImagesLoaded: {
+            get: function () {
+                return tiledImagesLoaded;
+            }
+        },
+        /**
+         * TODO document
+         *
+         * @typeArray.<Function>
+         * @memberof Seadragon.Controller#
+         */
+        tiledImagesCallbacks: {
+            get: function () {
+                return tiledImagesCallbacks;
+            }
+        }
+    });
 
     if (Seadragon.Magnifier) {
         /**
@@ -283,6 +308,13 @@ Seadragon.Controller = function Controller(seadragon) {
         that.$container.trigger('seadragon:loadedtiledimage');
         if (tiledImagesToHandle === 0) {
             that.$container.trigger('seadragon:loadedtiledimagearray');
+        }
+
+        var callbacks = tiledImagesCallbacks[index];
+        if (callbacks) {
+            callbacks.forEach(function (callback) {
+                callback.call(tiledImage);
+            });
         }
         that.restoreUpdating();
     }
@@ -537,6 +569,7 @@ Seadragon.Controller = function Controller(seadragon) {
             options.index = this.tiledImages.length;
         }
         tiledImagesLoaded[options.index] = true; // prevent loading the same image twice
+        tiledImagesCallbacks[options.index] = [];
         that.tiledImages[options.index] = null; // keep space for the image
 
         try {
@@ -547,6 +580,7 @@ Seadragon.Controller = function Controller(seadragon) {
             delete that.tiledImages[options.index];
             delete tiledImagesLoaded[options.index];
             delete tiledImagesOptions[options.index];
+            delete tiledImagesCallbacks[options.index];
             console.error('DZI failed to load.', error);
         }
 
