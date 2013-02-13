@@ -23,7 +23,6 @@ Seadragon.Controller = function Controller(seadragon) {
     var that = this,
         animated,
         forceAlign, forceRedraw,
-        tiledImagesLoaded, // map: imageNumber -> has the data file been already downloaded & processed?
         tiledImagesOptions, // map: imageNumber -> options needed to load the image; relevant for ones not yet loaded
         tiledImagesCallbacks, // map: imageNumber -> functions to execute when image is loaded
         tiledImageBoundsUpdatesNums,
@@ -33,18 +32,6 @@ Seadragon.Controller = function Controller(seadragon) {
         lockOnUpdates;
 
     Object.defineProperties(this, {
-        /**
-         * TODO document
-         *
-         * @typeArray.<number>
-         * @memberof Seadragon.Controller#
-         */
-        tiledImagesLoaded: {
-            get: function () {
-                return tiledImagesLoaded;
-            },
-            enumerable: true,
-        },
         /**
          * TODO document
          *
@@ -275,9 +262,15 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function recalculateMaxLevel() {
         that.viewport.maxLevel = 0;
-        that.tiledImages.forEach(function (tiledImage) {
-            that.viewport.maxLevel = Math.max(that.viewport.maxLevel, tiledImage.getViewportLevel(tiledImage.maxLevel));
-        });
+        for (var i = 0; i < that.tiledImages.length; i++) {
+            var tiledImage = that.tiledImages[i];
+            if (tiledImage instanceof Seadragon.TiledImage) { // Tiled Image has been loaded
+                that.viewport.maxLevel = Math.max(
+                    that.viewport.maxLevel,
+                    tiledImage.getViewportLevel(tiledImage.maxLevel)
+                );
+            }
+        }
         that.viewport.maxLevelExp = Math.pow(2, that.viewport.maxLevel); // TODO shouldn't this be in Seadragon?
     }
 
@@ -317,6 +310,7 @@ Seadragon.Controller = function Controller(seadragon) {
             callbacks.forEach(function (callback) {
                 callback.call(tiledImage);
             });
+            delete tiledImagesCallbacks[index];
         }
         that.restoreUpdating();
     }
@@ -523,7 +517,6 @@ Seadragon.Controller = function Controller(seadragon) {
      *
      * @param {Object} options  An object containing all given options.
      * @param {string} options.dziUrl  An URL/path to the DZI file.
-     * @param {function} options.callback  Function invoked when DZI is fully processed.
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
      * @param {number} [options.index]  If specified, an image is loaded into
@@ -532,7 +525,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {boolean} [options.shown=true]  If false, image is not drawn. It can be made visible later.
      */
     this.createFromDzi = function createFromDzi(options) {
-        this.ensureOptions(options, 'DziImage.createFromDzi', ['dziUrl', 'callback']);
+        this.ensureOptions(options, 'DziImage.createFromDzi', ['dziUrl']);
 
         $.ajax({
             type: 'GET',
@@ -540,7 +533,7 @@ Seadragon.Controller = function Controller(seadragon) {
             dataType: 'xml',
             success: function (data) {
                 options.data = data;
-                options.callback(processDzi(options), options.index);
+                onOpen(processDzi(options), options.index);
             },
             error: function (_, statusText) {
                 throw new Error('Unable to retrieve the given DZI file, does it really exist? ', statusText);
@@ -564,13 +557,10 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     this.openDzi = function openDzi(options) {
         tiledImagesToHandle++;
-        options.callback = onOpen;
         if (options.index == null) {
             options.index = this.tiledImages.length;
         }
-        tiledImagesLoaded[options.index] = true; // prevent loading the same image twice
         delete tiledImagesOptions[options.index];
-        delete tiledImagesCallbacks[options.index];
         that.tiledImages[options.index] = null; // keep space for the image
 
         try {
@@ -579,7 +569,6 @@ Seadragon.Controller = function Controller(seadragon) {
             // We try to keep working even after a failed attempt to load a new DZI.
             tiledImagesToHandle--;
             delete that.tiledImages[options.index];
-            delete tiledImagesLoaded[options.index];
             console.error('DZI failed to load; provided options:', options);
             console.info(error.stack);
         }
@@ -625,10 +614,13 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {boolean} [immediately=false]
      */
     this.showTiledImage = function showTiledImage(whichImage, immediately) {
-        if (!tiledImagesLoaded[whichImage]) {
-            // We have to load the image; it'll be shown automatically.
+        var tiledImage = that.tiledImages[whichImage];
+
+        if (!(tiledImage instanceof Seadragon.TiledImage)) {
+            // Image not loaded yet, loading it will show it automatically.
             return this.openDzi(tiledImagesOptions[whichImage]);
         }
+
         this.drawer.showTiledImage(whichImage, immediately);
         return this.restoreUpdating();
     };
@@ -640,9 +632,13 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {boolean} [immediately=false]
      */
     this.hideTiledImage = function hideTiledImage(whichImage, immediately) {
-        if (!tiledImagesLoaded[whichImage]) {
-            return this; // image not loaded yet
+        var tiledImage = that.tiledImages[whichImage];
+
+        if (!(tiledImage instanceof Seadragon.TiledImage)) {
+            // Image not loaded yet, doing nothing.
+            return this;
         }
+
         this.drawer.hideTiledImage(whichImage, immediately);
         return this.restoreUpdating();
     };
@@ -663,7 +659,6 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     this.init = function init() {
         that.tiledImages = [];
-        tiledImagesLoaded = [];
         tiledImagesOptions = [];
         tiledImagesCallbacks = [];
         tiledImageBoundsUpdatesNums = [];
