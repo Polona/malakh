@@ -389,7 +389,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @param {boolean} [immediately=false]
      * @private
      */
-    function showOrHideDzi(whichImage, hide, immediately) {
+    function showOrHideTiledImage(whichImage, hide, immediately) {
         var tiledImage = that.tiledImages[whichImage];
         if (!(tiledImage instanceof Seadragon.TiledImage)) {
             console.error('Can\'t ' + (hide ? 'hide' : 'show') +
@@ -397,6 +397,9 @@ Seadragon.Drawer = function Drawer(seadragon) {
             return;
         }
         var opacityTarget = hide ? 0 : 1;
+        if (opacityTarget === tiledImage.opacity) {
+            return; // nothing to do
+        }
 
         if (immediately) {
             tiledImage.opacity = opacityTarget;
@@ -421,7 +424,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @param {boolean} [immediately=false]
      */
     this.showTiledImage = function showTiledImage(whichImage, immediately) {
-        showOrHideDzi(whichImage, false, immediately);
+        showOrHideTiledImage(whichImage, false, immediately);
         return this;
     };
 
@@ -432,7 +435,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @param {boolean} [immediately=false]
      */
     this.hideTiledImage = function hideTiledImage(whichImage, immediately) {
-        showOrHideDzi(whichImage, true, immediately);
+        showOrHideTiledImage(whichImage, true, immediately);
         return this;
     };
 

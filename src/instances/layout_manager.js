@@ -109,16 +109,26 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      *
      * @param {number} whichImage  We fit the <code>this.tiledImages[whichImage]</code> image
      * @param {boolean} [current=false]
+     * @param {boolean} [immediately=false]
      */
-    this.fitImage = function fitImage(whichImage, current) {
+    this.fitImage = function fitImage(whichImage, current, immediately) {
         var tiledImage = this.tiledImages[whichImage];
         if (!tiledImage) {
             console.error('No image with number ' + whichImage);
             return this;
         }
-        this.viewport.fitBounds(tiledImage.boundsSprings.getRectangle(current));
+        this.viewport.fitBounds(
+            tiledImage.boundsSprings.getRectangle(current),
+            immediately
+        );
         return this;
     };
+
+    function getFitImageFunction(whichImage, current, immediately) {
+        return function () {
+            this.layoutManager.fitImage(whichImage, current, immediately);
+        };
+    }
 
     /**
      * Hides currently visible images and shows only the given one.
@@ -127,13 +137,27 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * @param {boolean} [immediately=false]
      */
     this.showOnlyImage = function showOnlyImage(whichImage, immediately) {
+        var tiledImage;
+
+        this.showTiledImage(whichImage, immediately);
+        if (this.tiledImages[whichImage] instanceof Seadragon.TiledImage) {
+            this.fitImage(whichImage);
+        } else {
+            this.controller.tiledImagesCallbacks[whichImage].push(
+                getFitImageFunction(whichImage, undefined, immediately)
+            );
+        }
+
         for (var i = 0; i < this.tiledImages.length; i++) {
-            if (i === whichImage) {
-                this.showTiledImage(i, immediately);
-            } else {
-                this.hideTiledImage(i, immediately);
+            tiledImage = this.tiledImages[i];
+            if (i !== whichImage) {
+                if (tiledImage instanceof Seadragon.TiledImage) { // otherwise it's already hidden
+                    this.hideTiledImage(i, immediately);
+                }
             }
         }
+
+        return this;
     };
 
     this.alignCenterAndHeight = function alignCenterAndHeight(height, immediately) {
@@ -154,7 +178,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         for (var i = 0; i < this.tiledImages.length; i++) {
             var tiledImage = this.tiledImages[i];
             var newBounds = new Seadragon.Rectangle(0, 0, undefined, height);
-            if (this.controller.tiledImagesLoaded[i]) {
+            if (tiledImage instanceof Seadragon.TiledImage) {
                 // Center in (0, 0), common height, width counted from height & aspect ratio.
                 tiledImage.fitBounds(newBounds, immediately);
             } else {
