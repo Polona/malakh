@@ -49,7 +49,7 @@ $.extend(Seadragon.LayoutManager.prototype,
             this.tiledImages.forEach(function (tiledImage) {
                 // Compute the current state.
                 if (alingInRows) {
-                    width = tiledImage.width * heightOrWidth / tiledImage.height;
+                    width = heightOrWidth * tiledImage.boundsSprings.getAspectRatio();
                     height = heightOrWidth;
                     if (widthSum + width > maxRowWidthOrColumnHeight) {
                         // Row width is now too much!
@@ -59,7 +59,7 @@ $.extend(Seadragon.LayoutManager.prototype,
                 }
                 else { // Align in columns.
                     width = heightOrWidth;
-                    height = tiledImage.height * heightOrWidth / tiledImage.width;
+                    height = heightOrWidth / tiledImage.boundsSprings.getAspectRatio();
                     if (heightSum + height > maxRowWidthOrColumnHeight) {
                         // Column height is now too much!
                         heightSum = 0;

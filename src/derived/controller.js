@@ -31,22 +31,6 @@ Seadragon.Controller = function Controller(seadragon) {
         containerSize,
         lockOnUpdates;
 
-    function init() {
-        tiledImagesLoaded = tiledImagesOptions = tiledImageBoundsUpdatesInProgressNums = [];
-        lockOnUpdates = false;
-
-        tiledImagesToHandle = 0;
-
-        bindEvents();
-
-        var containerCss = that.$container.css(['width', 'height']);
-        containerSize = new Seadragon.Point(parseFloat(containerCss.width), parseFloat(containerCss.height));
-
-        // Begin updating.
-        animated = false;
-        forceAlign = forceRedraw = true;
-        scheduleUpdate();
-    }
 
     if (Seadragon.Magnifier) {
         /**
@@ -641,20 +625,27 @@ Seadragon.Controller = function Controller(seadragon) {
     /**
      * TODO document.
      */
-    this.reset = function close() {
+    this.init = function init() {
         that.tiledImages = [];
-        tiledImageBoundsUpdatesInProgressNums = [];
+        tiledImagesLoaded = tiledImagesOptions = tiledImagesCallbacks = tiledImageBoundsUpdatesNums = [];
 
         that.config.enableMagnifier = that.config.enablePicker = false;
-        lockOnUpdates = true; // 'seadragon:forcealign.seadragon' handler will resume updating
+        lockOnUpdates = false;
 
         that.viewport.maxLevel = 0; // No DZIs loaded yet.
-
         tiledImagesToHandle = 0;
 
-        // Reset the drawer (at the end it triggers the <code>seadragon:forcealign.seadragon</code> event)
-        // so controller will know when to force re-draw.
+        bindEvents();
         that.drawer.reset();
+
+        var containerCss = that.$container.css(['width', 'height']);
+        containerSize = new Seadragon.Point(parseFloat(containerCss.width), parseFloat(containerCss.height));
+
+        // Begin updating.
+        animated = false;
+        forceAlign = forceRedraw = true;
+        scheduleUpdate();
+
         return this;
     };
 
@@ -692,7 +683,7 @@ Seadragon.Controller = function Controller(seadragon) {
         return this.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
     };
 
-    init();
+    this.init();
 };
 
 Seadragon.Controller.prototype = Object.create(seadragonBasePrototype);

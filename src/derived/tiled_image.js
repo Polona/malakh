@@ -327,11 +327,24 @@ $.extend(Seadragon.TiledImage.prototype,
          * @see Seadragon.AnimatedRectangle#fitBounds
          *
          * TODO write here sth about triggering?
+         * TODO write here about keeping aspect ratio
          *
          * @param {Seadragon.Rectangle} bounds
          * @param {boolean} [immediately=false]
+         * @param {boolean} [preferWidthPerfectMatch=false]  If true, adjust height, not width, to match aspect ratio.
          */
-        fitBounds: function fitBounds(bounds, immediately) {
+        fitBounds: function fitBounds(bounds, immediately, preferWidthPerfectMatch) {
+            var boundsCenter = bounds.getCenter();
+            var aspectRatio = this.boundsSprings.getAspectRatio(); // width/height
+            if (!bounds.height || (preferWidthPerfectMatch && bounds.width)) {
+                // Compute height from width and aspect ratio.
+                bounds.height = bounds.width / aspectRatio;
+            } else {
+                // Compute width from height and aspect ratio.
+                bounds.width = bounds.height * aspectRatio;
+            }
+            bounds.panTo(boundsCenter); // keep the planned center intact
+
             this.boundsSprings.fitBounds(bounds, immediately);
             this.$container.trigger('seadragon:forcealign');
             return this;
