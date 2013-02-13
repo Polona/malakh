@@ -312,7 +312,7 @@ $.extend(Seadragon.TiledImage.prototype,
         },
 
         /**
-         * Returns tile's URL/path. An abstract method - needs to be redefined in derived extending this one!
+         * Returns tile's URL/path. An abstract method - needs to be redefined in classes extending this one!
          * @param {number} level The image level the tile lies on.
          * @param {number} x Tile's column number (starting from 0).
          * @param {number} y Tile's row number (starting from 0).
