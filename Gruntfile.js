@@ -1,5 +1,5 @@
-/* jshint camelcase: false */
-/* global module: false, process: false, require: false, Buffer: false */
+/*jshint camelcase: false */
+/*global module: false, process: false, require: false, Buffer: false */
 
 module.exports = function (grunt) {
     'use strict';
