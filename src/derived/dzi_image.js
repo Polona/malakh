@@ -19,11 +19,11 @@
  * @param {number} options.tileSize Sets <code>this.tileSize</code>.
  * @param {number} options.tilesURL Sets <code>this.tilesUrl</code>.
  * @param {number} options.tileFormat Sets <code>this.tileFormat</code>.
- * @param {number} [options.tileOverlap] Sets <code>this.tileOverlap</code>.
- * @param {number} [options.bounds] Sets <code>this.bounds</code>.
+ * @param {number} [options.tileOverlap=0] Sets <code>this.tileOverlap</code>.
+ * @param {Seadragon.Rectangle} [options.bounds=new Seadragon.Rectangle(0, 0, options.width, options.height)]
+ *                              Sets <code>this.bounds</code>.
  * @param {number} [options.minLevel] Sets this.minLevel.
  * @param {number} [options.maxLevel] Sets this.maxLevel.
- * @param {number} [options.shown=true] If true, an image is hidden.
  */
 Seadragon.DziImage = function DziImage(seadragon, options) {
     this.ensureArguments(arguments, 'Drawer', ['options']);
@@ -36,8 +36,7 @@ Seadragon.DziImage = function DziImage(seadragon, options) {
         tileOverlap: options.tileOverlap,
         bounds: options.bounds,
         minLevel: options.minLevel,
-        maxLevel: options.maxLevel,
-        shown: options.shown
+        maxLevel: options.maxLevel
     });
 
     /**
@@ -71,6 +70,6 @@ $.extend(Seadragon.DziImage.prototype,
          */
         getTileUrl: function getTileUrl(level, x, y) {
             return this.tilesUrl + level + '/' + x + '_' + y + '.' + this.fileFormat;
-        }
+        },
     }
 );

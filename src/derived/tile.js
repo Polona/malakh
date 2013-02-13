@@ -129,7 +129,7 @@ Seadragon.Tile = function Tile(seadragon, options) {
     this.lastTouchTime = 0;
 };
 
-Seadragon.Tile.prototype = Object.create(seadragonBasePrototype);
+Seadragon.Tile.prototype = Object.create(seadragonProxy);
 
 $.extend(Seadragon.Tile.prototype,
     /**
@@ -197,6 +197,6 @@ $.extend(Seadragon.Tile.prototype,
          */
         toString: function toString() {
             return this.level + '/' + this.x + '_' + this.y;
-        }
+        },
     }
 );

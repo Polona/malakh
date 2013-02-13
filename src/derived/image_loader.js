@@ -24,7 +24,7 @@ Seadragon.ImageLoader = function ImageLoader(seadragon) {
     this.downloading = 0;
 };
 
-Seadragon.ImageLoader.prototype = Object.create(seadragonBasePrototype);
+Seadragon.ImageLoader.prototype = Object.create(seadragonProxy);
 
 $.extend(Seadragon.ImageLoader.prototype,
     /**
@@ -76,6 +76,6 @@ $.extend(Seadragon.ImageLoader.prototype,
             image.src = src;
 
             return true;
-        }
+        },
     }
 );

@@ -21,7 +21,7 @@ Seadragon.Magnifier = function Magnifier(seadragon, center) {
     this.center = center;
 };
 
-Seadragon.Magnifier.prototype = Object.create(seadragonBasePrototype);
+Seadragon.Magnifier.prototype = Object.create(seadragonProxy);
 
 $.extend(Seadragon.Magnifier.prototype,
     /**
@@ -118,6 +118,6 @@ $.extend(Seadragon.Magnifier.prototype,
          */
         toString: function toString() {
             return 'Magnifier((' + this.center.x + ', ' + this.center.y + '), ' + this.config.magnifierRadius + ')';
-        }
+        },
     }
 );

@@ -62,7 +62,7 @@ Seadragon.Spring = function Spring(seadragon, initialValue) {
     this.cacheIsAnimating = true;
 };
 
-Seadragon.Spring.prototype = Object.create(seadragonBasePrototype);
+Seadragon.Spring.prototype = Object.create(seadragonProxy);
 
 $.extend(Seadragon.Spring.prototype,
     /**
@@ -153,6 +153,6 @@ $.extend(Seadragon.Spring.prototype,
                 this.startValue + (this.targetValue - this.startValue) *
                     this._transform((currentTime - this.startTime) / (this.targetTime - this.startTime));
             return this;
-        }
+        },
     }
 );

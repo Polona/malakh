@@ -74,7 +74,7 @@ Seadragon.AnimatedRectangle = function AnimatedRectangle(seadragon, bounds) {
     };
 };
 
-Seadragon.AnimatedRectangle.prototype = Object.create(seadragonBasePrototype);
+Seadragon.AnimatedRectangle.prototype = Object.create(seadragonProxy);
 
 $.extend(Seadragon.AnimatedRectangle.prototype,
     /**
@@ -203,6 +203,6 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
             this.springs.height.springTo(bounds.height, immediately);
 
             return this;
-        }
+        },
     }
 );

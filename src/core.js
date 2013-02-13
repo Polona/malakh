@@ -84,7 +84,7 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
          * Time it takes to finish various animations in miliseconds.
          * @type number
          */
-        animationTime: 1000,
+        animationTime: 500,
         /**
          * Time it takes to blend in/out tiles in miliseconds.
          * WARNING: needs to be lower than animationTime!
@@ -97,7 +97,7 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
          * Defines sharpness of springs moves; springs are used for animations.
          * @type number
          */
-        springStiffness: 5,
+        springStiffness: 6,
 
 
         /**
@@ -172,12 +172,12 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
          * redraw background in places where there are no tiles to display.
          * @type string
          */
-        backgroundColor: ''
+        backgroundColor: '',
     };
     $.extend(this.config, configOverrides);
 
     // No DZIs loaded yet.
-    this.dziImages = [];
+    this.tiledImages = [];
 
     this.$container = $(containerSelectorOrElement);
     if (this.$container.length === 0) {
@@ -233,27 +233,88 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
      */
     this.controller = this.Controller();
 
-    function defineControllerProxyForField(field) {
+    // TODO document.
+    this._defineProxyForField = function _defineProxyForField(member, field, enumerable) {
+        var that = this;
         (function (field) {
-            Object.defineProperty(seadragon, field, {
+            Object.defineProperty(that, field, {
                 get: function () {
-                    return this.controller[field];
+                    return this[member][field];
                 },
                 set: function (value) {
-                    this.controller[field] = value;
-                }
+                    this[member][field] = value;
+                },
+                enumerable: !!enumerable, // we don't want duplicate enumerated fields in proxies by default
             });
         })(field);
-    }
+        return this;
+    };
 
-    // From user perspective controller is no different from seadragon itself so
-    // we're propagating its methods/fields.
-    for (var field in this.controller) {
-        if (this.controller.hasOwnProperty(field)) {
-            defineControllerProxyForField(field);
-        }
-    }
+    this._defineProxyForAllFields = function _defineProxyForAllFields(member) {
+        var that = this;
+        Object.keys(this[member]).forEach(function (field) {
+            that._defineProxyForField(member, field);
+        });
+        return this;
+    };
+
+    // Proxying `Controller`/`LayoutManager` fields.
+    this._defineProxyForAllFields('controller')
+        ._defineProxyForAllFields('layoutManager');
 }
+
+// TODO document all methods
+$.extend(Seadragon.prototype,
+    /**
+     * @lends Seadragon.prototype
+     */
+    {
+        ensureArguments: function ensureArgumentsNum(args, className, expectedArguments) {
+            expectedArguments = expectedArguments || [];
+            var firstArg = args[0];
+
+            if (!(firstArg instanceof Seadragon) ||
+                args.length < expectedArguments.length + 1) { // +1 because of the `seadragon` parameter
+
+                className = className || 'ClassName';
+
+                var names = expectedArguments.join(', ');
+                var errorString = 'Incorrect paremeters! Use:\n' +
+                    '    var obj = seadragon.' + className + '(' + names + ')\n';
+
+                expectedArguments.unshift('seadragon');
+                var namesWithSeadragon = expectedArguments.join(', ');
+                errorString += 'or:\n' +
+                    '    new Seadragon.' + className + '(' + namesWithSeadragon + ')\n';
+
+                console.info('Received arguments:', [].slice.call(args));
+                throw new Error(errorString);
+            }
+
+            /**
+             * Main Seadragon instance.
+             * @type Seadragon
+             */
+            this.seadragon = firstArg;
+            return this;
+        },
+
+        ensureOptions: function ensureOptions(options, className, expectedOptionsArray) {
+            var missingOption = !options;
+            expectedOptionsArray.forEach(function (expectedOption) {
+                if (!(options.hasOwnProperty(expectedOption))) {
+                    missingOption = true;
+                }
+            });
+            if (missingOption) {
+                console.info('Received options:', options);
+                throw new Error('Seadragon.' + className + ' needs a JSON parameter with at least the following ' +
+                    'fields: ' + expectedOptionsArray.join(', ') + '.');
+            }
+            return this;
+        },
+    }
+);
 
 // Export a `Seadragon` global.
 global.Seadragon = Seadragon;

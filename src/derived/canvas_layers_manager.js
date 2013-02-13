@@ -25,7 +25,7 @@ Seadragon.CanvasLayersManager = function CanvasLayersManager(seadragon) {
     ];
 };
 
-Seadragon.CanvasLayersManager.prototype = Object.create(seadragonBasePrototype);
+Seadragon.CanvasLayersManager.prototype = Object.create(seadragonProxy);
 
 $.extend(Seadragon.CanvasLayersManager.prototype,
     /**
@@ -96,6 +96,6 @@ $.extend(Seadragon.CanvasLayersManager.prototype,
                 []
             ];
             return this;
-        }
+        },
     }
 );
