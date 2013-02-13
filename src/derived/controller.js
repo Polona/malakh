@@ -42,7 +42,8 @@ Seadragon.Controller = function Controller(seadragon) {
         tiledImagesLoaded: {
             get: function () {
                 return tiledImagesLoaded;
-            }
+            },
+            enumerable: true,
         },
         /**
          * TODO document
@@ -53,8 +54,9 @@ Seadragon.Controller = function Controller(seadragon) {
         tiledImagesCallbacks: {
             get: function () {
                 return tiledImagesCallbacks;
-            }
-        }
+            },
+            enumerable: true,
+        },
     });
 
     if (Seadragon.Magnifier) {
@@ -561,15 +563,14 @@ Seadragon.Controller = function Controller(seadragon) {
      *                                                Seadragon plane.
      */
     this.openDzi = function openDzi(options) {
-        if (!options.dontIncrementCounter) {
-            tiledImagesToHandle++;
-        }
+        tiledImagesToHandle++;
         options.callback = onOpen;
         if (options.index == null) {
             options.index = this.tiledImages.length;
         }
         tiledImagesLoaded[options.index] = true; // prevent loading the same image twice
-        tiledImagesCallbacks[options.index] = [];
+        delete tiledImagesOptions[options.index];
+        delete tiledImagesCallbacks[options.index];
         that.tiledImages[options.index] = null; // keep space for the image
 
         try {
@@ -579,9 +580,8 @@ Seadragon.Controller = function Controller(seadragon) {
             tiledImagesToHandle--;
             delete that.tiledImages[options.index];
             delete tiledImagesLoaded[options.index];
-            delete tiledImagesOptions[options.index];
-            delete tiledImagesCallbacks[options.index];
-            console.error('DZI failed to load.', error);
+            console.error('DZI failed to load; provided options:', options);
+            console.info(error.stack);
         }
 
         return this;
@@ -596,14 +596,12 @@ Seadragon.Controller = function Controller(seadragon) {
         tiledImagesToHandle += optionsArray.length;
 
         optionsArray.forEach(function (options, index) {
+            tiledImagesToHandle--; // openDzi increases it again
             var shown = options.shown == null ? !hideByDefault : options.shown;
             if (shown) {
                 if (options.index == null) {
                     options.index = index;
                 }
-
-                // We've already counted the image in the first line of this method.
-                options.dontIncrementCounter = true;
 
                 that.openDzi(options);
             }
@@ -613,6 +611,7 @@ Seadragon.Controller = function Controller(seadragon) {
                 }
                 that.tiledImages[index] = null;
                 tiledImagesOptions[index] = options;
+                tiledImagesCallbacks[index] = [];
             }
         });
         return this;
@@ -641,6 +640,9 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {boolean} [immediately=false]
      */
     this.hideTiledImage = function hideTiledImage(whichImage, immediately) {
+        if (!tiledImagesLoaded[whichImage]) {
+            return this; // image not loaded yet
+        }
         this.drawer.hideTiledImage(whichImage, immediately);
         return this.restoreUpdating();
     };
@@ -661,7 +663,10 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     this.init = function init() {
         that.tiledImages = [];
-        tiledImagesLoaded = tiledImagesOptions = tiledImagesCallbacks = tiledImageBoundsUpdatesNums = [];
+        tiledImagesLoaded = [];
+        tiledImagesOptions = [];
+        tiledImagesCallbacks = [];
+        tiledImageBoundsUpdatesNums = [];
 
         that.config.enableMagnifier = that.config.enablePicker = false;
         lockOnUpdates = false;
@@ -720,4 +725,4 @@ Seadragon.Controller = function Controller(seadragon) {
     this.init();
 };
 
-Seadragon.Controller.prototype = Object.create(seadragonBasePrototype);
+Seadragon.Controller.prototype = Object.create(seadragonProxy);

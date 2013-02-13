@@ -62,7 +62,7 @@ Seadragon.Spring = function Spring(seadragon, initialValue) {
     this.cacheIsAnimating = true;
 };
 
-Seadragon.Spring.prototype = Object.create(seadragonBasePrototype);
+Seadragon.Spring.prototype = Object.create(seadragonProxy);
 
 $.extend(Seadragon.Spring.prototype,
     /**

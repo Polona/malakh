@@ -116,7 +116,7 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
     this.opacity = 1;
 };
 
-Seadragon.TiledImage.prototype = Object.create(seadragonBasePrototype);
+Seadragon.TiledImage.prototype = Object.create(seadragonProxy);
 
 $.extend(Seadragon.TiledImage.prototype,
     /**

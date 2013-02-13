@@ -21,7 +21,7 @@ Seadragon.Magnifier = function Magnifier(seadragon, center) {
     this.center = center;
 };
 
-Seadragon.Magnifier.prototype = Object.create(seadragonBasePrototype);
+Seadragon.Magnifier.prototype = Object.create(seadragonProxy);
 
 $.extend(Seadragon.Magnifier.prototype,
     /**

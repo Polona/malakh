@@ -74,4 +74,4 @@ Seadragon.Markers = function Markers(seadragon) {
     }
 };
 
-Seadragon.Markers.prototype = Object.create(seadragonBasePrototype);
+Seadragon.Markers.prototype = Object.create(seadragonProxy);

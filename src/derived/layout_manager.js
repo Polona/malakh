@@ -127,14 +127,13 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * @param {boolean} [immediately=false]
      */
     this.showOnlyImage = function showOnlyImage(whichImage, immediately) {
-        var that = this;
-        this.tiledImages.forEach(function (tiledImage, index) {
-            if (index === whichImage) {
-                that.showTiledImage(index, immediately);
+        for (var i = 0; i < this.tiledImages.length; i++) {
+            if (i === whichImage) {
+                this.showTiledImage(i, immediately);
             } else {
-                that.hideTiledImage(index, immediately);
+                this.hideTiledImage(i, immediately);
             }
-        });
+        }
     };
 
     this.alignCenterAndHeight = function alignCenterAndHeight(height, immediately) {
@@ -146,21 +145,27 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             return this;
         }
 
-        this.tiledImages.forEach(function (tiledImage, index) {
-            if (that.controller.tiledImagesLoaded[index]) {
+        function getFitBoundsFunction(bounds, immediately) {
+            return function () {
+                return this.fitBounds(bounds, immediately);
+            };
+        }
+
+        for (var i = 0; i < this.tiledImages.length; i++) {
+            var tiledImage = this.tiledImages[i];
+            var newBounds = new Seadragon.Rectangle(0, 0, undefined, height);
+            if (this.controller.tiledImagesLoaded[i]) {
                 // Center in (0, 0), common height, width counted from height & aspect ratio.
-                tiledImage.fitBounds(new Seadragon.Rectangle(0, 0, undefined, height), immediately);
+                tiledImage.fitBounds(newBounds, immediately);
             } else {
-                that.controller.tiledImagesCallbacks[index].push(
-                    function () {
-                        this.fitBounds(new Seadragon.Rectangle(0, 0, undefined, height), immediately);
-                    }
+                this.controller.tiledImagesCallbacks[i].push(
+                    getFitBoundsFunction(newBounds, immediately)
                 );
             }
-        });
+        }
 
         return this;
     };
 };
 
-Seadragon.LayoutManager.prototype = Object.create(seadragonBasePrototype);
+Seadragon.LayoutManager.prototype = Object.create(seadragonProxy);

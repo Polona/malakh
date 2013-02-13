@@ -129,7 +129,7 @@ Seadragon.Tile = function Tile(seadragon, options) {
     this.lastTouchTime = 0;
 };
 
-Seadragon.Tile.prototype = Object.create(seadragonBasePrototype);
+Seadragon.Tile.prototype = Object.create(seadragonProxy);
 
 $.extend(Seadragon.Tile.prototype,
     /**

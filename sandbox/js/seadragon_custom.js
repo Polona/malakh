@@ -6,7 +6,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
 
     var buttonColors = {
         false: '#cd5c5c',
-        true: '#2e8b57'
+        true: '#2e8b57',
     };
     var dziPrefix = 'seadragon_data/';
     var initialAnimationTime = 1000;

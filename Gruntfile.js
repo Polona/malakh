@@ -1,5 +1,5 @@
-/*jshint camelcase: false */
-/*global module: false, process: false, require: false, Buffer: false */
+/* jshint camelcase: false */
+/* global module: false, process: false, require: false, Buffer: false */
 
 module.exports = function (grunt) {
     'use strict';
@@ -30,8 +30,8 @@ module.exports = function (grunt) {
                 src: [
                     'src/_intro.js',
 
-                    'src/base_prototype.js',
                     'src/core.js',
+                    'src/seadragon_proxy.js',
 
                     'src/utils/point.js',
                     'src/utils/segment.js',

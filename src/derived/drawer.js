@@ -273,12 +273,12 @@ Seadragon.Drawer = function Drawer(seadragon) {
             // Check that every visible tile provides coverage.
             // Update: protecting against properties added to the Object
             // class's prototype, which can definitely (and does) happen.
-            var rows = coverage[whichImage][level];
-            for (i in rows) {
-                if (rows.hasOwnProperty(i)) {
-                    var cols = rows[i];
-                    for (j in cols) {
-                        if (cols.hasOwnProperty(j) && !cols[j]) {
+            var rowsOfColumns = coverage[whichImage][level];
+            for (i in rowsOfColumns) {
+                if (rowsOfColumns.hasOwnProperty(i)) {
+                    var columns = rowsOfColumns[i];
+                    for (j in columns) {
+                        if (columns.hasOwnProperty(j) && !columns[j]) {
                             return false;
                         }
                     }
@@ -391,9 +391,9 @@ Seadragon.Drawer = function Drawer(seadragon) {
      */
     function showOrHideDzi(whichImage, hide, immediately) {
         var tiledImage = that.tiledImages[whichImage];
-        if (!(tiledImage instanceof Seadragon.DziImage)) {
+        if (!(tiledImage instanceof Seadragon.TiledImage)) {
             console.error('Can\'t ' + (hide ? 'hide' : 'show') +
-                ' DZI of number ' + whichImage + '; there is no such DZI.');
+                ' TiledImage of number ' + whichImage + '; there is no such TiledImage.');
             return;
         }
         var opacityTarget = hide ? 0 : 1;
@@ -760,4 +760,4 @@ Seadragon.Drawer = function Drawer(seadragon) {
     this.reset(); // initialize fields
 };
 
-Seadragon.Drawer.prototype = Object.create(seadragonBasePrototype);
+Seadragon.Drawer.prototype = Object.create(seadragonProxy);

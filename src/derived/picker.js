@@ -402,4 +402,4 @@ Seadragon.Picker = function Picker(seadragon) {
     }
 };
 
-Seadragon.Picker.prototype = Object.create(seadragonBasePrototype);
+Seadragon.Picker.prototype = Object.create(seadragonProxy);
