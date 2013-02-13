@@ -67,7 +67,7 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
          * the viewport.constraintBounds rectangle.
          * @type boolean
          */
-        constraintViewport: false,
+        constrainViewport: false,
 
 
         /**

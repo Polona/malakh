@@ -608,9 +608,37 @@ Seadragon.Controller = function Controller(seadragon) {
 
 
     /**
+     * Sets viewport's constraints to the image of a given index.
+     *
+     * @param {number} whichImage  We constrain to the <code>this.tiledImages[whichImage]</code> image.
+     * @param {boolean} [dontForceConstraints=false]  If true, just set the constraints rectangle,
+     *                                                don't enforce it at the moment.
+     */
+    this.constrainToImage = function constrainToImage(whichImage, dontForceConstraints) {
+        function getFunctionConstrainingToImage(dontForceConstraints) {
+            return function () {
+                this.viewport.constraintBounds = new Seadragon.Rectangle(
+                    this.boundsSprings.getRectangle());
+                if (!dontForceConstraints) {
+                    this.config.constrainViewport = true;
+                }
+            };
+        }
+
+        var tiledImage = this.tiledImages[whichImage];
+        if (tiledImage instanceof Seadragon.TiledImage) {
+            getFunctionConstrainingToImage(dontForceConstraints).call(tiledImage);
+        } else {
+            tiledImagesCallbacks[whichImage].push(
+                getFunctionConstrainingToImage(dontForceConstraints));
+        }
+    };
+
+
+    /**
      * Shows the given image.
      *
-     * @param {number} whichImage We show the <code>this.tiledImages[whichImage]</code> image
+     * @param {number} whichImage  We show the <code>this.tiledImages[whichImage]</code> image.
      * @param {boolean} [immediately=false]
      */
     this.showTiledImage = function showTiledImage(whichImage, immediately) {
@@ -628,7 +656,7 @@ Seadragon.Controller = function Controller(seadragon) {
     /**
      * Hides the given image.
      *
-     * @param {number} whichImage We hide the <code>this.tiledImages[whichImage]</code> image
+     * @param {number} whichImage We hide the <code>this.tiledImages[whichImage]</code> image.
      * @param {boolean} [immediately=false]
      */
     this.hideTiledImage = function hideTiledImage(whichImage, immediately) {

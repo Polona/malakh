@@ -135,8 +135,9 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      *
      * @param {number} whichImage  Index of the image to show.
      * @param {boolean} [immediately=false]
+     * @param {boolean} [dontForceConstraints=false]
      */
-    this.showOnlyImage = function showOnlyImage(whichImage, immediately) {
+    this.showOnlyImage = function showOnlyImage(whichImage, immediately, dontForceConstraints) {
         var tiledImage;
 
         this.showTiledImage(whichImage, immediately);
@@ -155,6 +156,10 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
                     this.hideTiledImage(i, immediately);
                 }
             }
+        }
+
+        if (!dontForceConstraints) {
+            this.controller.constrainToImage(whichImage);
         }
 
         return this;

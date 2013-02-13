@@ -15,8 +15,8 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         magnifierOn = false,
         animationsOff = false;
 
-    var constrainImage3 = false,
-        constrainImage17 = false;
+    var constrainToImage2 = false,
+        constrainToImage16 = false;
 
     var dziDataArray;
 
@@ -102,7 +102,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (event.which !== 1) { // Only left-click is supported.
                 return false;
             }
-            if (constrainImage3 || constrainImage17) {
+            if (constrainToImage2 || constrainToImage16) {
                 return false;
             }
             seadragon.alignRows(6000, 100, Infinity);
@@ -115,7 +115,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (event.which !== 1) { // Only left-click is supported.
                 return false;
             }
-            if (constrainImage3 || constrainImage17) {
+            if (constrainToImage2 || constrainToImage16) {
                 return false;
             }
             seadragon.alignColumns(6000, 100, Infinity);
@@ -128,7 +128,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (event.which !== 1) { // Only left-click is supported.
                 return false;
             }
-            if (constrainImage3 || constrainImage17) {
+            if (constrainToImage2 || constrainToImage16) {
                 return false;
             }
             seadragon.alignRows(6000, 100, 100000);
@@ -141,7 +141,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (event.which !== 1) { // Only left-click is supported.
                 return false;
             }
-            if (constrainImage3 || constrainImage17) {
+            if (constrainToImage2 || constrainToImage16) {
                 return false;
             }
             seadragon.alignColumns(6000, 100, 100000);
@@ -149,12 +149,12 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         }
     });
 
-    $('#fit_image_3').on({
+    $('#fit_image_2').on({
         click: function (event) {
             if (event.which !== 1) { // Only left-click is supported.
                 return false;
             }
-            if (constrainImage17) {
+            if (constrainToImage16) {
                 return false;
             }
             seadragon.fitImage(2);
@@ -162,12 +162,12 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         }
     });
 
-    $('#fit_image_17').on({
+    $('#fit_image_16').on({
         click: function (event) {
             if (event.which !== 1) { // Only left-click is supported.
                 return false;
             }
-            if (constrainImage3) {
+            if (constrainToImage2) {
                 return false;
             }
             seadragon.fitImage(16);
@@ -175,7 +175,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         }
     });
 
-    $('#constrain_image_3').on({
+    $('#constrain_to_image_2').on({
         click: function (event) {
             if (event.which !== 1) { // Only left-click is supported.
                 return false;
@@ -183,20 +183,19 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (pickerOn) {
                 return false;
             }
-            constrainImage3 = !constrainImage3;
-            $(this).css('background-color', buttonColors[constrainImage3]);
-            constrainImage17 = false;
-            $('#constrainImage17').css('background-color', buttonColors[false]);
-            seadragon.config.constraintViewport = constrainImage3;
-            seadragon.viewport.constraintBounds = new Seadragon.Rectangle(
-                seadragon.tiledImages[2].boundsSprings.getRectangle()); // TODO better API
+            constrainToImage2 = !constrainToImage2;
+            $(this).css('background-color', buttonColors[constrainToImage2]);
+            constrainToImage16 = false;
+            $('#constrain_to_image_16').css('background-color', buttonColors[false]);
+            seadragon.constrainToImage(2);
+            seadragon.config.constrainViewport = constrainToImage2;
             seadragon.viewport.fitConstraintBounds();
             seadragon.viewport.applyConstraints();
             return false;
         }
     });
 
-    $('#constrain_image_17').on({
+    $('#constrain_to_image_16').on({
         click: function (event) {
             if (event.which !== 1) { // Only left-click is supported.
                 return false;
@@ -204,13 +203,12 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (pickerOn) {
                 return false;
             }
-            constrainImage17 = !constrainImage17;
-            $(this).css('background-color', buttonColors[constrainImage17]);
-            constrainImage3 = false;
-            $('#constrainImage3').css('background-color', buttonColors[false]);
-            seadragon.config.constraintViewport = constrainImage17;
-            seadragon.viewport.constraintBounds = new Seadragon.Rectangle(
-                seadragon.tiledImages[16].boundsSprings.getRectangle()); // TODO better API
+            constrainToImage16 = !constrainToImage16;
+            $(this).css('background-color', buttonColors[constrainToImage16]);
+            constrainToImage2 = false;
+            $('#constrain_to_image_2').css('background-color', buttonColors[false]);
+            seadragon.constrainToImage(16);
+            seadragon.config.constrainViewport = constrainToImage16;
             seadragon.viewport.fitConstraintBounds();
             seadragon.viewport.applyConstraints();
             return false;
