@@ -25,7 +25,7 @@ Seadragon.Controller = function Controller(seadragon) {
         forceAlign, forceRedraw,
         tiledImagesLoaded, // map: imageNumber -> has the data file been already downloaded & processed?
         tiledImagesOptions, // map: imageNumber -> options needed to load the image; relevant for ones not yet loaded
-        tiledImageBoundsUpdatesInProgressNums,
+        tiledImageBoundsUpdatesNums,
         tiledImagesToHandle,
         lastPosition,
         containerSize,
@@ -288,7 +288,7 @@ Seadragon.Controller = function Controller(seadragon) {
 
         // Adding a new image.
         that.tiledImages[index] = tiledImage;
-        tiledImageBoundsUpdatesInProgressNums[index] = 0;
+        tiledImageBoundsUpdatesNums[index] = 0;
         that.drawer.registerTiledImage(tiledImage, index);
 
         that.viewport.maxLevel = Math.max(that.viewport.maxLevel, tiledImage.maxLevel);
@@ -344,7 +344,7 @@ Seadragon.Controller = function Controller(seadragon) {
         forceAlign = tiledImage.boundsSprings.update() || forceAlign;
         that.restoreUpdating();
         if (decreaseCounter) {
-            tiledImageBoundsUpdatesInProgressNums[whichImage]--;
+            tiledImageBoundsUpdatesNums[whichImage]--;
         }
     }
 
@@ -354,7 +354,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * <code>updateTiledImageBounds</code> to wait on <code>setTimeout</code>s; it increases performance on weaker
      * computers.
      *
-     * <p>If the <code>tiledImageBoundsUpdatesInProgressNums[whichImage]</code> value is:
+     * <p>If the <code>tiledImageBoundsUpdatesNums[whichImage]</code> value is:
      * <ul>
      *     <li><code>0</code> (or <code>1</code> if <code>forceExecution</code> is true), then we invoke the
      *         <code>updateTiledImageBounds</code> asynchronously.</li>
@@ -362,7 +362,7 @@ Seadragon.Controller = function Controller(seadragon) {
      *     <li><code>>=2</code>, then we abort since one other instance is already waiting.</li>
      * </ul>
      * If the flag <code>forceExecution</code> is true, we invoke <code>updateTiledImageBounds</code>
-     * if only <code>tiledImageBoundsUpdatesInProgressNums[whichImage] < 2</code>. This is necessary
+     * if only <code>tiledImageBoundsUpdatesNums[whichImage] < 2</code>. This is necessary
      * because when counter increases by 1, the invocation which triggered the increase waits on
      * <code>setTimeout</code> and needs to be invoked when it remains the only waiting instance.
      *
@@ -371,19 +371,19 @@ Seadragon.Controller = function Controller(seadragon) {
      * @private
      */
     function scheduleUpdateDziImageBounds(whichImage, forceExecution) {
-        var tiledImageBoundsUpdatesInProgressNum = tiledImageBoundsUpdatesInProgressNums[whichImage];
+        var tiledImageBoundsUpdatesNum = tiledImageBoundsUpdatesNums[whichImage];
 
-        if (tiledImageBoundsUpdatesInProgressNum === 0 ||
-            (forceExecution && tiledImageBoundsUpdatesInProgressNum === 1)) {
+        if (tiledImageBoundsUpdatesNum === 0 ||
+            (forceExecution && tiledImageBoundsUpdatesNum === 1)) {
             // no other instance of this function was dispatched on tiledImage
             if (!forceExecution) { // otherwise counter already increased
-                tiledImageBoundsUpdatesInProgressNums[whichImage]++;
+                tiledImageBoundsUpdatesNums[whichImage]++;
             }
             setTimeout(updateTiledImageBounds, 0, whichImage, true); // invoke asynchronously
         }
-        else if (tiledImageBoundsUpdatesInProgressNum === 1) {
+        else if (tiledImageBoundsUpdatesNum === 1) {
             // one function instance was dispatched on tiledImage, trying in a moment
-            tiledImageBoundsUpdatesInProgressNums[whichImage]++;
+            tiledImageBoundsUpdatesNums[whichImage]++;
             setTimeout(scheduleUpdateDziImageBounds, 100, whichImage, true);
         }
         /* else {} // one function instance already waits, no need for a new one */
@@ -632,7 +632,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * Checks if controller is in progress of loading/processing new DZIs. Some actions are halted
      * for these short periods.
      *
-     * @return {boolean}
+     * @return boolean
      */
     this.isLoading = function isLoading() {
         return tiledImagesToHandle > 0;
