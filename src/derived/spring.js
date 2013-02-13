@@ -153,6 +153,6 @@ $.extend(Seadragon.Spring.prototype,
                 this.startValue + (this.targetValue - this.startValue) *
                     this._transform((currentTime - this.startTime) / (this.targetTime - this.startTime));
             return this;
-        }
+        },
     }
 );

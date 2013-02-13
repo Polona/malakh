@@ -84,7 +84,7 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
          * Time it takes to finish various animations in miliseconds.
          * @type number
          */
-        animationTime: 1000,
+        animationTime: 500,
         /**
          * Time it takes to blend in/out tiles in miliseconds.
          * WARNING: needs to be lower than animationTime!
@@ -97,7 +97,7 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
          * Defines sharpness of springs moves; springs are used for animations.
          * @type number
          */
-        springStiffness: 5,
+        springStiffness: 6,
 
 
         /**
@@ -172,7 +172,7 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
          * redraw background in places where there are no tiles to display.
          * @type string
          */
-        backgroundColor: ''
+        backgroundColor: '',
     };
     $.extend(this.config, configOverrides);
 
@@ -233,26 +233,34 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
      */
     this.controller = this.Controller();
 
-    function defineControllerProxyForField(field) {
+    // TODO document.
+    this._defineProxyForField = function _defineProxyForField(member, field) {
+        var that = this;
         (function (field) {
-            Object.defineProperty(seadragon, field, {
+            Object.defineProperty(that, field, {
                 get: function () {
-                    return this.controller[field];
+                    return this[member][field];
                 },
                 set: function (value) {
-                    this.controller[field] = value;
+                    this[member][field] = value;
                 }
             });
         })(field);
-    }
+        return this;
+    };
 
-    // From user perspective controller is no different from seadragon itself so
-    // we're propagating its methods/fields.
-    for (var field in this.controller) {
-        if (this.controller.hasOwnProperty(field)) {
-            defineControllerProxyForField(field);
+    this._defineProxyForAllFields = function _defineProxyForAllFields(member) {
+        for (var field in this[member]) {
+            if (this[member].hasOwnProperty(field)) {
+                this._defineProxyForField(member, field);
+            }
         }
-    }
+        return this;
+    };
+
+    // Proxying `Controller`/`LayoutManager` fields.
+    this._defineProxyForAllFields('controller')
+        ._defineProxyForAllFields('layoutManager');
 }
 
 // Export a `Seadragon` global.

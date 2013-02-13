@@ -76,6 +76,6 @@ $.extend(Seadragon.ImageLoader.prototype,
             image.src = src;
 
             return true;
-        }
+        },
     }
 );

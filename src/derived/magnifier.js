@@ -118,6 +118,6 @@ $.extend(Seadragon.Magnifier.prototype,
          */
         toString: function toString() {
             return 'Magnifier((' + this.center.x + ', ' + this.center.y + '), ' + this.config.magnifierRadius + ')';
-        }
+        },
     }
 );

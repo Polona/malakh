@@ -32,7 +32,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         };
     });
     seadragon.openDziArray(dziDataArray);
-    seadragon.layoutManager.alignRows(6000, 0, Infinity, true);
+    seadragon.alignRows(6000, 0, Infinity, true);
 
     // Adjust -- not necessary, just removes the need to do it by ourselves.
     seadragon.viewport.zoomTo(0.1, true);
@@ -105,7 +105,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainImage3 || constrainImage17) {
                 return false;
             }
-            seadragon.layoutManager.alignRows(6000, 100, Infinity);
+            seadragon.alignRows(6000, 100, Infinity);
             return false;
         }
     });
@@ -118,7 +118,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainImage3 || constrainImage17) {
                 return false;
             }
-            seadragon.layoutManager.alignColumns(6000, 100, Infinity);
+            seadragon.alignColumns(6000, 100, Infinity);
             return false;
         }
     });
@@ -131,7 +131,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainImage3 || constrainImage17) {
                 return false;
             }
-            seadragon.layoutManager.alignRows(6000, 100, 100000);
+            seadragon.alignRows(6000, 100, 100000);
             return false;
         }
     });
@@ -144,7 +144,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainImage3 || constrainImage17) {
                 return false;
             }
-            seadragon.layoutManager.alignColumns(6000, 100, 100000);
+            seadragon.alignColumns(6000, 100, 100000);
             return false;
         }
     });
@@ -157,7 +157,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainImage17) {
                 return false;
             }
-            seadragon.layoutManager.fitImage(2);
+            seadragon.fitImage(2);
             return false;
         }
     });
@@ -170,7 +170,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainImage3) {
                 return false;
             }
-            seadragon.layoutManager.fitImage(16);
+            seadragon.fitImage(16);
             return false;
         }
     });

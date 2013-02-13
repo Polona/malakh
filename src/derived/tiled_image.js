@@ -348,6 +348,6 @@ $.extend(Seadragon.TiledImage.prototype,
             this.boundsSprings.fitBounds(bounds, immediately);
             this.$container.trigger('seadragon:forcealign');
             return this;
-        }
+        },
     }
 );

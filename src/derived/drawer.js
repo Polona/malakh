@@ -552,7 +552,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
             drawnImageNumbers.push(whichImage);
         });
 
-        function updateBestTileForImageAtCurrentLevel(whichImage) { // TODO put it out of update()?
+        function updateBestTileAtCurrentLevel(whichImage) { // TODO put it out of update()?
             if (drawingEnded[whichImage]) {
                 return; // We could delete whichImage from drawnImageNumbers but cost would be higher.
             }
@@ -705,7 +705,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
 
         for (level = that.viewport.maxLevel; level >= 0; level--) {
-            drawnImageNumbers.forEach(updateBestTileForImageAtCurrentLevel);
+            drawnImageNumbers.forEach(updateBestTileAtCurrentLevel);
         }
 
         // Load next tile if there is one to load.

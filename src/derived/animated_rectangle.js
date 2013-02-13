@@ -203,6 +203,6 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
             this.springs.height.springTo(bounds.height, immediately);
 
             return this;
-        }
+        },
     }
 );

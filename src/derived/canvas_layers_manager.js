@@ -96,6 +96,6 @@ $.extend(Seadragon.CanvasLayersManager.prototype,
                 []
             ];
             return this;
-        }
+        },
     }
 );

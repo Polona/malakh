@@ -414,6 +414,6 @@ $.extend(Seadragon.Viewport.prototype,
             var newSize = this.deltaPixelsFromPoints(size, current);
 
             return new Seadragon.Rectangle(newTopLeft.x, newTopLeft.y, newSize.x, newSize.y);
-        }
+        },
     }
 );

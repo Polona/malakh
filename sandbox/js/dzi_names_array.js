@@ -93,5 +93,5 @@ var dziNamesArray = [
     'prace_sprzed_wyjazdu_do_polski_2',
     'piramida',
     'prace_o_watpliwym_autorstwie_1',
-    'prace_o_watpliwym_autorstwie_2'
+    'prace_o_watpliwym_autorstwie_2',
 ];

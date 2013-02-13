@@ -70,6 +70,6 @@ $.extend(Seadragon.DziImage.prototype,
          */
         getTileUrl: function getTileUrl(level, x, y) {
             return this.tilesUrl + level + '/' + x + '_' + y + '.' + this.fileFormat;
-        }
+        },
     }
 );

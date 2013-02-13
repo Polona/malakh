@@ -197,6 +197,6 @@ $.extend(Seadragon.Tile.prototype,
          */
         toString: function toString() {
             return this.level + '/' + this.x + '_' + this.y;
-        }
+        },
     }
 );
