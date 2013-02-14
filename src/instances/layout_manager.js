@@ -13,10 +13,10 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * Organizes DZIs into a given layout. TODO: currently doesn't work with uninitialized images.
      *
      * @param {boolean} [alingInRows=false]  If true, align in rows; otherwise in columns.
-     * @param {number} heightOrWidth  If <code>alignInRows</code>: height of rows; otherwise width of columns.
-     * @param {number} spaceBetweenImages
-     * @param {number} maxRowWidthOrColumnHeight  If not infinite, the next row/column is started
-     *                                            upon reaching the limit.
+     * @param {number} [heightOrWidth=500]  If <code>alignInRows</code>: height of rows; otherwise width of columns.
+     * @param {number} [spaceBetweenImages=0]
+     * @param {number} [maxRowWidthOrColumnHeight=Infinity]  If not infinite, the next row/column is started
+     *                                                       upon reaching the limit.
      * @param {boolean} [immediately=false]
      * @private
      */
@@ -24,6 +24,13 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
                                                            maxRowWidthOrColumnHeight, immediately) {
         var width, height, widthSum, heightSum, newBounds;
         var that = this;
+
+        // Setting default values if parameters were not provided.
+        heightOrWidth = heightOrWidth || 500; // it has to be >0
+        spaceBetweenImages = spaceBetweenImages || 0;
+        if (maxRowWidthOrColumnHeight == null) {
+            maxRowWidthOrColumnHeight = Infinity;
+        }
 
         if (this.controller.isLoading()) {
             setTimeout(function () {
@@ -79,10 +86,11 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
     /**
      * Align images in rows. TODO: currently doesn't work with uninitialized images.
      *
-     * @param {number} height  Height of a single row.
-     * @param {number} spaceBetweenImages Space between images in a row and between columns.
-     * @param {number} maxRowWidth  Maximum row width. If the next image exceeded it, it's moved to the next row.
-     *                              If set to <code>Infinity</code>, only one row will be created.
+     * @param {number} [height=500]  Height of a single row.
+     * @param {number} [spaceBetweenImages=0] Space between images in a row and between columns.
+     * @param {number} [maxRowWidth=Infinity]  Maximum row width. If the next image exceeded it, it's moved to
+     *                                         the next row. If set to <code>Infinity</code>, only one row will
+     *                                         be created.
      * @param {boolean} [immediately=false]
      */
     this.alignRows = function alignRows(height, spaceBetweenImages, maxRowWidth, immediately) {
@@ -94,9 +102,9 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      *
      * @see #alignRows
      *
-     * @param {number} width
-     * @param {number} spaceBetweenImages
-     * @param {number} maxColumnHeight
+     * @param {number} [width=500]
+     * @param {number} [spaceBetweenImages=0]
+     * @param {number} [maxColumnHeight=Infinity]
      * @param {boolean} [immediately=false]
      */
     this.alignColumns = function alignColumns(width, spaceBetweenImages, maxColumnHeight, immediately) {
@@ -124,9 +132,9 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         return this;
     };
 
-    function getFitImageFunction(whichImage, current, immediately) {
+    function getFitImageFunction(whichImage) {
         return function () {
-            this.layoutManager.fitImage(whichImage, current, immediately);
+            this.layoutManager.fitImage(whichImage, false, true);
         };
     }
 
@@ -142,10 +150,10 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
 
         this.showTiledImage(whichImage, immediately);
         if (this.tiledImages[whichImage] instanceof Seadragon.TiledImage) {
-            this.fitImage(whichImage);
+            getFitImageFunction(whichImage).call(this);
         } else {
             this.controller.tiledImagesCallbacks[whichImage].push(
-                getFitImageFunction(whichImage, undefined, immediately)
+                getFitImageFunction(whichImage)
             );
         }
 
@@ -165,14 +173,22 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         return this;
     };
 
-    this.alignCenterAndHeight = function alignCenterAndHeight(height, immediately) {
+    /**
+     * TODO document.
+     *
+     * @param {number} [height=500]
+     * @param {boolean} [immediately=false]
+     */
+    this.alignCentersAndHeights = function alignCenterAndHeight(height, immediately) {
         var that = this;
         if (this.controller.isLoading()) {
             setTimeout(function () {
-                that.alignCenterAndHeight(height, immediately);
+                that.alignCentersAndHeights(height, immediately);
             }, 100);
             return this;
         }
+
+        height = height || 500; // it has to be >0
 
         function getFitBoundsFunction(bounds, immediately) {
             return function () {
@@ -188,7 +204,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
                 tiledImage.fitBounds(newBounds, immediately);
             } else {
                 this.controller.tiledImagesCallbacks[i].push(
-                    getFitBoundsFunction(newBounds, immediately)
+                    getFitBoundsFunction(newBounds, true) // we want deferred bounds modifications to invoke immediately
                 );
             }
         }
