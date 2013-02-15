@@ -11,9 +11,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     var dziPrefix = 'seadragon_data/';
     var initialAnimationTime = 1000;
 
-    var pickerOn = false,
-        magnifierOn = false,
-        animationsOff = false;
+    var animationsOff = false;
 
     var constrainToImage2 = false,
         constrainToImage16 = false;
@@ -56,6 +54,18 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         }
     });
 
+    $('#tile_borders').on({
+        click: function (event) {
+            if (event.which !== 1) { // Only left-click is supported.
+                return false;
+            }
+            seadragon.config.debugTileBorders = !seadragon.config.debugTileBorders;
+            seadragon.$container.trigger('seadragon:forceredraw');
+            $(this).css('background-color', buttonColors[seadragon.config.debugTileBorders]);
+            return false;
+        }
+    });
+
     var $magnifier = $('#magnifier');
     if (Seadragon.Magnifier) {
         $magnifier.on({
@@ -63,12 +73,11 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
                 if (event.which !== 1) { // Only left-click is supported.
                     return false;
                 }
-                if (pickerOn) {
+                if (seadragon.config.enablePicker) {
                     $('#picker').trigger(event); // turn off the picker
                 }
                 seadragon.toggleMagnifier();
-                magnifierOn = !magnifierOn;
-                $(this).css('background-color', buttonColors[magnifierOn]);
+                $(this).css('background-color', buttonColors[seadragon.config.enableMagnifier]);
                 return false;
             }
         });
@@ -83,12 +92,11 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
                 if (event.which !== 1) { // Only left-click is supported.
                     return false;
                 }
-                if (magnifierOn) {
+                if (seadragon.config.enableMagnifier) {
                     $('#magnifier').trigger(event); // turn off the magnifier
                 }
                 seadragon.togglePicker();
-                pickerOn = !pickerOn;
-                $(this).css('background-color', buttonColors[pickerOn]);
+                $(this).css('background-color', buttonColors[seadragon.config.enablePicker]);
                 return false;
             }
         });
@@ -105,6 +113,9 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainToImage2 || constrainToImage16) {
                 return false;
             }
+            if (seadragon.config.enablePicker) {
+                $('#picker').trigger(event); // turn off the picker
+            }
             seadragon.alignRows(6000, 100, Infinity);
             return false;
         }
@@ -117,6 +128,9 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             }
             if (constrainToImage2 || constrainToImage16) {
                 return false;
+            }
+            if (seadragon.config.enablePicker) {
+                $('#picker').trigger(event); // turn off the picker
             }
             seadragon.alignColumns(6000, 100, Infinity);
             return false;
@@ -131,6 +145,9 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainToImage2 || constrainToImage16) {
                 return false;
             }
+            if (seadragon.config.enablePicker) {
+                $('#picker').trigger(event); // turn off the picker
+            }
             seadragon.alignRows(6000, 100, 100000);
             return false;
         }
@@ -143,6 +160,9 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             }
             if (constrainToImage2 || constrainToImage16) {
                 return false;
+            }
+            if (seadragon.config.enablePicker) {
+                $('#picker').trigger(event); // turn off the picker
             }
             seadragon.alignColumns(6000, 100, 100000);
             return false;
@@ -157,6 +177,9 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainToImage16) {
                 return false;
             }
+            if (seadragon.config.enablePicker) {
+                $('#picker').trigger(event); // turn off the picker
+            }
             seadragon.fitImage(2);
             return false;
         }
@@ -170,6 +193,9 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainToImage2) {
                 return false;
             }
+            if (seadragon.config.enablePicker) {
+                $('#picker').trigger(event); // turn off the picker
+            }
             seadragon.fitImage(16);
             return false;
         }
@@ -180,8 +206,8 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (event.which !== 1) { // Only left-click is supported.
                 return false;
             }
-            if (pickerOn) {
-                return false;
+            if (seadragon.config.enablePicker) {
+                $('#picker').trigger(event); // turn off the picker
             }
             constrainToImage2 = !constrainToImage2;
             $(this).css('background-color', buttonColors[constrainToImage2]);
@@ -200,8 +226,8 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (event.which !== 1) { // Only left-click is supported.
                 return false;
             }
-            if (pickerOn) {
-                return false;
+            if (seadragon.config.enablePicker) {
+                $('#picker').trigger(event); // turn off the picker
             }
             constrainToImage16 = !constrainToImage16;
             $(this).css('background-color', buttonColors[constrainToImage16]);
