@@ -171,7 +171,13 @@ $.extend(Seadragon.Tile.prototype,
             }
 
             context.globalAlpha = this.opacity;
-            context.drawImage(this.image, position.x, position.y, size.x, size.y);
+
+            try {
+                context.drawImage(this.image, position.x, position.y, size.x, size.y);
+            } catch (e) {
+                console.error('context.drawImage error.', this.image, position.x, position.y, size.x, size.y);
+                throw e;
+            }
 
             if (this.config.debugTileBorders) {
                 context.strokeRect(position.x, position.y, size.x, size.y);

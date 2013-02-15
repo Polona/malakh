@@ -59,20 +59,23 @@ $.extend(Seadragon.ImageLoader.prototype,
                 }
             }
 
-            function finish() {
-                if (timeout) {
-                    clearTimeout(timeout);
-                }
-                image.onload = image.onabort = image.onerror = null;
+            function getFinishFunction(success) {
+                return function () {
+                    if (timeout) {
+                        clearTimeout(timeout);
+                    }
+                    image.onload = image.onabort = image.onerror = null;
 
-                // Call on a timeout to ensure asynchronous behavior.
-                setTimeout(catchedCallback, 0, src, image.complete ? image : null);
+                    // Call on a timeout to ensure asynchronous behavior.
+                    setTimeout(catchedCallback, 0, src, (success && image.complete) ? image : null);
+                };
             }
 
-            image.onload = image.onabort = image.onerror = finish;
+            image.onload = getFinishFunction(true);
+            image.onabort = image.onerror = getFinishFunction(false);
 
             // Consider it a failure if the image times out.
-            timeout = setTimeout(finish, this.config.imageLoaderTimeout);
+            timeout = setTimeout(getFinishFunction(false), this.config.imageLoaderTimeout);
             image.src = src;
 
             return true;
