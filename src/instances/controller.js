@@ -584,11 +584,13 @@ Seadragon.Controller = function Controller(seadragon) {
             options.dziUrl = arguments0;
         }
 
+        // Removing options so that we don't try to open the same DZI twice.
+        delete tiledImagesOptions[options.index];
+
         tiledImagesToHandle++;
         if (options.index == null) {
             options.index = this.tiledImages.length;
         }
-        delete tiledImagesOptions[options.index];
         that.tiledImages[options.index] = null; // keep space for the image
 
         try {
@@ -674,7 +676,8 @@ Seadragon.Controller = function Controller(seadragon) {
 
         if (!(tiledImage instanceof Seadragon.TiledImage)) {
             // Image not loaded yet, loading it will show it automatically.
-            return this.openDzi(tiledImagesOptions[whichImage]);
+            var options = tiledImagesOptions[whichImage];
+            return options ? this.openDzi(options) : this; // options missing => opening probably already started
         }
 
         this.drawer.showTiledImage(whichImage, immediately);
