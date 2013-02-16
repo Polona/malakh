@@ -261,17 +261,17 @@ Seadragon.Controller = function Controller(seadragon) {
      * @private
      */
     function recalculateMaxLevel() {
-        that.viewport.maxLevel = 0;
+        var viewportMaxLevel = 0;
         for (var i = 0; i < that.tiledImages.length; i++) {
             var tiledImage = that.tiledImages[i];
-            if (tiledImage instanceof Seadragon.TiledImage) { // Tiled Image has been loaded
-                that.viewport.maxLevel = Math.max(
-                    that.viewport.maxLevel,
+            if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
+                viewportMaxLevel = Math.max(
+                    viewportMaxLevel,
                     tiledImage.getViewportLevel(tiledImage.maxLevel)
                 );
             }
         }
-        that.viewport.maxLevelExp = Math.pow(2, that.viewport.maxLevel); // TODO shouldn't this be in Seadragon?
+        that.viewport.maxLevel = viewportMaxLevel;
     }
 
     /**
@@ -296,7 +296,6 @@ Seadragon.Controller = function Controller(seadragon) {
         that.drawer.registerTiledImage(tiledImage, index);
 
         that.viewport.maxLevel = Math.max(that.viewport.maxLevel, tiledImage.maxLevel);
-        that.viewport.maxLevelExp = Math.pow(2, that.viewport.maxLevel);
 
         tiledImagesToHandle--;
 
@@ -421,9 +420,11 @@ Seadragon.Controller = function Controller(seadragon) {
         if (forceAlign) {
             forceAlign = false;
             setTimeout(function () { // Making it more asynchronous.
-                that.tiledImages.forEach(function (tiledImage, whichImage) {
-                    scheduleUpdateDziImageBounds(whichImage);
-                });
+                for (var i = 0; i < that.tiledImages.length; i++) {
+                    if (that.tiledImages[i] instanceof Seadragon.TiledImage) { // tiled image has been loaded
+                        scheduleUpdateDziImageBounds(i);
+                    }
+                }
             }, 0);
         }
 
@@ -626,9 +627,9 @@ Seadragon.Controller = function Controller(seadragon) {
         }
 
         var tiledImage = this.tiledImages[whichImage];
-        if (tiledImage instanceof Seadragon.TiledImage) {
+        if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
             getFunctionConstrainingToImage(dontForceConstraints).call(tiledImage);
-        } else {
+        } else { // register a callback
             tiledImagesCallbacks[whichImage].push(
                 getFunctionConstrainingToImage(dontForceConstraints));
         }
@@ -662,7 +663,7 @@ Seadragon.Controller = function Controller(seadragon) {
     this.hideTiledImage = function hideTiledImage(whichImage, immediately) {
         var tiledImage = that.tiledImages[whichImage];
 
-        if (!(tiledImage instanceof Seadragon.TiledImage)) {
+        if (!(tiledImage instanceof Seadragon.TiledImage)) { // tiled image has been loaded
             // Image not loaded yet, doing nothing.
             return this;
         }

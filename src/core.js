@@ -1,5 +1,6 @@
 // TODO document
-function Seadragon(containerSelectorOrElement, configOverrides) {
+Seadragon = function Seadragon(containerSelectorOrElement, configOverrides) {
+    var $canvas, canvasContext;
     var seadragon = this;
     this.seadragon = this; // needed for prototype methods
 
@@ -188,9 +189,35 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
         backgroundColor: this.config.backgroundColor
     });
 
+    Object.defineProperties(this,
+        /**
+         * @lends Seadragon#
+         */
+        {
+            $canvas: {
+                get: function () {
+                    return $canvas;
+                },
+                set: function (val) {
+                    $canvas = val;
+                    canvasContext = $canvas.get(0).getContext('2d');
+                },
+                enumerable: true,
+            },
+            canvasContext: { // caching canvas context for performance boost
+                get: function () {
+                    return canvasContext;
+                },
+                set: function () {
+                    console.error('Field canvasContext is not settable');
+                },
+                enumerable: true,
+            },
+        }
+    );
+
     this.$canvas = $('<canvas>');
     this.$container.append(this.$canvas);
-    this.canvasContext = this.$canvas.get(0).getContext('2d'); // caching canvas context for performance boost
 
     this.imageLoader = this.ImageLoader();
 
@@ -261,7 +288,7 @@ function Seadragon(containerSelectorOrElement, configOverrides) {
     // Proxying `Controller`/`LayoutManager` fields.
     this._defineProxyForAllFields('controller')
         ._defineProxyForAllFields('layoutManager');
-}
+};
 
 // TODO document all methods
 $.extend(Seadragon.prototype,
@@ -315,6 +342,3 @@ $.extend(Seadragon.prototype,
         },
     }
 );
-
-// Export a `Seadragon` global.
-global.Seadragon = Seadragon;
