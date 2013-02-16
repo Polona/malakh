@@ -8,6 +8,8 @@
  * Date: @DATE
  */
 
-;(function seadragonWrapper(global, undefined) {
+var Seadragon;
+
+;(function seadragonWrapper($, undefined) {
     'use strict';
 

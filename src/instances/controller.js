@@ -261,17 +261,17 @@ Seadragon.Controller = function Controller(seadragon) {
      * @private
      */
     function recalculateMaxLevel() {
-        that.viewport.maxLevel = 0;
+        var viewportMaxLevel = 0;
         for (var i = 0; i < that.tiledImages.length; i++) {
             var tiledImage = that.tiledImages[i];
-            if (tiledImage instanceof Seadragon.TiledImage) { // Tiled Image has been loaded
-                that.viewport.maxLevel = Math.max(
-                    that.viewport.maxLevel,
+            if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
+                viewportMaxLevel = Math.max(
+                    viewportMaxLevel,
                     tiledImage.getViewportLevel(tiledImage.maxLevel)
                 );
             }
         }
-        that.viewport.maxLevelExp = Math.pow(2, that.viewport.maxLevel); // TODO shouldn't this be in Seadragon?
+        that.viewport.maxLevel = viewportMaxLevel;
     }
 
     /**
@@ -296,7 +296,6 @@ Seadragon.Controller = function Controller(seadragon) {
         that.drawer.registerTiledImage(tiledImage, index);
 
         that.viewport.maxLevel = Math.max(that.viewport.maxLevel, tiledImage.maxLevel);
-        that.viewport.maxLevelExp = Math.pow(2, that.viewport.maxLevel);
 
         tiledImagesToHandle--;
 
@@ -422,7 +421,9 @@ Seadragon.Controller = function Controller(seadragon) {
             forceAlign = false;
             setTimeout(function () { // Making it more asynchronous.
                 that.tiledImages.forEach(function (tiledImage, whichImage) {
-                    scheduleUpdateDziImageBounds(whichImage);
+                    if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
+                        scheduleUpdateDziImageBounds(whichImage);
+                    }
                 });
             }, 0);
         }
@@ -546,6 +547,17 @@ Seadragon.Controller = function Controller(seadragon) {
     /**
      * Opens Deep Zoom Image (DZI).
      *
+     * @param {string} dziUrl  The URL/path to the DZI file.
+     * @param {Object} options  An object containing all given options.
+     * @param {string} options.tilesUrl  The URL/path to the tiles directory; by default it's the same
+     *                                   as <code>dziUrl<code> with '.dzi' changed to '_files'.
+     * @param {number} options.index  If specified, an image is loaded into <code>controller.tiledImages[index]</code>.
+     *                                Otherwise it's put at the end of the table.
+     * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
+     *                                                Seadragon plane.
+     *//**
+     * Opens Deep Zoom Image (DZI).
+     *
      * @param {Object} options  An object containing all given options.
      * @param {string} options.dziUrl  The URL/path to the DZI file.
      * @param {string} options.tilesUrl  The URL/path to the tiles directory; by default it's the same
@@ -555,12 +567,30 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
      */
-    this.openDzi = function openDzi(options) {
+    this.openDzi = function openDzi() {
+        var options;
+
+        // Handling signature variations.
+        var arguments0 = arguments[0];
+        if (arguments0 == null) { // wrong invocation, reverting changes
+            throw new Error('No arguments passed to openDzi!');
+        }
+        if (arguments0.dziUrl) {
+            // Signature openDzi(options).
+            options = arguments0;
+        } else {
+            // Signature openDzi(dziUrl, options).
+            options = arguments[1];
+            options.dziUrl = arguments0;
+        }
+
+        // Removing options so that we don't try to open the same DZI twice.
+        delete tiledImagesOptions[options.index];
+
         tiledImagesToHandle++;
         if (options.index == null) {
             options.index = this.tiledImages.length;
         }
-        delete tiledImagesOptions[options.index];
         that.tiledImages[options.index] = null; // keep space for the image
 
         try {
@@ -626,9 +656,9 @@ Seadragon.Controller = function Controller(seadragon) {
         }
 
         var tiledImage = this.tiledImages[whichImage];
-        if (tiledImage instanceof Seadragon.TiledImage) {
+        if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
             getFunctionConstrainingToImage(dontForceConstraints).call(tiledImage);
-        } else {
+        } else { // register a callback
             tiledImagesCallbacks[whichImage].push(
                 getFunctionConstrainingToImage(dontForceConstraints));
         }
@@ -646,7 +676,8 @@ Seadragon.Controller = function Controller(seadragon) {
 
         if (!(tiledImage instanceof Seadragon.TiledImage)) {
             // Image not loaded yet, loading it will show it automatically.
-            return this.openDzi(tiledImagesOptions[whichImage]);
+            var options = tiledImagesOptions[whichImage];
+            return options ? this.openDzi(options) : this; // options missing => opening probably already started
         }
 
         this.drawer.showTiledImage(whichImage, immediately);
@@ -662,7 +693,7 @@ Seadragon.Controller = function Controller(seadragon) {
     this.hideTiledImage = function hideTiledImage(whichImage, immediately) {
         var tiledImage = that.tiledImages[whichImage];
 
-        if (!(tiledImage instanceof Seadragon.TiledImage)) {
+        if (!(tiledImage instanceof Seadragon.TiledImage)) { // tiled image has been loaded
             // Image not loaded yet, doing nothing.
             return this;
         }

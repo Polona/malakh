@@ -34,30 +34,34 @@ Seadragon.AnimatedRectangle = function AnimatedRectangle(seadragon, bounds) {
     this.isAnimating = true;
 
     var version = Date.now();
-    Object.defineProperties(this, {
+    Object.defineProperties(this,
         /**
-         * Accessing the <code>version</code> parameter updates it to the current date (!),
-         * updating isAnimating, too, if it was true. Note that we never change isAnimating
-         * if it was false, we need to remember to set it manually when starting particular animations!
-         * (this is for performance reasons). Manually setting version is not allowed.
-         *
-         * @type number
-         * @memberof Seadragon.AnimatedRectangle#
+         * @lends Seadragon.AnimatedRectangle#
          */
-        version: {
-            get: function () {
-                if (that.isAnimating) { // We cache it otherwise for performance reasons.
-                    that.isAnimating = that.springs.x.isAnimating() || that.springs.y.isAnimating() ||
-                        that.springs.width.isAnimating() || that.springs.height.isAnimating();
-                    version = Date.now(); // We want an update at least one more time.
+        {
+            /**
+             * Accessing the <code>version</code> parameter updates it to the current date (!),
+             * updating isAnimating, too, if it was true. Note that we never change isAnimating
+             * if it was false, we need to remember to set it manually when starting particular animations!
+             * (this is for performance reasons). Manually setting version is not allowed.
+             *
+             * @type number
+             */
+            version: {
+                get: function () {
+                    if (that.isAnimating) { // We cache it otherwise for performance reasons.
+                        that.isAnimating = that.springs.x.isAnimating() || that.springs.y.isAnimating() ||
+                            that.springs.width.isAnimating() || that.springs.height.isAnimating();
+                        version = Date.now(); // We want an update at least one more time.
+                    }
+                    return version;
+                },
+                set: function () {
+                    console.error('Seadragon.AnimatedRectangle\'s version parameter can\'t be manually changed');
                 }
-                return version;
-            },
-            set: function () {
-                console.error('Seadragon.AnimatedRectangle\'s version parameter can\'t be manually changed');
             }
         }
-    });
+    );
 
     /**
      * @type Object

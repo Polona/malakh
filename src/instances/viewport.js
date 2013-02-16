@@ -34,12 +34,6 @@
 Seadragon.Viewport = function Viewport(seadragon) {
     this.ensureArguments(arguments, 'Viewport');
 
-    /**
-     * Maximum level to be drawn.
-     * @type number
-     */
-    this.maxLevel = 0;
-
     var containerDimensions = this.$container.css(['width', 'height']);
     var containerWidth = parseFloat(containerDimensions.width);
     var containerHeight = parseFloat(containerDimensions.height);
@@ -55,11 +49,6 @@ Seadragon.Viewport = function Viewport(seadragon) {
      */
     this.containerSize = new Seadragon.Point(containerWidth, containerHeight);
     /**
-     * Maximum permissible
-     * @type number
-     */
-    this.maxLevelExp = Infinity; // We'll change it later.
-    /**
      * Viewport can be constrained in a particular rectangle so that a user can't pan or zoom
      * beyond its visibility. It's done by setting <code>this.config.constrainViewport</code>
      * to true and then this parameter is used for constraining. If this parameter is not an instance
@@ -69,6 +58,47 @@ Seadragon.Viewport = function Viewport(seadragon) {
      * @type Seadragon.Rectangle
      */
     this.constraintBounds = undefined;
+
+    // We'll change them later:
+    var maxLevel = 0;
+    var maxLevelExp = 1;
+    Object.defineProperties(this,
+        /**
+         * @lends Seadragon.Viewport#
+         */
+        {
+            /**
+             * Maximum level to be drawn. Synchronized automatically with <code>this.maxLevelExp</code>.
+             * @type number
+             */
+            maxLevel: {
+                get: function () {
+                    return maxLevel;
+                },
+                set: function (val) {
+                    maxLevel = val;
+                    maxLevelExp = null; // we'll compute it when needed
+                },
+                enumerable: true,
+            },
+            /**
+             * Maximum permissible TODO what's that? Synchronized automatically with <code>this.maxLevel</code>.
+             * @type number
+             */
+            maxLevelExp: {
+                get: function () {
+                    if (maxLevelExp == null) { // we reset maxLevel and haven't computed maxLevelExp yet
+                        maxLevelExp = Math.pow(2, maxLevel);
+                    }
+                    return maxLevelExp;
+                },
+                set: function () {
+                    console.error('Field maxLevelExp is not settable.');
+                },
+                enumerable: true,
+            },
+        }
+    );
 };
 
 Seadragon.Viewport.prototype = Object.create(Seadragon.AnimatedRectangle.prototype);
@@ -268,7 +298,7 @@ $.extend(Seadragon.Viewport.prototype,
                 scale = vR[whatToScale] / cR[whatToScale];
             } else {
                 // We use 'else' just in case the maxLevelExp parameter has a stupid value.
-                // Otherwise, it could case the image to flicker.
+                // Otherwise, it could cause the image to flicker.
                 var cRInPixels = this.deltaPixelsFromPoints(new Seadragon.Point(cR.width, cR.height));
                 if (cRInPixels.x > this.maxLevelExp) { // We've zoomed in too much
                     needToAdjust = true;
