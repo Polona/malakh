@@ -572,6 +572,9 @@ Seadragon.Controller = function Controller(seadragon) {
 
         // Handling signature variations.
         var arguments0 = arguments[0];
+        if (arguments0 == null) { // wrong invocation, reverting changes
+            throw new Error('No arguments passed to openDzi!');
+        }
         if (arguments0.dziUrl) {
             // Signature openDzi(options).
             options = arguments0;
