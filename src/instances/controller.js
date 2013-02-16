@@ -420,11 +420,11 @@ Seadragon.Controller = function Controller(seadragon) {
         if (forceAlign) {
             forceAlign = false;
             setTimeout(function () { // Making it more asynchronous.
-                for (var i = 0; i < that.tiledImages.length; i++) {
-                    if (that.tiledImages[i] instanceof Seadragon.TiledImage) { // tiled image has been loaded
-                        scheduleUpdateDziImageBounds(i);
+                that.tiledImages.forEach(function (tiledImage, whichImage) {
+                    if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
+                        scheduleUpdateDziImageBounds(whichImage);
                     }
-                }
+                });
             }, 0);
         }
 
