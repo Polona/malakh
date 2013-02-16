@@ -547,6 +547,17 @@ Seadragon.Controller = function Controller(seadragon) {
     /**
      * Opens Deep Zoom Image (DZI).
      *
+     * @param {string} dziUrl  The URL/path to the DZI file.
+     * @param {Object} options  An object containing all given options.
+     * @param {string} options.tilesUrl  The URL/path to the tiles directory; by default it's the same
+     *                                   as <code>dziUrl<code> with '.dzi' changed to '_files'.
+     * @param {number} options.index  If specified, an image is loaded into <code>controller.tiledImages[index]</code>.
+     *                                Otherwise it's put at the end of the table.
+     * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
+     *                                                Seadragon plane.
+     *//**
+     * Opens Deep Zoom Image (DZI).
+     *
      * @param {Object} options  An object containing all given options.
      * @param {string} options.dziUrl  The URL/path to the DZI file.
      * @param {string} options.tilesUrl  The URL/path to the tiles directory; by default it's the same
@@ -556,7 +567,20 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
      */
-    this.openDzi = function openDzi(options) {
+    this.openDzi = function openDzi() {
+        var options;
+
+        // Handling signature variations.
+        var arguments0 = arguments[0];
+        if (arguments0.dziUrl) {
+            // Signature openDzi(options).
+            options = arguments0;
+        } else {
+            // Signature openDzi(dziUrl, options).
+            options = arguments[1];
+            options.dziUrl = arguments0;
+        }
+
         tiledImagesToHandle++;
         if (options.index == null) {
             options.index = this.tiledImages.length;
