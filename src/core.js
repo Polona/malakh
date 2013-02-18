@@ -348,5 +348,10 @@ $.extend(Seadragon.prototype,
             }
             return this;
         },
+        log: function log() {
+            if (this.config.debugMode) {
+                console.log.apply(console, arguments);
+            }
+        },
     }
 );
