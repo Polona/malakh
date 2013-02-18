@@ -238,7 +238,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         }
 
         tilesLoaded[insertionIndex] = tile;
-        that.$container.trigger('seadragon:forceredraw');
+        that.$container.trigger('seadragon:force_redraw');
     }
 
     /**
@@ -415,7 +415,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         tiledImage.blending = true;
 
         if (!tiledImage.hiding) { // showing an image requires recalculating max levels
-            that.$container.trigger('seadragon:forcealign');
+            that.$container.trigger('seadragon:force_align');
         }
         that.update();
     }
@@ -742,7 +742,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         this.canvasLayersManager.draw();
 
         if (triggerForceAlign) {
-            this.$container.trigger('seadragon:forcealign');
+            this.$container.trigger('seadragon:force_align');
         }
         midUpdate = false;
         return updateAgain;
@@ -769,7 +769,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         lastResetTime = 0;
         midUpdate = false;
 
-        that.$container.trigger('seadragon:forceredraw');
+        that.$container.trigger('seadragon:force_redraw');
         return this;
     };
 

@@ -65,9 +65,13 @@ $.extend(Seadragon.ImageLoader.prototype,
                         clearTimeout(timeout);
                     }
                     image.onload = image.onabort = image.onerror = null;
+                    if (!success) { // we failed or timeout was reached; cancel loading
+                        image.removeAttribute('src');
+                    }
 
                     // Call on a timeout to ensure asynchronous behavior.
                     setTimeout(catchedCallback, 0, src, (success && image.complete) ? image : null);
+                    return success;
                 };
             }
 

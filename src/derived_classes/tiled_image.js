@@ -346,7 +346,7 @@ $.extend(Seadragon.TiledImage.prototype,
             bounds.panTo(boundsCenter); // keep the planned center intact
 
             this.boundsSprings.fitBounds(bounds, immediately);
-            this.$container.trigger('seadragon:forcealign');
+            this.$container.trigger('seadragon:force_align');
             return this;
         },
     }

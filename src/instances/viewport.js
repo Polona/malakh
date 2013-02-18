@@ -122,7 +122,7 @@ $.extend(Seadragon.Viewport.prototype,
             if (!dontApplyConstraints) {
                 this.applyConstraints(false, refPoint);
             }
-            this.$container.trigger('seadragon:forceredraw');
+            this.$container.trigger('seadragon:force_redraw');
             return this;
         },
 
@@ -150,7 +150,7 @@ $.extend(Seadragon.Viewport.prototype,
             if (!dontApplyConstraints) {
                 this.applyConstraints(false);
             }
-            this.$container.trigger('seadragon:forceredraw');
+            this.$container.trigger('seadragon:force_redraw');
             return this;
         },
 
@@ -194,7 +194,7 @@ $.extend(Seadragon.Viewport.prototype,
 
             parentPrototype.fitBounds.call(this, newBounds, immediately);
 
-            this.$container.trigger('seadragon:forcealign');
+            this.$container.trigger('seadragon:force_align');
             return this;
         },
 

@@ -170,7 +170,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             this.controller.constrainToImage(whichImage);
         }
 
-        this.$container.trigger('seadragon:forcealign');
+        this.$container.trigger('seadragon:force_align');
 
         return this;
     };
