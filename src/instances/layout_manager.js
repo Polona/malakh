@@ -132,12 +132,6 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         return this;
     };
 
-    function getFitImageFunction(whichImage) {
-        return function () {
-            this.layoutManager.fitImage(whichImage, false, true);
-        };
-    }
-
     /**
      * Hides currently visible images and shows only the given one.
      *
@@ -146,6 +140,12 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * @param {boolean} [dontForceConstraints=false]
      */
     this.showOnlyImage = function showOnlyImage(whichImage, immediately, dontForceConstraints) {
+        function getFitImageFunction(whichImage) {
+            return function () {
+                this.layoutManager.fitImage(whichImage, false, true);
+            };
+        }
+
         var tiledImage;
 
         this.showTiledImage(whichImage, immediately);

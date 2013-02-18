@@ -137,7 +137,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
                 x: x,
                 y: y,
                 bounds: bounds,
-                url: url
+                url: url,
             });
             boundsAlreadyUpdated = true;
         }
