@@ -60,7 +60,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
                 return false;
             }
             seadragon.config.debugTileBorders = !seadragon.config.debugTileBorders;
-            seadragon.$container.trigger('seadragon:forceredraw');
+            seadragon.$container.trigger('seadragon:force_redraw');
             $(this).css('background-color', buttonColors[seadragon.config.debugTileBorders]);
             return false;
         }
