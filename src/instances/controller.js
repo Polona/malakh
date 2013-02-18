@@ -301,7 +301,9 @@ Seadragon.Controller = function Controller(seadragon) {
 
         tiledImagesToHandle--;
 
-        that.$container.trigger('seadragon:loaded_tiled_image');
+        that.$container
+            .trigger('seadragon:loaded_tiled_image')
+            .trigger('seadragon:showed_tiled_image');
         if (tiledImagesToHandle === 0) {
             that.$container.trigger('seadragon:loaded_all_tiled_images');
         }
@@ -683,6 +685,7 @@ Seadragon.Controller = function Controller(seadragon) {
         }
 
         this.drawer.showTiledImage(whichImage, immediately);
+        this.$container.trigger('seadragon:showed_tiled_image');
         return this.restoreUpdating();
     };
 
@@ -701,6 +704,7 @@ Seadragon.Controller = function Controller(seadragon) {
         }
 
         this.drawer.hideTiledImage(whichImage, immediately);
+        this.$container.trigger('seadragon:hidden_tiled_image');
         return this.restoreUpdating();
     };
 
