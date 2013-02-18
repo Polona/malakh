@@ -261,17 +261,19 @@ Seadragon.Controller = function Controller(seadragon) {
      * @private
      */
     function recalculateMaxLevel() {
-        var viewportMaxLevel = 0;
+        var viewportMaxLevel = 0, maxTiledImageLevel = 0;
         for (var i = 0; i < that.tiledImages.length; i++) {
             var tiledImage = that.tiledImages[i];
-            if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
+            if (tiledImage instanceof Seadragon.TiledImage && tiledImage.opacity > 0) { // tiled image has been loaded
                 viewportMaxLevel = Math.max(
                     viewportMaxLevel,
                     tiledImage.getViewportLevel(tiledImage.maxLevel)
                 );
+                maxTiledImageLevel = Math.max(maxTiledImageLevel, tiledImage.maxLevel);
             }
         }
         that.viewport.maxLevel = viewportMaxLevel;
+        that.viewport.maxTiledImageLevel = maxTiledImageLevel;
     }
 
     /**
@@ -301,7 +303,7 @@ Seadragon.Controller = function Controller(seadragon) {
 
         that.$container.trigger('seadragon:loadedtiledimage');
         if (tiledImagesToHandle === 0) {
-            that.$container.trigger('seadragon:loadedtiledimagearray');
+            that.$container.trigger('seadragon:loadedalltiledimages');
         }
 
         var callbacks = tiledImagesCallbacks[index];

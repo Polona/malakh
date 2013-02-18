@@ -27,6 +27,7 @@ Seadragon = function Seadragon(containerSelectorOrElement, configOverrides) {
     );
 
 
+    // TODO use setters triggering appropriate events for some of these keys.
     /**
      * Configuration options of this Seadragon instance.
      * @type Object
@@ -72,16 +73,6 @@ Seadragon = function Seadragon(containerSelectorOrElement, configOverrides) {
 
 
         /**
-         * DZI format has tiles as small as 1x1 pixel. Loading them all on one side
-         * prevents loading too large images conserving memory but, on the other hand,
-         * causes a fuzzy effect. Level set here should be small enough to be contained
-         * in one tile only.
-         * @type number
-         */
-        minLevelToDraw: 8,
-
-
-        /**
          * Time it takes to finish various animations in miliseconds.
          * @type number
          */
@@ -122,6 +113,23 @@ Seadragon = function Seadragon(containerSelectorOrElement, configOverrides) {
          * @type number
          */
         minPixelRatio: 0.5,
+        /**
+         * How much one can zoom in when constrained to a particular tiled image; 1 means native size.
+         * If more than one tiled image is displayed, this condition is checked against each of them;
+         * one positive result is enough.
+         * @type number
+         */
+        maxTiledImageStretch: 1,
+
+
+        /**
+         * DZI format has tiles as small as 1x1 pixel. Loading them all on one side
+         * prevents loading too large images conserving memory but, on the other hand,
+         * causes a fuzzy effect. Level set here should be small enough to be contained
+         * in one tile only.
+         * @type number
+         */
+        minLevelToDraw: 8,
 
 
         /**
