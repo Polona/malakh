@@ -10,7 +10,7 @@
             return; // already defined
         }
 
-        ['webkit', 'moz', 'o'].forEach(function (vendorPrefix) {
+        ['webkit', 'moz'].forEach(function (vendorPrefix) {
             if (window.requestAnimationFrame) {
                 return;
             }

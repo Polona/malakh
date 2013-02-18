@@ -59,46 +59,18 @@ Seadragon.Viewport = function Viewport(seadragon) {
      */
     this.constraintBounds = undefined;
 
-    // We'll change them later:
-    var maxLevel = 0;
-    var maxLevelExp = 1;
-    Object.defineProperties(this,
-        /**
-         * @lends Seadragon.Viewport#
-         */
-        {
-            /**
-             * Maximum level to be drawn. Synchronized automatically with <code>this.maxLevelExp</code>.
-             * @type number
-             */
-            maxLevel: {
-                get: function () {
-                    return maxLevel;
-                },
-                set: function (val) {
-                    maxLevel = val;
-                    maxLevelExp = null; // we'll compute it when needed
-                },
-                enumerable: true,
-            },
-            /**
-             * Maximum permissible TODO what's that? Synchronized automatically with <code>this.maxLevel</code>.
-             * @type number
-             */
-            maxLevelExp: {
-                get: function () {
-                    if (maxLevelExp == null) { // we reset maxLevel and haven't computed maxLevelExp yet
-                        maxLevelExp = Math.pow(2, maxLevel);
-                    }
-                    return maxLevelExp;
-                },
-                set: function () {
-                    console.error('Field maxLevelExp is not settable.');
-                },
-                enumerable: true,
-            },
-        }
-    );
+    /**
+     * Maximum <code>tiledImage.maxLevel</code> amongst all visible tiled images.
+     * @type number
+     */
+    this.maxTiledImageLevel = 0;
+    /**
+     * Maximum "viewport" level to be drawn. "Viewport level" translates to tiled images' levels; if tiled images
+     * were not scaled (i.e. their bounds width & height are equal to the source DZI width & height), it is
+     * equal to <code>this.maxTiledImageLevel</code>.
+     * @type number
+     */
+    this.maxLevel = 0;
 };
 
 Seadragon.Viewport.prototype = Object.create(Seadragon.AnimatedRectangle.prototype);
@@ -276,7 +248,8 @@ $.extend(Seadragon.Viewport.prototype,
                 console.error('Can\'t apply constraints because constraintBounds is not set.');
                 return this;
             }
-            var scale;
+            var scale, pixelSize;
+
             var needToAdjust = false;
             var whatToScale = 'height';
 
@@ -297,15 +270,13 @@ $.extend(Seadragon.Viewport.prototype,
                 needToAdjust = true;
                 scale = vR[whatToScale] / cR[whatToScale];
             } else {
-                // We use 'else' just in case the maxLevelExp parameter has a stupid value.
-                // Otherwise, it could cause the image to flicker.
-                var cRInPixels = this.deltaPixelsFromPoints(new Seadragon.Point(cR.width, cR.height));
-                if (cRInPixels.x > this.maxLevelExp) { // We've zoomed in too much
+                // We use 'else' just in case the image is so small it would fit in both scenarios;
+                // we want to aviod flicker in some cases and we prefer zooming in too much
+                // than zooming out too much.
+                pixelSize = this.getZoom() / Math.pow(0.5, this.maxTiledImageLevel - this.maxLevel); // TODO cache it?
+                if (pixelSize > this.config.maxTiledImageStretch) { // We've zoomed in too much
                     needToAdjust = true;
-                    scale = this.maxLevelExp / cRInPixels.x;
-                } else if (cRInPixels.y > this.maxLevelExp) { // We've zoomed in too much
-                    needToAdjust = true;
-                    scale = this.maxLevelExp / cRInPixels.y;
+                    scale = this.config.maxTiledImageStretch / pixelSize;
                 }
             }
 

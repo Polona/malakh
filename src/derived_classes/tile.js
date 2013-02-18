@@ -88,8 +88,9 @@ Seadragon.Tile = function Tile(seadragon, options) {
     this.position = null;
     /**
      * Current size of the tile on the screen in pixels.
-     * @type number
+     * @type Seadragon.Point
      */
+    this.size = null;
 
     /**
      * The start time of this tile's blending.
@@ -159,7 +160,8 @@ $.extend(Seadragon.Tile.prototype,
 
             var context = this.canvasContext,
                 position = this.position,
-                size = this.size;
+                size = this.size,
+                image = this.image;
 
             if (zoom != null && zoom !== 1) {
                 position = position
@@ -173,9 +175,9 @@ $.extend(Seadragon.Tile.prototype,
             context.globalAlpha = this.opacity;
 
             try {
-                context.drawImage(this.image, position.x, position.y, size.x, size.y);
+                context.drawImage(image, position.x, position.y, size.x, size.y);
             } catch (e) {
-                console.error('context.drawImage error.', this.image, position.x, position.y, size.x, size.y);
+                console.error('context.drawImage error.', image, position.x, position.y, size.x, size.y);
                 throw e;
             }
 
