@@ -182,13 +182,13 @@ Seadragon.Controller = function Controller(seadragon) {
         });
 
         that.$container.on({
-            'seadragon:forcealign.seadragon': function () {
+            'seadragon:force_align.seadragon': function () {
                 forceAlign = true;
                 recalculateMaxLevel();
                 that.restoreUpdating();
             },
 
-            'seadragon:forceredraw.seadragon': function () {
+            'seadragon:force_redraw.seadragon': function () {
                 that.restoreUpdating();
             }
         });
@@ -301,9 +301,9 @@ Seadragon.Controller = function Controller(seadragon) {
 
         tiledImagesToHandle--;
 
-        that.$container.trigger('seadragon:loadedtiledimage');
+        that.$container.trigger('seadragon:loaded_tiled_image');
         if (tiledImagesToHandle === 0) {
-            that.$container.trigger('seadragon:loadedalltiledimages');
+            that.$container.trigger('seadragon:loaded_all_tiled_images');
         }
 
         var callbacks = tiledImagesCallbacks[index];
@@ -439,14 +439,14 @@ Seadragon.Controller = function Controller(seadragon) {
         // Triger proper events.
         if (!animated && animating) {
             // We weren't animating, and now we did ==> animation start.
-            that.$container.trigger('seadragon:animationstart');
+            that.$container.trigger('seadragon:animation_start');
             that.$container.trigger('seadragon:animation');
         } else if (animating) {
             // We're in the middle of animating.
             that.$container.trigger('seadragon:animation');
         } else if (animated) {
             // We were animating, and now we're not anymore ==> animation finish.
-            that.$container.trigger('seadragon:animationend');
+            that.$container.trigger('seadragon:animation_end');
         }
 
         // For the next update check.
