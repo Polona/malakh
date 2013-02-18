@@ -44,7 +44,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      */
     this.registerTiledImage = function registerTiledImage(tiledImage, index) {
         if (midUpdate) { // We don't want to add a new image during the update process, deferring.
-            console.log('Deferred adding a DZI to Drawer');
+            this.log('Deferred adding a DZI to Drawer');
             var that = this;
             setTimeout(function () {
                 that.registerTiledImage(tiledImage, index);
@@ -194,7 +194,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
             tile.failedToLoad = true;
             return;
         } else if (time < lastResetTime) {
-            console.log('Ignoring tile ' + tile + ' loaded before reset: ' + tile.url);
+            that.log('Ignoring tile ' + tile + ' loaded before reset: ' + tile.url);
             return;
         }
 
