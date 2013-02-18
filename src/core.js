@@ -55,7 +55,7 @@ Seadragon = function Seadragon(containerSelectorOrElement, configOverrides) {
          */
         blockMovement: {
             horizontal: false,
-            vertical: false
+            vertical: false,
         },
         /**
          * Blocks user-invoked zoom; viewport methods still work.
@@ -147,6 +147,19 @@ Seadragon = function Seadragon(containerSelectorOrElement, configOverrides) {
 
 
         /**
+         * Do we draw the picker currently?
+         * @type boolean
+         */
+        enablePicker: false,
+        /**
+         * Determines the size of the area surrounding picker borders which triggers resizing mode
+         * when pressing the left mouse button when cursor is over it.
+         * @type number
+         */
+        pickerHandleSize: 10,
+
+
+        /**
          * Do we draw the magnifier currently?
          * @type Boolean
          */
@@ -161,21 +174,6 @@ Seadragon = function Seadragon(containerSelectorOrElement, configOverrides) {
          * @type number
          */
         magnifierRadius: 200,
-
-
-        /**
-         * Do we draw the picker currently?
-         * @type boolean
-         */
-        enablePicker: false,
-        /**
-         * Determines the size of the area surrounding picker borders which triggers resizing mode
-         * when pressing the left mouse button when cursor is over it.
-         * @type number
-         */
-        pickerHandleSize: 10,
-
-
         /**
          * Color of background beneath drawn images. Needed for magnifier to correctly
          * redraw background in places where there are no tiles to display.
