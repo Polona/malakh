@@ -23,7 +23,6 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
     this._alignRowsOrColumns = function alignRowsOrColumns(alingInRows, heightOrWidth, spaceBetweenImages,
                                                            maxRowWidthOrColumnHeight, immediately) {
         var width, height, widthSum, heightSum, newBounds;
-        var that = this;
 
         // Setting default values if parameters were not provided.
         heightOrWidth = heightOrWidth || 500; // it has to be >0
@@ -33,10 +32,9 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         }
 
         if (this.controller.isLoading()) {
-            setTimeout(function () {
-                that._alignRowsOrColumns(alingInRows, heightOrWidth, spaceBetweenImages,
-                    maxRowWidthOrColumnHeight, immediately);
-            }, 100);
+            setTimeout(this._alignRowsOrColumns.bind(this), 100,
+                alingInRows, heightOrWidth, spaceBetweenImages,
+                maxRowWidthOrColumnHeight, immediately);
             return this;
         }
 
@@ -182,11 +180,8 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * @param {boolean} [immediately=false]
      */
     this.alignCentersAndHeights = function alignCenterAndHeight(height, immediately) {
-        var that = this;
         if (this.controller.isLoading()) {
-            setTimeout(function () {
-                that.alignCentersAndHeights(height, immediately);
-            }, 100);
+            setTimeout(this.alignCentersAndHeights.bind(this), 100, height, immediately);
             return this;
         }
 

@@ -45,10 +45,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
     this.registerTiledImage = function registerTiledImage(tiledImage, index) {
         if (midUpdate) { // We don't want to add a new image during the update process, deferring.
             this.log('Deferred adding a DZI to Drawer');
-            var that = this;
-            setTimeout(function () {
-                that.registerTiledImage(tiledImage, index);
-            }, 100);
+            setTimeout(this.registerTiledImage.bind(this), 100, tiledImage, index);
             return this;
         }
         if (!tiledImage) {
