@@ -618,6 +618,11 @@ Seadragon.Controller = function Controller(seadragon) {
     this.openDziArray = function openDziArray(optionsArray, hideByDefault) {
         tiledImagesToHandle += optionsArray.length;
 
+        if (!optionsArray.length) {
+            this.log('No images to open!', arguments);
+            return this;
+        }
+
         optionsArray.forEach(function (options, index) {
             tiledImagesToHandle--; // openDzi increases it again
             var shown = options.shown == null ? !hideByDefault : options.shown;
