@@ -102,6 +102,11 @@ Seadragon = function Seadragon(containerSelectorOrElement, configOverrides) {
          * @type number
          */
         imageLoaderTimeout: 15000,
+        /**
+         * If true, image reuqests that exceedes <code>imageLoaderTimeout</code> are dropped.
+         * @type boolean
+         */
+        dropImageLoadingOnTimeout: true,
 
         /**
          * Maximum number of images we should keep in memory.
