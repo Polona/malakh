@@ -68,7 +68,7 @@ $.extend(Seadragon.ImageLoader.prototype,
                     if (!success) { // we failed or timeout was reached; cancel loading
                         console.error('Image failed to load.', image.src);
                         if (that.config.dropImageLoadingOnTimeout) {
-                            // Set empty GIF to src.
+                            // Set src to a blank GIF.
                             image.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
                         }
                     }
