@@ -23,7 +23,6 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
     this._alignRowsOrColumns = function alignRowsOrColumns(alingInRows, heightOrWidth, spaceBetweenImages,
                                                            maxRowWidthOrColumnHeight, immediately) {
         var width, height, widthSum, heightSum, newBounds;
-        var that = this;
 
         // Setting default values if parameters were not provided.
         heightOrWidth = heightOrWidth || 500; // it has to be >0
@@ -33,10 +32,9 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         }
 
         if (this.controller.isLoading()) {
-            setTimeout(function () {
-                that._alignRowsOrColumns(alingInRows, heightOrWidth, spaceBetweenImages,
-                    maxRowWidthOrColumnHeight, immediately);
-            }, 100);
+            setTimeout(this._alignRowsOrColumns.bind(this), 100,
+                alingInRows, heightOrWidth, spaceBetweenImages,
+                maxRowWidthOrColumnHeight, immediately);
             return this;
         }
 
@@ -182,11 +180,8 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * @param {boolean} [immediately=false]
      */
     this.alignCentersAndHeights = function alignCenterAndHeight(height, immediately) {
-        var that = this;
         if (this.controller.isLoading()) {
-            setTimeout(function () {
-                that.alignCentersAndHeights(height, immediately);
-            }, 100);
+            setTimeout(this.alignCentersAndHeights.bind(this), 100, height, immediately);
             return this;
         }
 
@@ -200,7 +195,9 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
 
         for (var i = 0; i < this.tiledImages.length; i++) {
             var tiledImage = this.tiledImages[i];
-            var newBounds = new Seadragon.Rectangle(0, 0, undefined, height);
+            // We pass width as 0 because TiledImage#fitBounds corrects it anyway
+            // and we adjust x & y so that (0, 0) is in the center of the returned rectangle.
+            var newBounds = new Seadragon.Rectangle(0, -height / 2, 0, height);
             if (tiledImage instanceof Seadragon.TiledImage) {
                 // Center in (0, 0), common height, width counted from height & aspect ratio.
                 tiledImage.fitBounds(newBounds, immediately);
