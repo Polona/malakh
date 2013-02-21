@@ -195,7 +195,9 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
 
         for (var i = 0; i < this.tiledImages.length; i++) {
             var tiledImage = this.tiledImages[i];
-            var newBounds = new Seadragon.Rectangle(0, 0, undefined, height);
+            // We pass width as 0 because TiledImage#fitBounds corrects it anyway
+            // and we adjust x & y so that (0, 0) is in the center of the returned rectangle.
+            var newBounds = new Seadragon.Rectangle(0, -height / 2, 0, height);
             if (tiledImage instanceof Seadragon.TiledImage) {
                 // Center in (0, 0), common height, width counted from height & aspect ratio.
                 tiledImage.fitBounds(newBounds, immediately);
