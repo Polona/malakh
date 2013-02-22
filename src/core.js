@@ -125,6 +125,12 @@ Seadragon = function Seadragon(containerSelectorOrElement, configOverrides) {
          * @type number
          */
         maxTiledImageStretch: 1,
+        /**
+         * Maximum of two values when zoomed out as much as possible: current tiled image height in pixels divided
+         * by container height, the same for width.
+         * @type number
+         */
+        minVisibilityRatio: 1,
 
 
         /**

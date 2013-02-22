@@ -266,9 +266,9 @@ $.extend(Seadragon.Viewport.prototype,
 
             /// ZOOMING PART
             // Now we assume viewportRatio < constraintsRatio which means empty borders on sides.
-            if (vR[whatToScale] > cR[whatToScale]) { // Too small, we need to zoom in.
+            if (vR[whatToScale] * this.config.minVisibilityRatio > cR[whatToScale]) { // Too small, we need to zoom in.
                 needToAdjust = true;
-                scale = vR[whatToScale] / cR[whatToScale];
+                scale = vR[whatToScale] * this.config.minVisibilityRatio / cR[whatToScale];
             } else {
                 // We use 'else' just in case the image is so small it would fit in both scenarios;
                 // we want to aviod flicker in some cases and we prefer zooming in too much
