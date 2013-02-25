@@ -260,7 +260,6 @@ Seadragon.Drawer = function Drawer(seadragon) {
         }
         if (x == null || y == null) {
             // Check that every visible tile provides coverage.
-            // Update: protecting against properties added to the Object prototype.
             var rowsOfColumns = coverage[whichImage][level];
             for (i in rowsOfColumns) {
                 if (rowsOfColumns.hasOwnProperty(i)) {
