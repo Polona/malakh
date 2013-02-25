@@ -51,11 +51,6 @@ Seadragon.Tile = function Tile(seadragon, options) {
     this.bounds = options.bounds;
 
     /**
-     * Set to false if an error during tile file load occurs. Helps <code>Drawer</code> to omit such tiles.
-     * @type boolean
-     */
-    this.failedToLoad = false;
-    /**
      * Did the tile already load its file?
      * @type boolean
      */

@@ -162,9 +162,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @private
      */
     function loadTile(tile, time) {
-        tile.loading = that.imageLoader.loadImage(tile.url, function (image) {
-            onTileLoad(tile, time, image);
-        });
+        that.imageLoader.loadImage(tile, onTileLoad.bind(null, tile, time));
     }
 
     /**
@@ -178,25 +176,19 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @param {Image} image
      * @private
      */
-    function onTileLoad(tile, time, image) {
+    function onTileLoad(tile, time) {
         var i;
-
-        tile.loading = false;
 
         if (midUpdate) {
             console.error('Tile load callback in the middle of drawing routine.');
             return;
-        } else if (!image) {
+        } else if (!tile.loaded) {
             console.error('Tile ' + tile + ' failed to load: ' + tile.url);
-            tile.failedToLoad = true;
             return;
         } else if (time < lastResetTime) {
             that.log('Ignoring tile ' + tile + ' loaded before reset: ' + tile.url);
             return;
         }
-
-        tile.loaded = true;
-        tile.image = image;
 
         var insertionIndex = tilesLoaded.length;
 
@@ -268,8 +260,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         }
         if (x == null || y == null) {
             // Check that every visible tile provides coverage.
-            // Update: protecting against properties added to the Object
-            // class's prototype, which can definitely (and does) happen.
+            // Update: protecting against properties added to the Object prototype.
             var rowsOfColumns = coverage[whichImage][level];
             for (i in rowsOfColumns) {
                 if (rowsOfColumns.hasOwnProperty(i)) {
@@ -629,10 +620,6 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
                     // Assume this tile doesn't cover initially.
                     setCoverage(whichImage, adjustedLevel, x, y, false);
-
-                    if (tile.failedToLoad) {
-                        continue;
-                    }
 
                     // If we've drawn a higher-resolution level and we're
                     // not going to draw this level, then say this tile does
