@@ -654,10 +654,13 @@ Seadragon.Controller = function Controller(seadragon) {
      *                                                don't enforce it at the moment.
      */
     this.constrainToImage = function constrainToImage(whichImage, dontForceConstraints) {
+        var that = this;
+
         function getFunctionConstrainingToImage(dontForceConstraints) {
             return function () {
                 this.viewport.constraintBounds = new Seadragon.Rectangle(
                     this.boundsSprings.getRectangle());
+                that.$container.trigger('seadragon:constraint_bounds_set');
                 if (!dontForceConstraints) {
                     this.config.constrainViewport = true;
                 }
