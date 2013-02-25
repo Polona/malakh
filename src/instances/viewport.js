@@ -120,7 +120,7 @@ $.extend(Seadragon.Viewport.prototype,
                 refPoint.y - refPointRelativeDimensions.y * this.springs.height.targetValue, immediately);
 
             if (!dontApplyConstraints) {
-                this.applyConstraints(false, refPoint);
+                this.applyConstraints(immediately, refPoint);
             }
             this.$container.trigger('seadragon:force_redraw');
             return this;
@@ -273,7 +273,8 @@ $.extend(Seadragon.Viewport.prototype,
                 // We use 'else' just in case the image is so small it would fit in both scenarios;
                 // we want to aviod flicker in some cases and we prefer zooming in too much
                 // than zooming out too much.
-                pixelSize = this.getZoom() / Math.pow(0.5, this.maxTiledImageLevel - this.maxLevel); // TODO cache it?
+                // TODO cache it?
+                pixelSize = this.getZoom() / Math.pow(0.5, this.maxTiledImageLevel - 1 - this.maxLevel);
                 if (pixelSize > this.config.maxTiledImageStretch) { // We've zoomed in too much
                     needToAdjust = true;
                     scale = this.config.maxTiledImageStretch / pixelSize;

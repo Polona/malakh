@@ -119,9 +119,13 @@ Seadragon = function Seadragon(containerSelectorOrElement, configOverrides) {
          */
         minPixelRatio: 0.5,
         /**
-         * How much one can zoom in when constrained to a particular tiled image; 1 means native size.
+         * <p>How much one can zoom in when constrained to a particular tiled image; 1 means native size.
          * If more than one tiled image is displayed, this condition is checked against each of them;
          * one positive result is enough.
+         *
+         * <p>NOTE: this value has certain tolerance; the actual experienced value is somewhere between
+         * <code>maxTiledImageStretch</code> and <code>2 * maxTiledImageStretch</code>.
+         *
          * @type number
          */
         maxTiledImageStretch: 1,
