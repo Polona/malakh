@@ -38,11 +38,12 @@ $.extend(Seadragon.ImageLoader.prototype,
          * @param {function} [callback] Callback function to be executed after image is loaded
          * @return {boolean} Was loading successful?
          */
-        loadImage: function loadImage(src, callback) {
+        loadImage: function loadImage(tile, callback) {
             if (this.downloading >= this.config.imageLoaderLimit) {
-                return false;
+                tile.loading = false;
             }
             var that = this;
+            var url = tile.url;
 
             this.downloading++;
             var timeout;
@@ -52,9 +53,9 @@ $.extend(Seadragon.ImageLoader.prototype,
                 that.downloading--;
                 if (typeof callback === 'function') {
                     try {
-                        callback(image);
+                        callback();
                     } catch (error) {
-                        console.error('Error while executing ' + src + ' callback.', error);
+                        console.error('Error while executing ' + url + ' callback.', error);
                     }
                 }
             }
@@ -72,9 +73,12 @@ $.extend(Seadragon.ImageLoader.prototype,
                             image.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
                         }
                     }
+                    tile.loading = false;
+                    tile.loaded = success;
+                    tile.image = image;
 
                     // Call on a timeout to ensure asynchronous behavior.
-                    setTimeout(catchedCallback, 0, src, (success && image.complete) ? image : null);
+                    setTimeout(catchedCallback, 0);
                 };
             }
 
@@ -83,9 +87,9 @@ $.extend(Seadragon.ImageLoader.prototype,
 
             // Consider it a failure if the image times out.
             timeout = setTimeout(getFinishFunction(false), this.config.imageLoaderTimeout);
-            image.src = src;
+            image.src = url;
 
-            return true;
+            tile.loading = true;
         },
     }
 );
