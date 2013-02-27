@@ -1,5 +1,5 @@
 // TODO document
-Seadragon = function Seadragon(containerSelectorOrElement, configOverrides) {
+Seadragon = function (containerSelectorOrElement, configOverrides) {
     var $canvas, canvasContext;
     var seadragon = this;
     this.seadragon = this; // needed for prototype methods

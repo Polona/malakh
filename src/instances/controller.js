@@ -164,20 +164,20 @@ Seadragon.Controller = function Controller(seadragon) {
 
             'mousedown.seadragon': function (evt) {
                 if (evt.which !== 1 || that.config.enableMagnifier) { // Only left-click is supported.
-                    return false;
+                    return true;
                 }
                 lastPosition = that.getMousePosition(evt);
                 $(document).on('mousemove.seadragon', dragCanvas);
-                return false;
+                return true;
             },
 
             'wheel.seadragon': function (evt) {
                 if (that.config.enableMagnifier || !evt.deltaY) {
-                    return false;
+                    return true;
                 }
                 zoomCanvas(evt);
                 that.restoreUpdating();
-                return false;
+                return true;
             }
         });
 
