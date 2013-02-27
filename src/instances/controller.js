@@ -164,20 +164,20 @@ Seadragon.Controller = function Controller(seadragon) {
 
             'mousedown.seadragon': function (evt) {
                 if (evt.which !== 1 || that.config.enableMagnifier) { // Only left-click is supported.
-                    return false;
+                    return true;
                 }
                 lastPosition = that.getMousePosition(evt);
                 $(document).on('mousemove.seadragon', dragCanvas);
-                return false;
+                return true;
             },
 
             'wheel.seadragon': function (evt) {
                 if (that.config.enableMagnifier || !evt.deltaY) {
-                    return false;
+                    return true;
                 }
                 zoomCanvas(evt);
                 that.restoreUpdating();
-                return false;
+                return true;
             }
         });
 
@@ -559,7 +559,8 @@ Seadragon.Controller = function Controller(seadragon) {
      *                                Otherwise it's put at the end of the table.
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
-     *//**
+     */
+    /**
      * Opens Deep Zoom Image (DZI).
      *
      * @param {Object} options  An object containing all given options.
