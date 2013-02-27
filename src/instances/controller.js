@@ -559,8 +559,7 @@ Seadragon.Controller = function Controller(seadragon) {
      *                                Otherwise it's put at the end of the table.
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
-     */
-    /**
+     *//**
      * Opens Deep Zoom Image (DZI).
      *
      * @param {Object} options  An object containing all given options.
