@@ -391,21 +391,24 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
         if (immediately) {
             tiledImage.opacity = opacityTarget;
-        } else if (!tiledImage.blending) { // Otherwise we leave it where it was before updating.
-            tiledImage.opacity = hide ? 1 : 0;
+            tiledImage.blending = false;
+        }
+        else {
+            if (!tiledImage.blending) { // Otherwise we leave it where it was before updating.
+                // We need to set values different than 1 or 0 so that code that assumes by opacity === 0 that
+                // the image is hidden won't matched the tiled image in the process of being shown.
+                tiledImage.opacity = hide ? 0.99999999 : 0.00000001;
+            }
+
+            tiledImage.hiding = hide;
+            tiledImage.blendStart = Date.now();
+            if (tiledImage.blending) { // Fake that we started blending earlier.
+                tiledImage.blendStart -= (1 - Math.abs(opacityTarget - tiledImage.opacity)) * that.config.blendTime;
+            }
+            tiledImage.blending = true;
         }
 
-        tiledImage.hiding = hide;
-        tiledImage.blendStart = Date.now();
-        if (tiledImage.blending) { // Fake that we started blending earlier.
-            tiledImage.blendStart -= (1 - Math.abs(opacityTarget - tiledImage.opacity)) * that.config.blendTime;
-        }
-        tiledImage.blending = true;
-
-        if (!tiledImage.hiding) { // showing an image requires recalculating max levels
-            that.$container.trigger('seadragon:force_align');
-        }
-        that.update();
+        that.$container.trigger('seadragon:force_align'); // we need to recalculate max levels
     }
 
     /**
