@@ -225,7 +225,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
 
     this.$container = $(containerSelectorOrElement);
     if (this.$container.length === 0) {
-        console.info('Received containerSelectorOrElement:', containerSelectorOrElement);
+        console.log('Received containerSelectorOrElement:', containerSelectorOrElement);
         throw new Error('Can\'t create a Controller instance without a container!');
     }
     this.$container.empty().css({
@@ -402,7 +402,7 @@ $.extend(Seadragon.prototype,
                 errorString += 'or:\n' +
                     '    new Seadragon.' + className + '(' + namesWithSeadragon + ')\n';
 
-                console.info('Received arguments:', [].slice.call(args));
+                console.log('Received arguments:', [].slice.call(args));
                 throw new Error(errorString);
             }
 
@@ -422,7 +422,7 @@ $.extend(Seadragon.prototype,
                 }
             });
             if (missingOption) {
-                console.info('Received options:', options);
+                console.log('Received options:', options);
                 throw new Error('Seadragon.' + className + ' needs a JSON parameter with at least the following ' +
                     'fields: ' + expectedOptionsArray.join(', ') + '.');
             }
