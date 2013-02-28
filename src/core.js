@@ -1,4 +1,12 @@
-// TODO document
+/**
+ * Constructs a Seadragon instance.
+ *
+ * @class Represents the whole Seadragon.
+ *
+ * @param {jQuery|string} containerSelectorOrElement  The jQuery object which will serve as the Seadragon container
+ *                                                    or selector pointing to that object.
+ * @param {Object} configOverrides  Overrides for default configuration options.
+ */
 Seadragon = function (containerSelectorOrElement, configOverrides) {
     var $canvas, canvasContext;
     var seadragon = this;
@@ -27,7 +35,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
     );
 
 
-    // TODO use setters triggering appropriate events for some of these keys.
+    // TODO correct jsDoc for config parameters, now it doesn't get generated.
     /**
      * Configuration options of this Seadragon instance.
      * @type Object
@@ -38,11 +46,6 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          * @type boolean
          */
         debugMode: false,
-        /**
-         * Adds borders to tiles so that loading process is more explicit.
-         * @type boolean
-         */
-        debugTileBorders: false,
 
 
         /**
@@ -58,10 +61,10 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
             vertical: false,
         },
         /**
-         * Blocks user-invoked zoom; viewport methods still work.
+         * If <code>blockZoom</code>, use wheel event to pan.
          * @type boolean
          */
-        blockZoom: false,
+        wheelToPanWhenZoomBlocked: true,
 
 
         /**
@@ -208,7 +211,14 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          */
         backgroundColor: '',
     };
+
     $.extend(this.config, configOverrides);
+
+    // Those values are handled using ES5 getters/setters but since they need Seadragon
+    // initialized for their setters to work, they're defined at the end of the constructor.
+    var debugTileBorders = this.config.debugTileBorders || false;
+    var blockZoom = this.config.blockZoom || false;
+
 
     // No DZIs loaded yet.
     this.tiledImages = [];
@@ -321,6 +331,51 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
     // Proxying `Controller`/`LayoutManager` fields.
     this._defineProxyForAllFields('controller')
         ._defineProxyForAllFields('layoutManager');
+
+
+    // Define config variables that need the initialized Seadragon for their setters to work.
+    Object.defineProperties(this.config,
+        /**
+         * @lends Seadragon#config
+         */
+        {
+            /**
+             * Adds borders to tiles so that loading process is more explicit.
+             * @type boolean
+             */
+            debugTileBorders: {
+                get: function () {
+                    return debugTileBorders;
+                },
+                set: function (value) {
+                    debugTileBorders = value;
+                    seadragon.$container.trigger('seadragon:force_redraw');
+                },
+                enumerable: true,
+            },
+            /**
+             * Blocks user-invoked zoom; viewport methods still work.
+             * @type boolean
+             */
+            blockZoom: {
+                get: function () {
+                    return blockZoom;
+                },
+                set: function (value) {
+                    blockZoom = value;
+                    if (blockZoom && seadragon.config.wheelToPanWhenZoomBlocked) {
+                        seadragon.enableWheelToPan();
+                    } else {
+                        seadragon.disableWheelToPan();
+                    }
+                },
+                enumerable: true,
+            },
+        }
+    );
+    // Trigger setters:
+    this.config.debugTileBorders = debugTileBorders;
+    this.config.blockZoom = blockZoom;
 };
 
 // TODO document all methods

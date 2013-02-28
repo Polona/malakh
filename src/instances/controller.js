@@ -29,7 +29,8 @@ Seadragon.Controller = function Controller(seadragon) {
         tiledImagesToHandle,
         lastPosition,
         containerSize,
-        lockOnUpdates;
+        lockOnUpdates,
+        wheelToPanEnabled;
 
     Object.defineProperties(this, {
         /**
@@ -83,12 +84,18 @@ Seadragon.Controller = function Controller(seadragon) {
 
         /**
          * Toggles magnifier's state - shows it if it was hidden; hides it otherwise.
+         *
+         * @param {boolean} enable  If provided, falls back to <code>enableMagnifier</code>
+         *                          or <code>disableMagnifier</code>.
          */
-        this.toggleMagnifier = function toggleMagnifier() {
-            if (that.config.enableMagnifier) {
-                that.disableMagnifier();
-            } else {
+        this.toggleMagnifier = function toggleMagnifier(enable) {
+            if (enable == null) {
+                enable = !that.config.enableMagnifier;
+            }
+            if (enable) {
                 that.enableMagnifier();
+            } else {
+                that.disableMagnifier();
             }
             return this;
         };
@@ -121,12 +128,18 @@ Seadragon.Controller = function Controller(seadragon) {
 
         /**
          * Toggles picker's state - shows it if it was hidden; hides it otherwise.
+         *
+         * @param {boolean} enable  If provided, falls back to <code>enablePicker</code>
+         *                          or <code>disablePicker</code>.
          */
-        this.togglePicker = function togglePicker() {
-            if (that.config.enablePicker) {
-                that.disablePicker();
-            } else {
+        this.togglePicker = function togglePicker(enable) {
+            if (enable == null) {
+                enable = !that.config.enablePicker;
+            }
+            if (enable) {
                 that.enablePicker();
+            } else {
+                that.disablePicker();
             }
             return this;
         };
@@ -146,6 +159,47 @@ Seadragon.Controller = function Controller(seadragon) {
     function onDocumentMouseUp() {
         $(document).off('mousemove.seadragon', dragCanvas);
         that.restoreUpdating();
+    }
+
+    function wheelToZoom(evt) {
+        if (that.config.enableMagnifier) {
+            return true;
+        }
+        zoomCanvas(evt);
+        that.restoreUpdating();
+        return true;
+    }
+
+    function wheelToPan(evt) {
+        evt.preventDefault(); // block gestures for back/forward history navigation
+        var deltaX, deltaY, scale;
+
+        switch (evt.deltaMode) {
+            case 0: // deltas in pixels
+                scale = 1;
+                break;
+            case 1: // deltas in lines
+                scale = 14; // default line-height, I guess
+                break;
+            case 2: // deltas in pages
+                scale = parseFloat(seadragon.$container.css('height'));
+                break;
+            default:
+                throw new Error('SeadragonManagerView#toggleBlockZoom: deltaMode not recognized',
+                    evt.deltaMode, evt);
+        }
+        deltaX = scale * evt.deltaX;
+        deltaY = scale * evt.deltaY;
+
+        if (evt.shiftKey) {
+            // Swap deltaX & deltaY (thus, if deltaX is missing, we can scroll horizontally).
+            var oldDeltaX = deltaX;
+            deltaX = deltaY;
+            deltaY = oldDeltaX;
+        }
+
+        that.viewport.panBy(that.viewport.deltaPointsFromPixels(new Seadragon.Point(deltaX, deltaY)));
+        return false;
     }
 
     function bindEvents() {
@@ -171,14 +225,7 @@ Seadragon.Controller = function Controller(seadragon) {
                 return true;
             },
 
-            'wheel.seadragon': function (evt) {
-                if (that.config.enableMagnifier || !evt.deltaY) {
-                    return true;
-                }
-                zoomCanvas(evt);
-                that.restoreUpdating();
-                return true;
-            }
+            'wheel.seadragon': wheelToZoom
         });
 
         that.$container.on({
@@ -196,6 +243,52 @@ Seadragon.Controller = function Controller(seadragon) {
         $(document).on('mouseup.seadragon', onDocumentMouseUp);
         $(window).on('resize.seadragon', that.restoreUpdating);
     }
+
+    /**
+     * Switches `wheel` event behavior to panning.
+     */
+    this.enableWheelToPan = function enableWheelToPan() {
+        if (wheelToPanEnabled) {
+            return this; // already enabled
+        }
+        wheelToPanEnabled = true;
+        that.$canvas
+            .off('wheel.seadragon', wheelToZoom)
+            .on('wheel.seadragon', wheelToPan);
+        return this;
+    };
+
+    /**
+     * Switches `wheel` event behavior to zooming.
+     */
+    this.disableWheelToPan = function disableWheelToPan() {
+        if (!wheelToPanEnabled) {
+            return this; // already disabled
+        }
+        wheelToPanEnabled = false;
+        that.$canvas
+            .off('wheel.seadragon', wheelToPan)
+            .on('wheel.seadragon', wheelToZoom);
+        return this;
+    };
+
+    /**
+     * Toggles `wheel` event behavior between panning and zooming.
+     *
+     * @param {boolean} enable  If provided, falls back to <code>enableWheelToPan</code>
+     *                          or <code>disableWheelToPan</code>.
+     */
+    this.toggleWheelToPan = function toggleWheelToPan(enable) {
+        if (enable == null) {
+            enable = !wheelToPanEnabled;
+        }
+        if (enable) {
+            that.enableWheelToPan();
+        } else {
+            that.disableWheelToPan();
+        }
+        return this;
+    };
 
     /**
      * Handler executed when user drags the canvas using their mouse.
@@ -756,6 +849,8 @@ Seadragon.Controller = function Controller(seadragon) {
         animated = false;
         forceAlign = forceRedraw = true;
         scheduleUpdate();
+
+        wheelToPanEnabled = false;
 
         return this;
     };
