@@ -22,7 +22,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     seadragon = new Seadragon(containerSelectorOrElement,
         $.extend({}, {backgroundColor: '#2d2a2b'}, configOverrides));
 
-    function openAllInARow() {
+    function openNorblinDZIsInARow() {
         dziDataArray = [];
         dziNamesArray.forEach(function (dziName, index) {
             dziDataArray[index] = {
@@ -46,7 +46,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             });
     }
 
-    openOneTestDZIFromAcademica();
+    openNorblinDZIsInARow();
 
     // Buttons.
     $('#animations_off').on({
