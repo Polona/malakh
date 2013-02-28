@@ -634,7 +634,7 @@ Seadragon.Controller = function Controller(seadragon) {
                 onOpen(processDzi(options), options.index);
             },
             error: function (_, statusText) {
-                throw new Error('Unable to retrieve the given DZI file, does it really exist? ', statusText);
+                throw new Error('Unable to retrieve the given DZI file, does it really exist?\n' + statusText);
             }
         });
 
@@ -704,7 +704,7 @@ Seadragon.Controller = function Controller(seadragon) {
                 tiledImagesToHandle--;
                 that.tiledImages[options.index] = null;
                 console.error('DZI failed to load; provided options:', options);
-                console.info(error.stack);
+                console.log(error.stack);
             }
         }
         else { // register image options to show later
