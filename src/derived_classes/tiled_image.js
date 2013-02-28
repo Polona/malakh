@@ -74,6 +74,17 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
      * @type number
      */
     this.tileOverlap = options.tileOverlap || 0;
+    /**
+     * Support subpixel precision when drawing on canvas.
+     * @type boolean
+     * @see Seadragon#config.subpixelTileParameters
+     */
+    this.subpixelTileParameters = this.config.subpixelTileParameters;
+    if (!this.tileOverlap) {
+        // Subpixel tile drawing causes small empty spaces between tiles when there's no overlap
+        // so in that case we override the default.
+        this.subpixelTileParameters = false;
+    }
 
     // Bounds are coordinates of a Seadragon Image on the virtual plane containing all the images.
     if (!options.bounds) {

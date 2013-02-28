@@ -119,6 +119,12 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          */
         minPixelRatio: 0.5,
         /**
+         * Maximum of two values when zoomed out as much as possible: current tiled image height in pixels divided
+         * by container height, the same for width.
+         * @type number
+         */
+        minVisibilityRatio: 1,
+        /**
          * <p>How much one can zoom in when constrained to a particular tiled image; 1 means native size.
          * If more than one tiled image is displayed, this condition is checked against each of them;
          * one positive result is enough.
@@ -130,11 +136,17 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          */
         maxTiledImageStretch: 1,
         /**
-         * Maximum of two values when zoomed out as much as possible: current tiled image height in pixels divided
-         * by container height, the same for width.
-         * @type number
+         * <p>Modern browsers support subpixel precision when drawing on canvas. Utilizing it eliminates
+         * the ugly "jumping effect" between tiles.
+         *
+         * <p>NOTE: subpixel tile drawing doesn't work well when there is no overlap between tiles. That's
+         * one of reasons one should NEVER use zero overlap but in case we stumble upon such tiled images,
+         * it can be desirable to disable subpixel tile drawing. That's why even if this setting is set
+         * to true, it gets overriden for tiled images with zero tile overlap.
+         *
+         * @type boolean
          */
-        minVisibilityRatio: 1,
+        subpixelTileParameters: true,
 
 
         /**
