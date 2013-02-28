@@ -86,6 +86,14 @@ Seadragon.Tile = function Tile(seadragon, options) {
      * @type Seadragon.Point
      */
     this.size = null;
+    /**
+     * Support subpixel precision when drawing on canvas.
+     * @type boolean
+     * @see Seadragon.TiledImage#subpixelTileParameters
+     */
+    this.subpixelTileParameters = (options.subpixelTileParameters != null) ?
+        options.subpixelTileParameters :
+        this.config.subpixelTileParameters;
 
     /**
      * The start time of this tile's blending.
@@ -167,15 +175,20 @@ $.extend(Seadragon.Tile.prototype,
                 size.y *= zoom;
             }
 
-            context.globalAlpha = this.opacity;
+            if (!this.subpixelTileParameters) {
+                position.x = Math.floor(position.x);
+                position.y = Math.floor(position.y);
+                size.x = Math.ceil(size.x);
+                size.y = Math.ceil(size.y);
+            }
 
+            context.globalAlpha = this.opacity;
             try {
                 context.drawImage(image, position.x, position.y, size.x, size.y);
             } catch (e) {
                 console.error('context.drawImage error.', image, position.x, position.y, size.x, size.y);
                 throw e;
             }
-
             if (this.config.debugTileBorders) {
                 context.strokeRect(position.x, position.y, size.x, size.y);
             }

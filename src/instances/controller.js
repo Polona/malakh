@@ -635,7 +635,7 @@ Seadragon.Controller = function Controller(seadragon) {
             return this;
         }
 
-        optionsArray.forEach(function (options, index) {
+        optionsArray.forEach(function (options) {
             tiledImagesToHandle--; // openDzi increases it again
             if (options.shown == null) {
                 options.shown = !hideByDefault;

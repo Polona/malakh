@@ -135,6 +135,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
                 y: y,
                 bounds: bounds,
                 url: url,
+                subpixelTileParameters: tiledImage.subpixelTileParameters,
             });
             boundsAlreadyUpdated = true;
         }
