@@ -687,7 +687,11 @@ Seadragon.Controller = function Controller(seadragon) {
         if (!(tiledImage instanceof Seadragon.TiledImage)) {
             // Image not loaded yet, loading it will show it automatically.
             var options = tiledImagesOptions[whichImage];
-            return options ? this.openDzi(options) : this; // options missing => opening probably already started
+            if (options) { // if options missing, opening probably already started
+                options.shown = true;
+                this.openDzi(options);
+            }
+            return this;
         }
 
         this.drawer.showTiledImage(whichImage, immediately);
