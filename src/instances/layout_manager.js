@@ -119,7 +119,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      */
     this.fitImage = function fitImage(whichImage, current, immediately) {
         var tiledImage = this.tiledImages[whichImage];
-        if (!tiledImage) {
+        if (!(tiledImage instanceof Seadragon.TiledImage)) {
             console.error('No image with number ' + whichImage);
             return this;
         }

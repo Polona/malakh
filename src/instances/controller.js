@@ -592,8 +592,10 @@ Seadragon.Controller = function Controller(seadragon) {
         if (options.index == null) {
             options.index = this.tiledImages.length;
         }
-        that.tiledImages[options.index] = null; // keep space for the image
-        tiledImagesCallbacks[options.index] = [];
+        if (!tiledImagesCallbacks[options.index]) { // image not registered yet => initialize fields
+            that.tiledImages[options.index] = null; // keep space for the image
+            tiledImagesCallbacks[options.index] = [];
+        }
 
         var shown = options.shown == null ? true : options.shown;
         if (shown) { // actually open the DZI image
