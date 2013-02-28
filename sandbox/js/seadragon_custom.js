@@ -22,20 +22,31 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     seadragon = new Seadragon(containerSelectorOrElement,
         $.extend({}, {backgroundColor: '#2d2a2b'}, configOverrides));
 
-    dziDataArray = [];
-    dziNamesArray.forEach(function (dziName, index) {
-        dziDataArray[index] = {
-            dziUrl: dziPrefix + dziName + '.dzi',
-            bounds: new Seadragon.Rectangle(1000000, 1000000, 1000, 1000)
-        };
-    });
-    seadragon.openDziArray(dziDataArray);
-    seadragon.alignRows(6000, 0, Infinity, true);
+    function openNorblinDZIsInARow() {
+        dziDataArray = [];
+        dziNamesArray.forEach(function (dziName, index) {
+            dziDataArray[index] = {
+                dziUrl: dziPrefix + dziName + '.dzi',
+                bounds: new Seadragon.Rectangle(1000000, 1000000, 1000, 1000),
+            };
+        });
+        seadragon.openDziArray(dziDataArray);
+        seadragon.alignRows(6000, 0, Infinity, true);
+        seadragon.viewport.zoomTo(0.1, true);
+        seadragon.viewport.panTo(new Seadragon.Point(7000, 3000), true);
+    }
 
-    // Adjust -- not necessary, just removes the need to do it by ourselves.
-    seadragon.viewport.zoomTo(0.1, true);
-    seadragon.viewport.panTo(new Seadragon.Point(7000, 3000), true);
+    function openOneTestDZIFromAcademica() {
+        seadragon
+            .openDzi({
+                dziUrl: 'http://127.0.0.1:8107/resource/image/280189/?DeepZoom=279868.tif.dzi',
+                tilesUrl: 'http://127.0.0.1:8107/resource/image/280189/?DeepZoom=279868.tif_files/',
+            }).showOnlyImage(0, {
+                dontForceConstraints: true,
+            });
+    }
 
+    openNorblinDZIsInARow();
 
     // Buttons.
     $('#animations_off').on({

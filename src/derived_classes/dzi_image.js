@@ -17,7 +17,7 @@
  * @param {number} options.width Sets <code>this.width</code>.
  * @param {number} options.height Sets <code>this.height</code>.
  * @param {number} options.tileSize Sets <code>this.tileSize</code>.
- * @param {number} options.tilesURL Sets <code>this.tilesUrl</code>.
+ * @param {number} options.tilesUrl Sets <code>this.tilesUrl</code>.
  * @param {number} options.tileFormat Sets <code>this.tileFormat</code>.
  * @param {number} [options.tileOverlap=0] Sets <code>this.tileOverlap</code>.
  * @param {Seadragon.Rectangle} [options.bounds=new Seadragon.Rectangle(0, 0, options.width, options.height)]

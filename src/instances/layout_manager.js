@@ -119,7 +119,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      */
     this.fitImage = function fitImage(whichImage, current, immediately) {
         var tiledImage = this.tiledImages[whichImage];
-        if (!tiledImage) {
+        if (!(tiledImage instanceof Seadragon.TiledImage)) {
             console.error('No image with number ' + whichImage);
             return this;
         }
@@ -134,37 +134,44 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * Hides currently visible images and shows only the given one.
      *
      * @param {number} whichImage  Index of the image to show.
-     * @param {boolean} [immediately=false]
-     * @param {boolean} [dontForceConstraints=false]
+     * @param {boolean} [options={}] Object  containing optional configuration.
+     * @param {boolean} [options.immediately=false]
+     * @param {boolean} [options.dontFitImage=false]
+     * @param {boolean} [options.dontForceConstraints=false]
      */
-    this.showOnlyImage = function showOnlyImage(whichImage, immediately, dontForceConstraints) {
+    this.showOnlyImage = function showOnlyImage(whichImage, options) {
+        var tiledImage;
+
         function getFitImageFunction(whichImage) {
             return function () {
                 this.layoutManager.fitImage(whichImage, false, true);
             };
         }
 
-        var tiledImage;
+        options = options || {};
 
-        this.showTiledImage(whichImage, immediately);
-        if (this.tiledImages[whichImage] instanceof Seadragon.TiledImage) {
-            getFitImageFunction(whichImage).call(this);
-        } else {
-            this.controller.tiledImagesCallbacks[whichImage].push(
-                getFitImageFunction(whichImage)
-            );
+        this.controller.showTiledImage(whichImage, options.immediately);
+
+        if (!options.dontFitImage) {
+            if (this.tiledImages[whichImage] instanceof Seadragon.TiledImage) {
+                getFitImageFunction(whichImage).call(this);
+            } else {
+                this.controller.tiledImagesCallbacks[whichImage].push(
+                    getFitImageFunction(whichImage)
+                );
+            }
         }
 
         for (var i = 0; i < this.tiledImages.length; i++) {
             tiledImage = this.tiledImages[i];
             if (i !== whichImage) {
                 if (tiledImage instanceof Seadragon.TiledImage) { // otherwise it's already hidden
-                    this.hideTiledImage(i, immediately);
+                    this.controller.hideTiledImage(i, options.immediately);
                 }
             }
         }
 
-        if (!dontForceConstraints) {
+        if (!options.dontForceConstraints) {
             this.controller.constrainToImage(whichImage);
         }
 
