@@ -588,24 +588,34 @@ Seadragon.Controller = function Controller(seadragon) {
             options.dziUrl = arguments0;
         }
 
-        // Removing options so that we don't try to open the same DZI twice.
-        delete tiledImagesOptions[options.index];
 
-        tiledImagesToHandle++;
         if (options.index == null) {
             options.index = this.tiledImages.length;
         }
         that.tiledImages[options.index] = null; // keep space for the image
+        tiledImagesCallbacks[options.index] = [];
 
-        try {
-            this.createFromDzi(options);
-        } catch (error) {
-            // We try to keep working even after a failed attempt to load a new DZI.
-            tiledImagesToHandle--;
-            delete that.tiledImages[options.index];
-            console.error('DZI failed to load; provided options:', options);
-            console.info(error.stack);
+        var shown = options.shown == null ? true : options.shown;
+        if (shown) { // actually open the DZI image
+            // Removing options so that we don't try to open the same DZI twice.
+            delete tiledImagesOptions[options.index];
+
+            tiledImagesToHandle++;
+
+            try {
+                this.createFromDzi(options);
+            } catch (error) {
+                // We try to keep working even after a failed attempt to load a new DZI.
+                tiledImagesToHandle--;
+                that.tiledImages[options.index] = null;
+                console.error('DZI failed to load; provided options:', options);
+                console.info(error.stack);
+            }
         }
+        else { // register image options to show later
+            tiledImagesOptions[options.index] = options;
+        }
+
 
         return this;
     };
@@ -625,22 +635,10 @@ Seadragon.Controller = function Controller(seadragon) {
 
         optionsArray.forEach(function (options, index) {
             tiledImagesToHandle--; // openDzi increases it again
-            var shown = options.shown == null ? !hideByDefault : options.shown;
-            if (shown) {
-                if (options.index == null) {
-                    options.index = index;
-                }
-
-                that.openDzi(options);
+            if (options.shown == null) {
+                options.shown = !hideByDefault;
             }
-            else { // register image options to show later
-                if (options.index == null) { // if index not provided, put the image at the end
-                    options.index = that.tiledImages.length;
-                }
-                that.tiledImages[index] = null;
-                tiledImagesOptions[index] = options;
-                tiledImagesCallbacks[index] = [];
-            }
+            that.openDzi(options);
         });
         return this;
     };

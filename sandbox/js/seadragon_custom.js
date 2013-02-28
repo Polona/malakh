@@ -35,6 +35,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     // Adjust -- not necessary, just removes the need to do it by ourselves.
     seadragon.viewport.zoomTo(0.1, true);
     seadragon.viewport.panTo(new Seadragon.Point(7000, 3000), true);
+//    seadragon.openDzi({
+//        dziUrl: 'http://127.0.0.1:8107/resource/image/280189/?DeepZoom=279868.tif.dzi',
+//        tilesUrl: 'http://127.0.0.1:8107/resource/image/280189/?DeepZoom=279868.tif_files/',
+//    }).showOnlyImage(0);
 
 
     // Buttons.
