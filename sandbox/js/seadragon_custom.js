@@ -65,13 +65,23 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         }
     });
 
+    $('#zoom_off').on({
+        click: function () {
+            if (event.which !== 1) { // Only left-click is supported.
+                return false;
+            }
+            seadragon.config.blockZoom = !seadragon.config.blockZoom;
+            $(this).css('background-color', buttonColors[seadragon.config.blockZoom]);
+            return false;
+        }
+    });
+
     $('#tile_borders').on({
         click: function (event) {
             if (event.which !== 1) { // Only left-click is supported.
                 return false;
             }
             seadragon.config.debugTileBorders = !seadragon.config.debugTileBorders;
-            seadragon.$container.trigger('seadragon:force_redraw');
             $(this).css('background-color', buttonColors[seadragon.config.debugTileBorders]);
             return false;
         }

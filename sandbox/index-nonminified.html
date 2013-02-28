@@ -15,6 +15,7 @@
 
 <div id="buttonsBar">
     <div id="animations_off" class="color_red">Bez anim.</div>
+    <div id="zoom_off" class="color_red">Blokuj zoom</div>
     <div id="tile_borders" class="color_red">Ramki kafli</div>
     <div id="picker" class="color_red">Picker</div>
     <div id="magnifier" class="color_red">Lupa</div>
@@ -31,18 +32,14 @@
 <!--[if IE]>
 <script src="js/ie9.js"></script>
 <![endif]-->
-<script src="js/polyfill.js"></script>
 <script src="js/jquery-1.9.1.js"></script>
-<script src="js/jquery.wheel.js"></script>
 <script src="js/dzi_names_array.js"></script>
 <script src="../dist/seadragon.js"></script>
 <script src="js/seadragon_custom.js"></script>
 <script>
     $(function () {
         seadragonCustom('#seadragon_container', {
-            //animationTime: 0,
-            //debugTileBorders: true,
-            debugMode: true
+            debugMode: true,
         });
     });
 </script>

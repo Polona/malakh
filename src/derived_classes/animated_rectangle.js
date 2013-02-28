@@ -58,8 +58,9 @@ Seadragon.AnimatedRectangle = function AnimatedRectangle(seadragon, bounds) {
                 },
                 set: function () {
                     console.error('Seadragon.AnimatedRectangle\'s version parameter can\'t be manually changed');
-                }
-            }
+                },
+                enumerable: true,
+            },
         }
     );
 
