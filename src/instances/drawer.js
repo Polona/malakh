@@ -473,13 +473,10 @@ Seadragon.Drawer = function Drawer(seadragon) {
             tile.beingDrawn = false;
         }
 
-        // Clear canvas, whether in <canvas> mode or HTML mode.
-        // This is important as scene may be empty this frame.
+        // Clear canvas.
         var viewportSize = viewport.containerSize;
-        this.$canvas.attr('width', viewportSize.x);
-        this.$canvas.attr('height', viewportSize.y);
-
-        this.canvasLayersManager.clear();
+        this.canvasContext.clearRect(0, 0, viewportSize.x, viewportSize.y);
+        this.canvasLayersManager.reset();
 
         var viewportBounds = viewport.getRectangle(true);
         var viewportTL = viewportBounds.getTopLeft();

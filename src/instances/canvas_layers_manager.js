@@ -84,13 +84,14 @@ $.extend(Seadragon.CanvasLayersManager.prototype,
          * Draws both canvas layers.
          */
         draw: function draw() {
+            // TODO try drawing to an off-screen canvas first to eliminate "seaming" effect on tiled image showing.
             return this.drawLayer(0).drawLayer(1);
         },
 
         /**
          * Clears the set of tiles to draw.
          */
-        clear: function clear() {
+        reset: function reset() {
             this.tiles = [
                 [],
                 []

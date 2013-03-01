@@ -510,6 +510,11 @@ Seadragon.Controller = function Controller(seadragon) {
             forceRedraw = true; // canvas needs it
             containerSize = newContainerSize; // TODO maybe keep it as a Seadragon parameter?
             that.viewport.resize(newContainerSize);
+
+            // Resize canvas.
+            that.$canvas
+                .attr('width', newContainerSize.x)
+                .attr('height', newContainerSize.y);
         }
 
         // animating => viewport moved, aligning images or loading/blending tiles.
@@ -841,9 +846,6 @@ Seadragon.Controller = function Controller(seadragon) {
 
         bindEvents();
         that.drawer.reset();
-
-        var containerCss = that.$container.css(['width', 'height']);
-        containerSize = new Seadragon.Point(parseFloat(containerCss.width), parseFloat(containerCss.height));
 
         // Begin updating.
         animated = false;
