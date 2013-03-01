@@ -502,27 +502,35 @@ Seadragon.Controller = function Controller(seadragon) {
      * @private
      */
     function update() {
-        var containerCss = that.$container.css(['width', 'height']);
+        // Caching this.seadragon.[a-zA-Z]* instances.
+        // Note: we avoid using ES5 getters here for performance reasons.
+        var $container = this.seadragon.$container,
+            $canvas = this.seadragon.$canvas,
+            viewport = this.seadragon.viewport,
+            tiledImages = this.seadragon.tiledImages,
+            drawer = this.seadragon.drawer;
+
+        var containerCss = $container.css(['width', 'height']);
         var newContainerSize = new Seadragon.Point(parseFloat(containerCss.width), parseFloat(containerCss.height));
 
         if (!newContainerSize.equals(containerSize)) {
             // Maintain image position:
             forceRedraw = true; // canvas needs it
             containerSize = newContainerSize; // TODO maybe keep it as a Seadragon parameter?
-            that.viewport.resize(newContainerSize);
+            viewport.resize(newContainerSize);
 
             // Resize canvas.
-            that.$canvas
+            $canvas
                 .attr('width', newContainerSize.x)
                 .attr('height', newContainerSize.y);
         }
 
         // animating => viewport moved, aligning images or loading/blending tiles.
-        var animating = that.viewport.update() || forceAlign || forceRedraw;
+        var animating = viewport.update() || forceAlign || forceRedraw;
         if (forceAlign) {
             forceAlign = false;
             setTimeout(function () { // Making it more asynchronous.
-                that.tiledImages.forEach(function (tiledImage, whichImage) {
+                tiledImages.forEach(function (tiledImage, whichImage) {
                     if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
                         scheduleUpdateDziImageBounds(whichImage);
                     }
@@ -531,7 +539,7 @@ Seadragon.Controller = function Controller(seadragon) {
         }
 
         if (animating) {
-            forceRedraw = that.drawer.update();
+            forceRedraw = drawer.update();
         } else {
             lockOnUpdates = true;
         }
@@ -539,14 +547,15 @@ Seadragon.Controller = function Controller(seadragon) {
         // Triger proper events.
         if (!animated && animating) {
             // We weren't animating, and now we did ==> animation start.
-            that.$container.trigger('seadragon:animation_start');
-            that.$container.trigger('seadragon:animation');
+            $container
+                .trigger('seadragon:animation_start')
+                .trigger('seadragon:animation');
         } else if (animating) {
             // We're in the middle of animating.
-            that.$container.trigger('seadragon:animation');
+            $container.trigger('seadragon:animation');
         } else if (animated) {
             // We were animating, and now we're not anymore ==> animation finish.
-            that.$container.trigger('seadragon:animation_end');
+            $container.trigger('seadragon:animation_end');
         }
 
         // For the next update check.
