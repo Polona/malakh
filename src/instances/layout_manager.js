@@ -24,6 +24,10 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
                                                            maxRowWidthOrColumnHeight, immediately) {
         var width, height, widthSum, heightSum, newBounds;
 
+        var seadragon = this.seadragon,
+            controller = seadragon.controller,
+            tiledImages = seadragon.tiledImages;
+
         // Setting default values if parameters were not provided.
         heightOrWidth = heightOrWidth || 500; // it has to be >0
         spaceBetweenImages = spaceBetweenImages || 0;
@@ -31,7 +35,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             maxRowWidthOrColumnHeight = Infinity;
         }
 
-        if (this.controller.isLoading()) {
+        if (controller.isLoading()) {
             setTimeout(this._alignRowsOrColumns.bind(this), 100,
                 alingInRows, heightOrWidth, spaceBetweenImages,
                 maxRowWidthOrColumnHeight, immediately);
@@ -44,7 +48,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             maxRowWidthOrColumnHeight = Infinity;
         }
 
-        this.tiledImages.forEach(function (tiledImage) {
+        tiledImages.forEach(function (tiledImage) {
             // Compute the current state.
             if (alingInRows) {
                 width = heightOrWidth * tiledImage.boundsSprings.getAspectRatio();
@@ -118,12 +122,14 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * @param {boolean} [immediately=false]
      */
     this.fitImage = function fitImage(whichImage, current, immediately) {
-        var tiledImage = this.tiledImages[whichImage];
+        var seadragon = this.seadragon,
+            tiledImage = seadragon.tiledImages[whichImage];
+
         if (!(tiledImage instanceof Seadragon.TiledImage)) {
             console.error('No image with number ' + whichImage);
             return this;
         }
-        this.viewport.fitBounds(
+        seadragon.viewport.fitBounds(
             tiledImage.boundsSprings.getRectangle(current),
             immediately
         );
@@ -142,40 +148,46 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
     this.showOnlyImage = function showOnlyImage(whichImage, options) {
         var tiledImage;
 
+        var seadragon = this.seadragon,
+            tiledImages = seadragon.tiledImages,
+            controller = seadragon.controller,
+            layoutManager = seadragon.layoutManager,
+            $container = seadragon.$container;
+
         function getFitImageFunction(whichImage) {
             return function () {
-                this.layoutManager.fitImage(whichImage, false, true);
+                layoutManager.fitImage(whichImage, false, true);
             };
         }
 
         options = options || {};
 
-        this.controller.showTiledImage(whichImage, options.immediately);
+        controller.showTiledImage(whichImage, options.immediately);
 
         if (!options.dontFitImage) {
-            if (this.tiledImages[whichImage] instanceof Seadragon.TiledImage) {
+            if (tiledImages[whichImage] instanceof Seadragon.TiledImage) {
                 getFitImageFunction(whichImage).call(this);
             } else {
-                this.controller.tiledImagesCallbacks[whichImage].push(
+                controller.tiledImagesCallbacks[whichImage].push(
                     getFitImageFunction(whichImage)
                 );
             }
         }
 
-        for (var i = 0; i < this.tiledImages.length; i++) {
-            tiledImage = this.tiledImages[i];
+        for (var i = 0; i < tiledImages.length; i++) {
+            tiledImage = tiledImages[i];
             if (i !== whichImage) {
                 if (tiledImage instanceof Seadragon.TiledImage) { // otherwise it's already hidden
-                    this.controller.hideTiledImage(i, options.immediately);
+                    controller.hideTiledImage(i, options.immediately);
                 }
             }
         }
 
         if (!options.dontForceConstraints) {
-            this.controller.constrainToImage(whichImage);
+            controller.constrainToImage(whichImage);
         }
 
-        this.$container.trigger('seadragon:force_align');
+        $container.trigger('seadragon:force_align');
 
         return this;
     };
@@ -187,10 +199,14 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * @param {boolean} [immediately=false]
      */
     this.alignCentersAndHeights = function alignCenterAndHeight(height, immediately) {
-        if (this.controller.isLoading()) {
+        var seadragon = this.seadragon,
+            controller = seadragon.controller;
+        if (controller.isLoading()) {
             setTimeout(this.alignCentersAndHeights.bind(this), 100, height, immediately);
             return this;
         }
+
+        var tiledImages = seadragon.tiledImages;
 
         height = height || 500; // it has to be >0
 
@@ -200,8 +216,8 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             };
         }
 
-        for (var i = 0; i < this.tiledImages.length; i++) {
-            var tiledImage = this.tiledImages[i];
+        for (var i = 0; i < tiledImages.length; i++) {
+            var tiledImage = tiledImages[i];
             // We pass width as 0 because TiledImage#fitBounds corrects it anyway
             // and we adjust x & y so that (0, 0) is in the center of the returned rectangle.
             var newBounds = new Seadragon.Rectangle(0, -height / 2, 0, height);
@@ -209,7 +225,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
                 // Center in (0, 0), common height, width counted from height & aspect ratio.
                 tiledImage.fitBounds(newBounds, immediately);
             } else {
-                this.controller.tiledImagesCallbacks[i].push(
+                controller.tiledImagesCallbacks[i].push(
                     getFitBoundsFunction(newBounds, true) // we want deferred bounds modifications to invoke immediately
                 );
             }

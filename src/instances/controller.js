@@ -174,6 +174,10 @@ Seadragon.Controller = function Controller(seadragon) {
         evt.preventDefault(); // block gestures for back/forward history navigation
         var deltaX, deltaY, scale;
 
+        var seadragon = that.seadragon,
+            viewport = seadragon.viewport,
+            $container = seadragon.$container;
+
         switch (evt.deltaMode) {
             case 0: // deltas in pixels
                 scale = 1;
@@ -182,11 +186,10 @@ Seadragon.Controller = function Controller(seadragon) {
                 scale = 14; // default line-height, I guess
                 break;
             case 2: // deltas in pages
-                scale = parseFloat(seadragon.$container.css('height'));
+                scale = parseFloat($container.css('height'));
                 break;
             default:
-                throw new Error('SeadragonManagerView#toggleBlockZoom: deltaMode not recognized',
-                    evt.deltaMode, evt);
+                throw new Error('SeadragonManagerView#toggleBlockZoom: deltaMode not recognized', evt.deltaMode, evt);
         }
         deltaX = scale * evt.deltaX;
         deltaY = scale * evt.deltaY;
@@ -198,7 +201,7 @@ Seadragon.Controller = function Controller(seadragon) {
             deltaY = oldDeltaX;
         }
 
-        that.viewport.panBy(that.viewport.deltaPointsFromPixels(new Seadragon.Point(deltaX, deltaY)));
+        viewport.panBy(viewport.deltaPointsFromPixels(new Seadragon.Point(deltaX, deltaY)));
         return false;
     }
 
@@ -297,17 +300,21 @@ Seadragon.Controller = function Controller(seadragon) {
      * @private
      */
     function dragCanvas(evt) {
+        var seadragon = that.seadragon,
+            viewport = seadragon.viewport,
+            config = seadragon.config;
+
         var position = that.getMousePosition(evt);
         var delta = position.minus(lastPosition);
 
-        var blockMovement = that.config.blockMovement;
+        var blockMovement = config.blockMovement;
         if (blockMovement.horizontal) {
             delta.x = 0;
         }
         if (blockMovement.vertical) {
             delta.y = 0;
         }
-        that.viewport.panBy(that.viewport.deltaPointsFromPixels(delta.negate()));
+        viewport.panBy(viewport.deltaPointsFromPixels(delta.negate()));
 
         lastPosition = position;
     }
@@ -319,17 +326,21 @@ Seadragon.Controller = function Controller(seadragon) {
      * @private
      */
     function zoomCanvas(evt) {
-        if (that.config.blockZoom) {
+        var seadragon = that.seadragon,
+            config = seadragon.config,
+            viewport = seadragon.viewport;
+
+        if (config.blockZoom) {
             return;
         }
-        var factor = that.config.zoomPerScroll;
+        var factor = config.zoomPerScroll;
         if (evt.deltaY > 0) { // zooming out
             factor = 1 / factor;
         }
-        that.viewport.zoomBy(
+        viewport.zoomBy(
             factor,
             false,
-            that.viewport.pointFromPixel(that.getMousePosition(evt), true));
+            viewport.pointFromPixel(that.getMousePosition(evt), true));
     }
 
 
@@ -341,7 +352,7 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function moveMagnifier(evt) {
         var position = that.getMousePosition(evt);
-        that.magnifier.panTo(position);
+        that.seadragon.magnifier.panTo(position);
         that.restoreUpdating();
     }
 
@@ -354,9 +365,13 @@ Seadragon.Controller = function Controller(seadragon) {
      * @private
      */
     function recalculateMaxLevel() {
+        var seadragon = that.seadragon,
+            tiledImages = seadragon.tiledImages,
+            viewport = seadragon.viewport;
+
         var viewportMaxLevel = 0, maxTiledImageLevel = 0;
-        for (var i = 0; i < that.tiledImages.length; i++) {
-            var tiledImage = that.tiledImages[i];
+        for (var i = 0; i < tiledImages.length; i++) {
+            var tiledImage = tiledImages[i];
             if (tiledImage instanceof Seadragon.TiledImage && tiledImage.opacity > 0) { // tiled image has been loaded
                 viewportMaxLevel = Math.max(
                     viewportMaxLevel,
@@ -365,8 +380,8 @@ Seadragon.Controller = function Controller(seadragon) {
                 maxTiledImageLevel = Math.max(maxTiledImageLevel, tiledImage.maxLevel);
             }
         }
-        that.viewport.maxLevel = viewportMaxLevel;
-        that.viewport.maxTiledImageLevel = maxTiledImageLevel;
+        viewport.maxLevel = viewportMaxLevel;
+        viewport.maxTiledImageLevel = maxTiledImageLevel;
     }
 
     /**
@@ -448,7 +463,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @private
      */
     function updateTiledImageBounds(whichImage, decreaseCounter) {
-        var tiledImage = that.tiledImages[whichImage];
+        var tiledImage = that.seadragon.tiledImages[whichImage];
         forceAlign = tiledImage.boundsSprings.update() || forceAlign;
         that.restoreUpdating();
         if (decreaseCounter) {
@@ -504,11 +519,12 @@ Seadragon.Controller = function Controller(seadragon) {
     function update() {
         // Caching this.seadragon.[a-zA-Z]* instances.
         // Note: we avoid using ES5 getters here for performance reasons.
-        var $container = this.seadragon.$container,
-            $canvas = this.seadragon.$canvas,
-            viewport = this.seadragon.viewport,
-            tiledImages = this.seadragon.tiledImages,
-            drawer = this.seadragon.drawer;
+        var seadragon = that.seadragon,
+            $container = seadragon.$container,
+            $canvas = seadragon.$canvas,
+            viewport = seadragon.viewport,
+            tiledImages = seadragon.tiledImages,
+            drawer = seadragon.drawer;
 
         var containerCss = $container.css(['width', 'height']);
         var newContainerSize = new Seadragon.Point(parseFloat(containerCss.width), parseFloat(containerCss.height));
@@ -681,6 +697,9 @@ Seadragon.Controller = function Controller(seadragon) {
     this.openDzi = function openDzi() {
         var options;
 
+        var seadragon = this.seadragon,
+            tiledImages = seadragon.tiledImages;
+
         // Handling signature variations.
         var arguments0 = arguments[0];
         if (arguments0 == null) { // wrong invocation, reverting changes
@@ -697,10 +716,10 @@ Seadragon.Controller = function Controller(seadragon) {
 
 
         if (options.index == null) {
-            options.index = this.tiledImages.length;
+            options.index = tiledImages.length;
         }
         if (!tiledImagesCallbacks[options.index]) { // image not registered yet => initialize fields
-            that.tiledImages[options.index] = null; // keep space for the image
+            tiledImages[options.index] = null; // keep space for the image
             tiledImagesCallbacks[options.index] = [];
         }
 
@@ -716,7 +735,7 @@ Seadragon.Controller = function Controller(seadragon) {
             } catch (error) {
                 // We try to keep working even after a failed attempt to load a new DZI.
                 tiledImagesToHandle--;
-                that.tiledImages[options.index] = null;
+                tiledImages[options.index] = null;
                 console.error('DZI failed to load; provided options:', options);
                 console.log(error.stack);
             }
@@ -724,7 +743,6 @@ Seadragon.Controller = function Controller(seadragon) {
         else { // register image options to show later
             tiledImagesOptions[options.index] = options;
         }
-
 
         return this;
     };
@@ -761,20 +779,24 @@ Seadragon.Controller = function Controller(seadragon) {
      *                                                don't enforce it at the moment.
      */
     this.constrainToImage = function constrainToImage(whichImage, dontForceConstraints) {
-        var that = this;
+        var seadragon = this.seadragon,
+            viewport = seadragon.viewport,
+            $container = seadragon.$container,
+            tiledImages = seadragon.tiledImages,
+            config = seadragon.config;
 
         function getFunctionConstrainingToImage(dontForceConstraints) {
             return function () {
-                this.viewport.constraintBounds = new Seadragon.Rectangle(
+                viewport.constraintBounds = new Seadragon.Rectangle(
                     this.boundsSprings.getRectangle());
-                that.$container.trigger('seadragon:constraint_bounds_set');
+                $container.trigger('seadragon:constraint_bounds_set');
                 if (!dontForceConstraints) {
-                    this.config.constrainViewport = true;
+                    config.constrainViewport = true;
                 }
             };
         }
 
-        var tiledImage = this.tiledImages[whichImage];
+        var tiledImage = tiledImages[whichImage];
         if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
             getFunctionConstrainingToImage(dontForceConstraints).call(tiledImage);
         } else { // register a callback
@@ -885,7 +907,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @return {Seadragon.Rectangle}
      */
     this.tiledImageBoundsInPoints = function tiledImageBoundsInPoints(whichImage, current) {
-        return this.tiledImages[whichImage].boundsSprings.getRectangle(current);
+        return this.seadragon.tiledImages[whichImage].boundsSprings.getRectangle(current);
     };
 
     /**
@@ -897,7 +919,7 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     this.tiledImageBoundsInPixels = function tiledImageBoundsInPixels(whichImage, current) {
         var pointBounds = this.tiledImageBoundsInPoints(whichImage, current);
-        return this.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
+        return this.seadragon.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
     };
 
     this.init();

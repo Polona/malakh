@@ -51,31 +51,35 @@ $.extend(Seadragon.CanvasLayersManager.prototype,
          */
         drawLayer: function drawLayer(layerNum) {
             var tilesOnLayer, drawLayer1, zoom;
-            var that = this;
-            var context = this.canvasContext;
 
-            tilesOnLayer = that.tiles[layerNum];
-            drawLayer1 = layerNum === 1 && this.config.enableMagnifier && this.magnifier;
+            var seadragon = this.seadragon,
+                canvasContext = seadragon.canvasContext,
+                magnifier = seadragon.magnifier,
+                config = seadragon.config,
+                viewport = seadragon.viewport;
+
+            tilesOnLayer = this.tiles[layerNum];
+            drawLayer1 = layerNum === 1 && config.enableMagnifier && magnifier;
 
             if (drawLayer1) { // magnifier level
-                context.save();
-                this.magnifier.drawPath(context);
+                canvasContext.save();
+                magnifier.drawPath(canvasContext);
             }
             tilesOnLayer.forEach(function (tile) {
                 if (drawLayer1) {
-                    zoom = that.config.magnifierZoom;
+                    zoom = config.magnifierZoom;
                 } else {
                     zoom = 1;
                 }
                 if (drawLayer1) {
-                    tile.draw(zoom, that.magnifier.center);
+                    tile.draw(zoom, magnifier.center);
                 } else {
-                    tile.draw(zoom, that.viewport.getCenter());
+                    tile.draw(zoom, viewport.getCenter());
                 }
             });
             if (drawLayer1) { // magnifier level
-                this.magnifier.drawOnFinish(context);
-                context.restore();
+                magnifier.drawOnFinish(canvasContext);
+                canvasContext.restore();
             }
             return this;
         },

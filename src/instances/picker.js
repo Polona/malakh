@@ -286,7 +286,7 @@ Seadragon.Picker = function Picker(seadragon) {
             $pickerOverlay.off('mousemove.seadragon');
             bindPickerMouseMove();
 
-            var areaBounds = that.viewport.pointRectangleFromPixelRectangle(getPickerAreaRectangle());
+            var areaBounds = that.seadragon.viewport.pointRectangleFromPixelRectangle(getPickerAreaRectangle());
 
             // Prints coordinates of the selected area (so far it's not used anywhere).
             console.log('areaBounds: [' + areaBounds.x + ', ' + areaBounds.y +
