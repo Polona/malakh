@@ -803,6 +803,7 @@ Seadragon.Controller = function Controller(seadragon) {
             tiledImagesCallbacks[whichImage].push(
                 getFunctionConstrainingToImage(dontForceConstraints));
         }
+        return this;
     };
 
 
