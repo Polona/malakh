@@ -73,6 +73,13 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          * @type boolean
          */
         constrainViewport: false,
+        /**
+         * If image is zoomed out so that its width is smaller than the container width, this switch means
+         * the image is being kept centered horizontally; the same applies to height. Otherwise, user is free
+         * to move the image as long as it doesn't go outside of the container.
+         * @type boolean
+         */
+        centerWhenZoomedOut: true,
 
 
         /**
