@@ -26,7 +26,7 @@ Seadragon.Picker = function Picker(seadragon) {
     };
     drawingArea = false; // Are we drawing a rectangle at the moment?
 
-    $pickerOverlay = $('<div class="pickerOverlay">').css({
+    $pickerOverlay = $('<div class="picker_overlay">').css({
         position: 'absolute',
         zIndex: 100,
         left: 0,
@@ -36,7 +36,7 @@ Seadragon.Picker = function Picker(seadragon) {
         backgroundColor: 'transparent'
     });
 
-    $pickerArea = $('<div class="pickerArea">').css({
+    $pickerArea = $('<div class="picker_area">').css({
         position: 'absolute',
         display: 'none',
         zIndex: 150,
