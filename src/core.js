@@ -68,14 +68,6 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
 
 
         /**
-         * If set to true, it prevents user from panning/zooming too far from
-         * the viewport.constraintBounds rectangle.
-         * @type boolean
-         */
-        constrainViewport: false,
-
-
-        /**
          * Time it takes to finish various animations in miliseconds.
          * @type number
          */
@@ -214,12 +206,6 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
 
     $.extend(this.config, configOverrides);
 
-    // Those values are handled using ES5 getters/setters but since they need Seadragon
-    // initialized for their setters to work, they're defined at the end of the constructor.
-    var debugTileBorders = this.config.debugTileBorders || false;
-    var blockZoom = this.config.blockZoom || false;
-
-
     // No DZIs loaded yet.
     this.tiledImages = [];
 
@@ -333,37 +319,70 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
         ._defineProxyForAllFields('layoutManager');
 
 
-    // Define config variables that need the initialized Seadragon for their setters to work.
+    // Those values are handled using ES5 getters/setters but since they need Seadragon
+    // initialized for their setters to work, they're defined at the end of the constructor.
+    var configProxies = {
+        blockZoom: this.config.blockZoom || false,
+        centerWhenZoomedOut: this.config.centerWhenZoomedOut == null ? true : this.config.centerWhenZoomedOut,
+        constrainViewport: this.config.constrainViewport || false,
+        debugTileBorders: this.config.debugTileBorders || false,
+    };
+
+    this._setupVariableAndForceRedraw = function _setupVariableAndForceRedraw(name, forceIfTrue) {
+        Object.defineProperty(this.config, name, {
+            get: function () {
+                return configProxies[name];
+            },
+            set: function (value) {
+                configProxies[name] = value;
+                if (forceIfTrue == null || configProxies[name] === forceIfTrue) {
+                    seadragon.$container.trigger('seadragon:force_redraw');
+                    seadragon.viewport.applyConstraints();
+                }
+            },
+            enumerable: true,
+        });
+        this.config[name] = configProxies[name]; // trigger setters
+        return this;
+    };
+
+    // Setup getters/setters.
+    this
+    /**
+     * If image is zoomed out so that its width is smaller than the container width, this switch means
+     * the image is being kept centered horizontally; the same applies to height. Otherwise, user is free
+     * to move the image as long as it doesn't go outside of the container.
+     * @type boolean
+     */
+        ._setupVariableAndForceRedraw('centerWhenZoomedOut', true)
+    /**
+     * If set to true, it prevents user from panning/zooming too far from
+     * the viewport.constraintBounds rectangle.
+     * @type boolean
+     */
+        ._setupVariableAndForceRedraw('constrainViewport', true)
+    /**
+     * Adds borders to tiles so that loading process is more explicit.
+     * @type boolean
+     */
+        ._setupVariableAndForceRedraw('debugTileBorders');
+
     Object.defineProperties(this.config,
         /**
          * @lends Seadragon#config
          */
         {
             /**
-             * Adds borders to tiles so that loading process is more explicit.
-             * @type boolean
-             */
-            debugTileBorders: {
-                get: function () {
-                    return debugTileBorders;
-                },
-                set: function (value) {
-                    debugTileBorders = value;
-                    seadragon.$container.trigger('seadragon:force_redraw');
-                },
-                enumerable: true,
-            },
-            /**
              * Blocks user-invoked zoom; viewport methods still work.
              * @type boolean
              */
             blockZoom: {
                 get: function () {
-                    return blockZoom;
+                    return configProxies.blockZoom;
                 },
                 set: function (value) {
-                    blockZoom = value;
-                    if (blockZoom && seadragon.config.wheelToPanWhenZoomBlocked) {
+                    configProxies.blockZoom = value;
+                    if (configProxies.blockZoom && seadragon.config.wheelToPanWhenZoomBlocked) {
                         seadragon.enableWheelToPan();
                     } else {
                         seadragon.disableWheelToPan();
@@ -373,9 +392,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
             },
         }
     );
-    // Trigger setters:
-    this.config.debugTileBorders = debugTileBorders;
-    this.config.blockZoom = blockZoom;
+    this.config.blockZoom = configProxies.blockZoom;
 };
 
 // TODO document all methods

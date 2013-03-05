@@ -65,6 +65,17 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         }
     });
 
+    $('#dont_center').on({
+        click: function () {
+            if (event.which !== 1) { // Only left-click is supported.
+                return false;
+            }
+            seadragon.config.centerWhenZoomedOut = !seadragon.config.centerWhenZoomedOut;
+            $(this).css('background-color', buttonColors[!seadragon.config.centerWhenZoomedOut]);
+            return false;
+        }
+    });
+
     $('#zoom_off').on({
         click: function () {
             if (event.which !== 1) { // Only left-click is supported.
@@ -235,9 +246,9 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             constrainToImage16 = false;
             $('#constrain_to_image_16').css('background-color', buttonColors[false]);
             seadragon.constrainToImage(2);
-            seadragon.config.constrainViewport = constrainToImage2;
-            seadragon.viewport.fitConstraintBounds();
-            seadragon.viewport.applyConstraints();
+            if (constrainToImage16) {
+                seadragon.fitImage(2);
+            }
             return false;
         }
     });
@@ -255,9 +266,9 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             constrainToImage2 = false;
             $('#constrain_to_image_2').css('background-color', buttonColors[false]);
             seadragon.constrainToImage(16);
-            seadragon.config.constrainViewport = constrainToImage16;
-            seadragon.viewport.fitConstraintBounds();
-            seadragon.viewport.applyConstraints();
+            if (constrainToImage16) {
+                seadragon.fitImage(16);
+            }
             return false;
         }
     });

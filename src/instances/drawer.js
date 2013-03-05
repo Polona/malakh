@@ -72,7 +72,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      */
     function getNumTiles(whichImage, level) {
         if (!cacheNumTiles[whichImage][level]) {
-            cacheNumTiles[whichImage][level] = that.tiledImages[whichImage].getNumTiles(level);
+            cacheNumTiles[whichImage][level] = that.seadragon.tiledImages[whichImage].getNumTiles(level);
         }
 
         return cacheNumTiles[whichImage][level];
@@ -89,7 +89,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      */
     function getPixelOnImageSizeMax(whichImage, level) {
         if (!cachePixelOnImageSizeMax[whichImage][level]) {
-            var pixelOnImageSize = that.tiledImages[whichImage].getScaledDimensions(level).invert();
+            var pixelOnImageSize = that.seadragon.tiledImages[whichImage].getScaledDimensions(level).invert();
             cachePixelOnImageSizeMax[whichImage][level] = Math.max(pixelOnImageSize.x, pixelOnImageSize.y);
         }
 
@@ -115,7 +115,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         var boundsAlreadyUpdated = false;
 
         tileMatrix = tilesMatrix[whichImage];
-        tiledImage = that.tiledImages[whichImage];
+        tiledImage = that.seadragon.tiledImages[whichImage];
 
         if (!tileMatrix[level]) {
             tileMatrix[level] = [];
@@ -163,7 +163,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @private
      */
     function loadTile(tile, time) {
-        that.imageLoader.loadImage(tile, onTileLoad.bind(null, tile, time));
+        that.seadragon.imageLoader.loadImage(tile, onTileLoad.bind(null, tile, time));
     }
 
     /**
@@ -378,7 +378,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @private
      */
     function showOrHideTiledImage(whichImage, hide, immediately) {
-        var tiledImage = that.tiledImages[whichImage];
+        var tiledImage = that.seadragon.tiledImages[whichImage];
         if (!(tiledImage instanceof Seadragon.TiledImage)) {
             console.error('Can\'t ' + (hide ? 'hide' : 'show') +
                 ' TiledImage of number ' + whichImage + '; there is no such TiledImage.');
@@ -447,9 +447,16 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
         var triggerForceAlign = false; // if true at the end of the method, trigger 'seadragon:forcealign'
 
-        // Caching Seadragon.[a-zA-Z]* instances.
-        var viewport = this.viewport,
-            magnifier = this.magnifier;
+        // Caching this.seadragon.[a-zA-Z]* instances.
+        // Note: we avoid using ES5 getters here for performance reasons.
+        var seadragon = this.seadragon,
+            viewport = seadragon.viewport,
+            magnifier = seadragon.magnifier,
+            canvasContext = seadragon.canvasContext,
+            canvasLayersManager = seadragon.canvasLayersManager,
+            tiledImages = seadragon.tiledImages,
+            $container = seadragon.$container,
+            config = seadragon.config;
 
         if (midUpdate) {
             // We don't want to run two updates at the same time but we do want to indicate
@@ -473,13 +480,10 @@ Seadragon.Drawer = function Drawer(seadragon) {
             tile.beingDrawn = false;
         }
 
-        // Clear canvas, whether in <canvas> mode or HTML mode.
-        // This is important as scene may be empty this frame.
+        // Clear canvas.
         var viewportSize = viewport.containerSize;
-        this.$canvas.attr('width', viewportSize.x);
-        this.$canvas.attr('height', viewportSize.y);
-
-        this.canvasLayersManager.clear();
+        canvasContext.clearRect(0, 0, viewportSize.x, viewportSize.y);
+        canvasLayersManager.reset();
 
         var viewportBounds = viewport.getRectangle(true);
         var viewportTL = viewportBounds.getTopLeft();
@@ -502,7 +506,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         currentTime = Date.now();
 
         // Drawing all images.
-        this.tiledImages.forEach(function (tiledImage, whichImage) {
+        tiledImages.forEach(function (tiledImage, whichImage) {
             if (!(tiledImage instanceof Seadragon.DziImage) || tiledImage.isHidden()) {
                 return;
             }
@@ -533,7 +537,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
                 updateAgain = true;
 
                 deltaTime = currentTime - tiledImage.blendStart;
-                opacity = Math.min(1, deltaTime / that.config.blendTime);
+                opacity = Math.min(1, deltaTime / config.blendTime);
                 tiledImage.opacity = tiledImage.hiding ? 1 - opacity : opacity;
                 if ((tiledImage.isHiding() && tiledImage.opacity === 0) ||
                     (tiledImage.isShowing() && tiledImage.opacity === 1)) {
@@ -562,7 +566,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
                 return; // We could delete whichImage from drawnImageNumbers but cost would be higher.
             }
 
-            tiledImage = that.tiledImages[whichImage];
+            tiledImage = tiledImages[whichImage];
             var adjustedLevel = tiledImage.getTiledImageLevel(level);
 
             viewportTL = viewportTLs[whichImage];
@@ -577,7 +581,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
             var drawLevel = false;
             var pixelSizeCurrent = viewportZoom / tiledImage.getScaledLevel(level);
 
-            if (that.config.enableMagnifier) {
+            if (config.enableMagnifier) {
                 // We need to load higher-level tiles as we need them
                 // for the magnifier. Notice that we load these higher
                 // levels for the whole space inside the viewport, not
@@ -586,11 +590,11 @@ Seadragon.Drawer = function Drawer(seadragon) {
                 // don't need to worry about the additional tiles to load
                 // since before they're loaded we still see tiles from lower
                 // levels so transitions are smooth.
-                pixelSizeCurrent *= that.config.magnifierZoom;
+                pixelSizeCurrent *= config.magnifierZoom;
             }
 
             // If we haven't drawn yet, only draw level if tiles are big enough.
-            if ((!haveDrawns[whichImage] && pixelSizeCurrent >= that.config.minPixelRatio) ||
+            if ((!haveDrawns[whichImage] && pixelSizeCurrent >= config.minPixelRatio) ||
                 adjustedLevel === tiledImage.minLevel) {
                 drawLevel = true;
                 haveDrawns[whichImage] = true;
@@ -647,7 +651,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
                     var positionCurrent = viewport.pixelFromPoint(boundsTL, true);
                     var sizeCurrent = viewport.deltaPixelsFromPoints(boundsSize, true);
 
-                    var drawOnMagnifier = that.config.enableMagnifier && magnifier &&
+                    var drawOnMagnifier = config.enableMagnifier && magnifier &&
                         magnifier.intersectsRectangle(new Seadragon.Rectangle(
                             positionCurrent.x, positionCurrent.y, sizeCurrent.x, sizeCurrent.y));
 
@@ -670,7 +674,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
                         }
 
                         deltaTime = currentTime - tile.blendStart;
-                        opacity = Math.min(1, deltaTime / that.config.blendTime);
+                        opacity = Math.min(1, deltaTime / config.blendTime);
 
                         tile.opacity = opacity * tiledImage.opacity;
 
@@ -688,7 +692,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
                     } else if (!tile.loading) {
                         // Means tile isn't loaded yet, so score it.
                         var interestingPoint;
-                        if (that.config.enableMagnifier) { // if magnifier shown, draw tiles close to its center
+                        if (config.enableMagnifier) { // if magnifier shown, draw tiles close to its center
                             interestingPoint = magnifier.center;
                         } else { // otherwise prefer the middle of the screen
                             interestingPoint = viewportCenter;
@@ -705,7 +709,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         }
 
 
-        for (level = this.viewport.maxLevel; level >= 0; level--) {
+        for (level = viewport.maxLevel; level >= 0; level--) {
             drawnImageNumbers.forEach(updateBestTileAtCurrentLevel);
         }
 
@@ -722,14 +726,14 @@ Seadragon.Drawer = function Drawer(seadragon) {
         for (i = tilesDrawnLastFrame.length - 1; i >= 0; i--) {
             tile = tilesDrawnLastFrame[i];
             for (j = 0; j <= tilesDrawnLastFrameLayers[i]; j++) {
-                this.canvasLayersManager.addToLayer(j, tile);
+                canvasLayersManager.addToLayer(j, tile);
             }
             tile.beingDrawn = true;
         }
-        this.canvasLayersManager.draw();
+        canvasLayersManager.draw();
 
         if (triggerForceAlign) {
-            this.$container.trigger('seadragon:force_align');
+            $container.trigger('seadragon:force_align');
         }
         midUpdate = false;
         return updateAgain;
@@ -756,7 +760,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         lastResetTime = 0;
         midUpdate = false;
 
-        that.$container.trigger('seadragon:force_redraw');
+        this.$container.trigger('seadragon:force_redraw');
         return this;
     };
 

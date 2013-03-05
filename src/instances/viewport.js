@@ -253,6 +253,8 @@ $.extend(Seadragon.Viewport.prototype,
             var needToAdjust = false;
             var whatToScale = 'height';
 
+            var config = this.seadragon.config;
+
             var cR = this.constraintBounds; // constraints rectangle
             var vR = this.getRectangle(); // viewport rectangle
 
@@ -275,9 +277,9 @@ $.extend(Seadragon.Viewport.prototype,
                 // than zooming out too much.
                 // TODO cache it?
                 pixelSize = this.getZoom() / Math.pow(0.5, this.maxTiledImageLevel - 1 - this.maxLevel);
-                if (pixelSize > this.config.maxTiledImageStretch) { // We've zoomed in too much
+                if (pixelSize > config.maxTiledImageStretch) { // We've zoomed in too much
                     needToAdjust = true;
-                    scale = this.config.maxTiledImageStretch / pixelSize;
+                    scale = config.maxTiledImageStretch / pixelSize;
                 }
             }
 
@@ -297,10 +299,21 @@ $.extend(Seadragon.Viewport.prototype,
                 var length = pair.length;
 
                 if (vR[length] > cR[length]) {
-                    // If the image is zoomed out so that its height/width is
-                    // smaller than constraints, center it.
-                    needToAdjust = true;
-                    vR[start] = cR[start] + cR[length] / 2 - vR[length] / 2;
+                    if (config.centerWhenZoomedOut) {
+                        // If the image is zoomed out so that its height/width is
+                        // smaller than constraints, center it.
+                        needToAdjust = true;
+                        vR[start] = cR[start] + cR[length] / 2 - vR[length] / 2;
+                    } else {
+                        // Just don't allow going outside of the container.
+                        if (vR[start] > cR[start]) {
+                            needToAdjust = true;
+                            vR[start] = cR[start];
+                        } else if (vR[start] + vR[length] < cR[start] + cR[length]) {
+                            needToAdjust = true;
+                            vR[start] = cR[start] + cR[length] - vR[length];
+                        }
+                    }
                 }
                 else if ((vR[start] < cR[start] && vR[start] + vR[length] < cR[start] + cR[length]) ||
                     (vR[start] > cR[start] && vR[start] + vR[length] > cR[start] + cR[length])) {

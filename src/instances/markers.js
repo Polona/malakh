@@ -57,7 +57,7 @@ Seadragon.Markers = function Markers(seadragon) {
      */
     function fixPositions() {
         $.each(markers, function (_, pair) {
-            var pixelRectangle = that.viewport.pixelRectangleFromPointRectangle(pair.rectangle, true);
+            var pixelRectangle = that.seadragon.viewport.pixelRectangleFromPointRectangle(pair.rectangle, true);
             var object = pair.object;
             object.css({
                 left: pixelRectangle.x,
