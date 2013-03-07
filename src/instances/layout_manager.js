@@ -154,6 +154,14 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             layoutManager = seadragon.layoutManager,
             $container = seadragon.$container;
 
+        tiledImage = tiledImages[whichImage];
+        var tiledImageCallbacks = controller.tiledImagesCallbacks[whichImage];
+
+        if (!(tiledImage instanceof Seadragon.TiledImage) && !(tiledImageCallbacks instanceof Array)) {
+            console.error('No Tiled Image shown or registered at number: ' + whichImage + '!');
+            return this;
+        }
+
         function getFitImageFunction(whichImage) {
             return function () {
                 layoutManager.fitImage(whichImage, false, true);
@@ -165,12 +173,10 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         controller.showTiledImage(whichImage, options.immediately);
 
         if (!options.dontFitImage) {
-            if (tiledImages[whichImage] instanceof Seadragon.TiledImage) {
+            if (tiledImage instanceof Seadragon.TiledImage) {
                 getFitImageFunction(whichImage).call(this);
             } else {
-                controller.tiledImagesCallbacks[whichImage].push(
-                    getFitImageFunction(whichImage)
-                );
+                tiledImageCallbacks.push(getFitImageFunction(whichImage));
             }
         }
 

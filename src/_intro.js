@@ -10,6 +10,6 @@
 
 var Seadragon;
 
-;(function seadragonWrapper($, undefined) {
+(function seadragonWrapper($, undefined) {
     'use strict';
 

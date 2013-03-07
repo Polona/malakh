@@ -539,6 +539,9 @@ Seadragon.Controller = function Controller(seadragon) {
             $canvas
                 .attr('width', newContainerSize.x)
                 .attr('height', newContainerSize.y);
+
+            // Let the world know we resized.
+            $container.trigger('seadragon:resize');
         }
 
         // animating => viewport moved, aligning images or loading/blending tiles.
