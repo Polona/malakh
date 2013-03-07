@@ -36,7 +36,6 @@ $.extend(Seadragon.ImageLoader.prototype,
          *
          * @param {string} src URL to the image to be loaded
          * @param {function} [callback] Callback function to be executed after image is loaded
-         * @return {boolean} Was loading successful?
          */
         loadImage: function loadImage(tile, callback) {
             if (this.downloading >= this.config.imageLoaderLimit) {
