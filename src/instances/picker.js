@@ -314,8 +314,10 @@ Seadragon.Picker = function Picker(seadragon) {
 
         $pickerOverlay.on({
             'mousedown.seadragon': function (evt) {
+                evt.stopPropagation(); // don't propagate events to the Seadragon canvas
+
                 if (evt.which !== 1) { // Only left-click is supported.
-                    return false; // don't propagate events to the Seadragon canvas
+                    return;
                 }
                 drawingArea = true;
                 var mousePosition = getMousePosition(evt);
@@ -395,8 +397,6 @@ Seadragon.Picker = function Picker(seadragon) {
                             pickerAreaCssNormalized.y + pickerAreaCssNormalized.height);
                         break;
                 }
-
-                return false; // don't propagate events to the Seadragon canvas
             }
         });
     }

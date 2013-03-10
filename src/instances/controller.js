@@ -163,15 +163,16 @@ Seadragon.Controller = function Controller(seadragon) {
 
     function wheelToZoom(evt) {
         if (that.config.enableMagnifier) {
-            return true;
+            return;
         }
         zoomCanvas(evt);
         that.restoreUpdating();
-        return true;
     }
 
     function wheelToPan(evt) {
         evt.preventDefault(); // block gestures for back/forward history navigation
+        evt.stopImmediatePropagation();
+
         var deltaX, deltaY, scale;
 
         var seadragon = that.seadragon,
@@ -202,7 +203,6 @@ Seadragon.Controller = function Controller(seadragon) {
         }
 
         viewport.panBy(viewport.deltaPointsFromPixels(new Seadragon.Point(deltaX, deltaY)));
-        return false;
     }
 
     function bindEvents() {
@@ -221,11 +221,10 @@ Seadragon.Controller = function Controller(seadragon) {
 
             'mousedown.seadragon': function (evt) {
                 if (evt.which !== 1 || that.config.enableMagnifier) { // Only left-click is supported.
-                    return true;
+                    return;
                 }
                 lastPosition = that.getMousePosition(evt);
                 $(document).on('mousemove.seadragon', dragCanvas);
-                return true;
             },
 
             'wheel.seadragon': wheelToZoom
