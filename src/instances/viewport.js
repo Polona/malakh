@@ -71,6 +71,43 @@ Seadragon.Viewport = function Viewport(seadragon) {
      * @type number
      */
     this.maxLevel = 0;
+
+    // TODO document
+    this._minZoom = -Infinity;
+    this._maxZoom = Infinity;
+    Object.defineProperties(this,
+        /**
+         * @lends Seadragon.Viewport#
+         */
+        {
+            minZoom: {
+                get: function () {
+                    if (!this.config.constrainViewport || !(this.constraintBounds instanceof Seadragon.Rectangle)) {
+                        return -Infinity;
+                    }
+                    this.applyConstraints(true, null, true);
+                    return this._minZoom;
+                },
+                set: function () {
+                    console.error('Field Seadragon.Viewport#minZoom is not settable');
+                },
+                enumerable: true,
+            },
+            maxZoom: {
+                get: function () {
+                    if (!this.config.constrainViewport || !(this.constraintBounds instanceof Seadragon.Rectangle)) {
+                        return Infinity;
+                    }
+                    this.applyConstraints(true, null, true);
+                    return this._maxZoom;
+                },
+                set: function () {
+                    console.error('Field Seadragon.Viewport#maxZoom is not settable');
+                },
+                enumerable: true,
+            },
+        }
+    );
 };
 
 Seadragon.Viewport.prototype = Object.create(Seadragon.AnimatedRectangle.prototype);
@@ -240,7 +277,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          * @param {Seadragon.Point} [refPoint]
          */
-        applyConstraints: function applyConstraints(immediately, refPoint) {
+        applyConstraints: function applyConstraints(immediately, refPoint, /* INTERNAL */ setMinMaxZoom) {
             if (!this.config.constrainViewport) {
                 return this;
             }
@@ -248,7 +285,7 @@ $.extend(Seadragon.Viewport.prototype,
                 console.error('Can\'t apply constraints because constraintBounds is not set.');
                 return this;
             }
-            var scale, pixelSize;
+            var scale, minZoomScale, maxZoomScale, pixelSize;
 
             var needToAdjust = false;
             var whatToScale = 'height';
@@ -268,19 +305,24 @@ $.extend(Seadragon.Viewport.prototype,
 
             /// ZOOMING PART
             // Now we assume viewportRatio < constraintsRatio which means empty borders on sides.
-            if (vR[whatToScale] * this.config.minVisibilityRatio > cR[whatToScale]) { // Too small, we need to zoom in.
-                needToAdjust = true;
-                scale = vR[whatToScale] * this.config.minVisibilityRatio / cR[whatToScale];
-            } else {
-                // We use 'else' just in case the image is so small it would fit in both scenarios;
-                // we want to aviod flicker in some cases and we prefer zooming in too much
-                // than zooming out too much.
+            if (vR[whatToScale] * this.config.minVisibilityRatio > cR[whatToScale] || setMinMaxZoom) {
+                // Too small, we need to zoom in.
+                needToAdjust = !setMinMaxZoom;
+                scale = minZoomScale = vR[whatToScale] * this.config.minVisibilityRatio / cR[whatToScale];
+            }
+            if (!needToAdjust || setMinMaxZoom) {
+                // We check for `!needToAdjust` just in case the image is so small it would fit in both scenarios;
+                // we want to aviod flicker in some cases and we prefer zooming in too much than zooming out too much.
                 // TODO cache it?
                 pixelSize = this.getZoom() / Math.pow(0.5, this.maxTiledImageLevel - 1 - this.maxLevel);
-                if (pixelSize > config.maxTiledImageStretch) { // We've zoomed in too much
-                    needToAdjust = true;
-                    scale = config.maxTiledImageStretch / pixelSize;
+                if (pixelSize > config.maxTiledImageStretch || setMinMaxZoom) { // We've zoomed in too much
+                    needToAdjust = !setMinMaxZoom;
+                    scale = maxZoomScale = config.maxTiledImageStretch / pixelSize;
                 }
+            }
+            if (setMinMaxZoom) {
+                this._minZoom = this.getZoom() * minZoomScale;
+                this._maxZoom = this.getZoom() * maxZoomScale;
             }
 
             if (needToAdjust) {

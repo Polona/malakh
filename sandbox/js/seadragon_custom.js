@@ -233,9 +233,11 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             $(this).css('background-color', buttonColors[constrainToImage2]);
             constrainToImage16 = false;
             $('#constrain_to_image_16').css('background-color', buttonColors[false]);
-            seadragon.constrainToImage(2);
-            if (constrainToImage16) {
-                seadragon.fitImage(2);
+            if (constrainToImage2) {
+                seadragon.constrainToImage(16);
+                seadragon.fitImage(16);
+            } else {
+                seadragon.config.constrainViewport = false;
             }
         }
     });
@@ -252,9 +254,11 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             $(this).css('background-color', buttonColors[constrainToImage16]);
             constrainToImage2 = false;
             $('#constrain_to_image_2').css('background-color', buttonColors[false]);
-            seadragon.constrainToImage(16);
             if (constrainToImage16) {
+                seadragon.constrainToImage(16);
                 seadragon.fitImage(16);
+            } else {
+                seadragon.config.constrainViewport = false;
             }
         }
     });
