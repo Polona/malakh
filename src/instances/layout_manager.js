@@ -170,7 +170,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
 
         options = options || {};
 
-        controller.showTiledImage(whichImage, options.immediately);
+        controller.showImage(whichImage, options.immediately);
 
         if (!options.dontFitImage) {
             if (tiledImage instanceof Seadragon.TiledImage) {
@@ -183,8 +183,8 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         for (var i = 0; i < tiledImages.length; i++) {
             tiledImage = tiledImages[i];
             if (i !== whichImage) {
-                if (tiledImage instanceof Seadragon.TiledImage) { // otherwise it's already hidden
-                    controller.hideTiledImage(i, options.immediately);
+                if (controller.imageLoadingStarted(i)) { // otherwise it's already hidden
+                    controller.hideImage(i, options.immediately);
                 }
             }
         }

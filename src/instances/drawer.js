@@ -377,7 +377,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @param {boolean} [immediately=false]
      * @private
      */
-    function showOrHideTiledImage(whichImage, hide, immediately) {
+    function showOrHideImage(whichImage, hide, immediately) {
         var tiledImage = that.seadragon.tiledImages[whichImage];
         if (!(tiledImage instanceof Seadragon.TiledImage)) {
             console.error('Can\'t ' + (hide ? 'hide' : 'show') +
@@ -417,8 +417,8 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {boolean} [immediately=false]
      */
-    this.showTiledImage = function showTiledImage(whichImage, immediately) {
-        showOrHideTiledImage(whichImage, false, immediately);
+    this.showImage = function showTiledImage(whichImage, immediately) {
+        showOrHideImage(whichImage, false, immediately);
         return this;
     };
 
@@ -428,8 +428,8 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @param {number} whichImage Index of an image in the <code>controller.tiledImage</code> table.
      * @param {boolean} [immediately=false]
      */
-    this.hideTiledImage = function hideTiledImage(whichImage, immediately) {
-        showOrHideTiledImage(whichImage, true, immediately);
+    this.hideImage = function hideTiledImage(whichImage, immediately) {
+        showOrHideImage(whichImage, true, immediately);
         return this;
     };
 
