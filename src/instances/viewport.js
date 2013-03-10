@@ -330,6 +330,10 @@ $.extend(Seadragon.Viewport.prototype,
                 vR = this.getRectangle();
             }
 
+            if (setMinMaxZoom) { // all data collected, we're not really applying constraints now
+                return;
+            }
+
             /// PANNING PART
             var parameterPairs = [
                 {start: 'x', length: 'width'},
