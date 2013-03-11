@@ -289,7 +289,16 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
      */
     this.controller = this.Controller();
 
-    // TODO document.
+    /**
+     * Defines a proxy for a member's field, allowing to refer to <code>this[field]</code> instead of
+     * <code>this[member][field]</code> for both getting or setting the field.
+     *
+     * @param {string} member  A field of the member of <code>this</code> indicated by this string is proxied.
+     * @param {string} field  The field's name.
+     * @param {boolean} enumerable  Value of field's planned <code>enumerable</code> flag.
+     * @return {*} this
+     * @private
+     */
     this._defineProxyForField = function _defineProxyForField(member, field, enumerable) {
         var that = this;
         (function (field) {
@@ -395,12 +404,19 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
     this.config.blockZoom = configProxies.blockZoom;
 };
 
-// TODO document all methods
 $.extend(Seadragon.prototype,
     /**
      * @lends Seadragon.prototype
      */
     {
+        /**
+         * Checks if the <code>args</code> arguments object contains all expected values; throws an error otherwise.
+         *
+         * @param {Object} args  The <code>arguments</code> object to check.
+         * @param {string} className  The name of the class used to create the object; needed for an error message.
+         * @param {Array.<string>}expectedArguments  An array of argument names expected in the <code>args</code> array.
+         * @returns {*} this
+         */
         ensureArguments: function ensureArgumentsNum(args, className, expectedArguments) {
             expectedArguments = expectedArguments || [];
             var firstArg = args[0];
@@ -431,6 +447,15 @@ $.extend(Seadragon.prototype,
             return this;
         },
 
+        /**
+         * Checks if the <code>options</code> object contains all expected keys; throws an error otherwise.
+         *
+         * @param {Object} options  The <code>options</code> object to check.
+         * @param {string} className  The name of the class used to create the object; needed for an error message.
+         * @param {Array.<string>} expectedOptionsArray  An array of key names expected in the <code>options</code>
+         *                                               object.
+         * @return {*} this
+         */
         ensureOptions: function ensureOptions(options, className, expectedOptionsArray) {
             var missingOption = !options;
             expectedOptionsArray.forEach(function (expectedOption) {
@@ -445,10 +470,15 @@ $.extend(Seadragon.prototype,
             }
             return this;
         },
+        /**
+         * Invokes <code>console.log</code> iff <code>config.debugMode</code> is true.
+         * @return {*} this
+         */
         log: function log() {
             if (this.config.debugMode) {
                 console.log.apply(console, arguments);
             }
+            return this;
         },
     }
 );

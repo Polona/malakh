@@ -72,7 +72,6 @@ Seadragon.Viewport = function Viewport(seadragon) {
      */
     this.maxLevel = 0;
 
-    // TODO document
     this._minZoom = -Infinity;
     this._maxZoom = Infinity;
     Object.defineProperties(this,
@@ -80,6 +79,10 @@ Seadragon.Viewport = function Viewport(seadragon) {
          * @lends Seadragon.Viewport#
          */
         {
+            /**
+             * Minimal zoom value of the viewport; <code>-Infinity</code> if constraints not set.
+             * @type number
+             */
             minZoom: {
                 get: function () {
                     if (!this.config.constrainViewport || !(this.constraintBounds instanceof Seadragon.Rectangle)) {
@@ -93,6 +96,10 @@ Seadragon.Viewport = function Viewport(seadragon) {
                 },
                 enumerable: true,
             },
+            /**
+             * Maximal zoom value of the viewport; <code>Infinity</code> if constraints not set.
+             * @type number
+             */
             maxZoom: {
                 get: function () {
                     if (!this.config.constrainViewport || !(this.constraintBounds instanceof Seadragon.Rectangle)) {
