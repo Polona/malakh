@@ -163,15 +163,16 @@ Seadragon.Controller = function Controller(seadragon) {
 
     function wheelToZoom(evt) {
         if (that.config.enableMagnifier) {
-            return true;
+            return;
         }
         zoomCanvas(evt);
         that.restoreUpdating();
-        return true;
     }
 
     function wheelToPan(evt) {
         evt.preventDefault(); // block gestures for back/forward history navigation
+        evt.stopImmediatePropagation();
+
         var deltaX, deltaY, scale;
 
         var seadragon = that.seadragon,
@@ -202,7 +203,6 @@ Seadragon.Controller = function Controller(seadragon) {
         }
 
         viewport.panBy(viewport.deltaPointsFromPixels(new Seadragon.Point(deltaX, deltaY)));
-        return false;
     }
 
     function bindEvents() {
@@ -221,11 +221,10 @@ Seadragon.Controller = function Controller(seadragon) {
 
             'mousedown.seadragon': function (evt) {
                 if (evt.which !== 1 || that.config.enableMagnifier) { // Only left-click is supported.
-                    return true;
+                    return;
                 }
                 lastPosition = that.getMousePosition(evt);
                 $(document).on('mousemove.seadragon', dragCanvas);
-                return true;
             },
 
             'wheel.seadragon': wheelToZoom
@@ -384,6 +383,11 @@ Seadragon.Controller = function Controller(seadragon) {
         viewport.maxTiledImageLevel = maxTiledImageLevel;
     }
 
+    // TODO document
+    this.imageLoadingStarted = function imageLoadingStarted(whichImage) {
+        return whichImage < this.tiledImages.length && tiledImagesOptions[whichImage] == null;
+    };
+
     /**
      * Registers a new open image.
      *
@@ -396,9 +400,6 @@ Seadragon.Controller = function Controller(seadragon) {
             console.error('No TiledImage given to Controller\'s onOpen()!');
             return;
         }
-
-        // Delete loading options for the current TiledImage.
-        delete tiledImagesOptions[index];
 
         // Adding a new image.
         that.tiledImages[index] = tiledImage;
@@ -421,7 +422,7 @@ Seadragon.Controller = function Controller(seadragon) {
             callbacks.forEach(function (callback) {
                 callback.call(tiledImage);
             });
-            delete tiledImagesCallbacks[index];
+            tiledImagesCallbacks[index] = null;
         }
         that.restoreUpdating();
     }
@@ -539,6 +540,9 @@ Seadragon.Controller = function Controller(seadragon) {
             $canvas
                 .attr('width', newContainerSize.x)
                 .attr('height', newContainerSize.y);
+
+            // Let the world know we resized.
+            $container.trigger('seadragon:resize');
         }
 
         // animating => viewport moved, aligning images or loading/blending tiles.
@@ -724,9 +728,12 @@ Seadragon.Controller = function Controller(seadragon) {
         }
 
         var shown = options.shown == null ? true : options.shown;
-        if (shown) { // actually open the DZI image
+        if (!shown) { // register image options to show later
+            tiledImagesOptions[options.index] = options;
+        }
+        else { // actually open the DZI image
             // Removing options so that we don't try to open the same DZI twice.
-            delete tiledImagesOptions[options.index];
+            tiledImagesOptions[options.index] = null;
 
             tiledImagesToHandle++;
 
@@ -739,9 +746,6 @@ Seadragon.Controller = function Controller(seadragon) {
                 console.error('DZI failed to load; provided options:', options);
                 console.log(error.stack);
             }
-        }
-        else { // register image options to show later
-            tiledImagesOptions[options.index] = options;
         }
 
         return this;
@@ -813,7 +817,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {number} whichImage  We show the <code>this.tiledImages[whichImage]</code> image.
      * @param {boolean} [immediately=false]
      */
-    this.showTiledImage = function showTiledImage(whichImage, immediately) {
+    this.showImage = function showImage(whichImage, immediately) {
         var tiledImage = that.tiledImages[whichImage];
 
         if (!(tiledImage instanceof Seadragon.TiledImage)) {
@@ -826,7 +830,7 @@ Seadragon.Controller = function Controller(seadragon) {
             return this;
         }
 
-        this.drawer.showTiledImage(whichImage, immediately);
+        this.drawer.showImage(whichImage, immediately);
         this.$container.trigger('seadragon:showed_tiled_image');
         return this.restoreUpdating();
     };
@@ -837,15 +841,19 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {number} whichImage We hide the <code>this.tiledImages[whichImage]</code> image.
      * @param {boolean} [immediately=false]
      */
-    this.hideTiledImage = function hideTiledImage(whichImage, immediately) {
+    this.hideImage = function hideImage(whichImage, immediately) {
         var tiledImage = that.tiledImages[whichImage];
 
         if (!(tiledImage instanceof Seadragon.TiledImage)) { // tiled image has been loaded
-            // Image not loaded yet, doing nothing.
+            // Image not loaded yet, register a callback.
+            var tiledImageCallbacks = this.tiledImagesCallbacks[whichImage];
+            if (tiledImageCallbacks.length) { // no callbacks present => the hidden state is the default
+                tiledImageCallbacks.push(this.hideImage.bind(this, whichImage, immediately));
+            }
             return this;
         }
 
-        this.drawer.hideTiledImage(whichImage, immediately);
+        this.drawer.hideImage(whichImage, immediately);
         this.$container.trigger('seadragon:hidden_tiled_image');
         return this.restoreUpdating();
     };
