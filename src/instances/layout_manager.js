@@ -199,7 +199,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
     };
 
     /**
-     * TODO document.
+     * Aligns all images so that their centers and heights match.
      *
      * @param {number} [height=500]
      * @param {boolean} [immediately=false]

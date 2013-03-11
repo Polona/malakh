@@ -34,9 +34,12 @@ Seadragon.Controller = function Controller(seadragon) {
 
     Object.defineProperties(this, {
         /**
-         * TODO document
+         * If the image on which <code>Controller#openDzi</code> was invoked is hidden by default, its loading gets
+         * deferred. Since we might want to apply some operations on the image once it's shown, we add them to the
+         * <code>tiledImagesCallbacks[i]</code> array where <code>i</code> is the index in <code>tiledImages</code>
+         * where the image is scheduled to be loaded.
          *
-         * @typeArray.<Function>
+         * @type Array.<Function>
          * @memberof Seadragon.Controller#
          */
         tiledImagesCallbacks: {
@@ -383,9 +386,15 @@ Seadragon.Controller = function Controller(seadragon) {
         viewport.maxTiledImageLevel = maxTiledImageLevel;
     }
 
-    // TODO document
-    this.imageLoadingStarted = function imageLoadingStarted(whichImage) {
-        return whichImage < this.tiledImages.length && tiledImagesOptions[whichImage] == null;
+    /**
+     * Checks if the image was scheduled to open and the opening process has already started. <code>false</code>
+     * can occur if <code>openDzi</code> was invoked on an image hidden by default as its loading is then deferred.
+     *
+     * @param {number} index  Index in the <code>this.tiledImages</code> table where <code>tiledImage</code> is put.
+     * @return {boolean}
+     */
+    this.imageLoadingStarted = function imageLoadingStarted(index) {
+        return index < this.tiledImages.length && tiledImagesOptions[index] == null;
     };
 
     /**
@@ -863,14 +872,14 @@ Seadragon.Controller = function Controller(seadragon) {
      * Checks if controller is in progress of loading/processing new DZIs. Some actions are halted
      * for these short periods.
      *
-     * @return boolean
+     * @return {boolean}
      */
     this.isLoading = function isLoading() {
         return tiledImagesToHandle > 0;
     };
 
     /**
-     * TODO document.
+     * Initializes the Seadragon controller.
      */
     this.init = function init() {
         that.tiledImages = [];
