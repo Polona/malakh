@@ -137,7 +137,8 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             return this;
         }
         var boundsRectangle = tiledImage.boundsSprings.getRectangle(options.current);
-        if (options.visibility !== 1) { // enlarge bounds rectangle to match non-1 visibility
+        if (options.visibility !== 1) {
+            // Enlarge bounds rectangle to match non-1 visibility while preserving the center.
             center = boundsRectangle.getCenter();
             boundsHalfWidth = boundsRectangle.width / 2;
             boundsHalfHeight = boundsRectangle.height / 2;
