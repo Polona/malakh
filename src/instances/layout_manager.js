@@ -118,10 +118,17 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * while still being contained within the viewport.
      *
      * @param {number} whichImage  We fit the <code>this.tiledImages[whichImage]</code> image
-     * @param {boolean} [current=false]
-     * @param {boolean} [immediately=false]
+     * @param {Object} [options]
+     * @param {number} [options.visibility=1]  How large is the image in the viewport; visibility 1 means as large
+     *                                         as possible while fitting in it
+     * @param {boolean} [options.current=false]
+     * @param {boolean} [options.immediately=false]
      */
-    this.fitImage = function fitImage(whichImage, current, immediately) {
+    this.fitImage = function fitImage(whichImage, options) {
+        var center, boundsHalfWidth, boundsHalfHeight;
+        options = options || {};
+        options.visibility = options.visibility || 1; // visibility 0 doesn't make sense
+
         var seadragon = this.seadragon,
             tiledImage = seadragon.tiledImages[whichImage];
 
@@ -129,10 +136,18 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             console.error('No image with number ' + whichImage);
             return this;
         }
-        seadragon.viewport.fitBounds(
-            tiledImage.boundsSprings.getRectangle(current),
-            immediately
-        );
+        var boundsRectangle = tiledImage.boundsSprings.getRectangle(options.current);
+        if (options.visibility !== 1) {
+            // Enlarge bounds rectangle to match non-1 visibility while preserving the center.
+            center = boundsRectangle.getCenter();
+            boundsHalfWidth = boundsRectangle.width / 2;
+            boundsHalfHeight = boundsRectangle.height / 2;
+            boundsRectangle.x = center.x - boundsHalfWidth / options.visibility;
+            boundsRectangle.y = center.y - boundsHalfHeight / options.visibility;
+            boundsRectangle.width /= options.visibility;
+            boundsRectangle.height /= options.visibility;
+        }
+        seadragon.viewport.fitBounds(boundsRectangle, options.immediately);
         return this;
     };
 
@@ -141,6 +156,8 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      *
      * @param {number} whichImage  Index of the image to show.
      * @param {boolean} [options={}] Object  containing optional configuration.
+     * @param {number} [options.visibility=1]  How large is the image in the viewport; visibility 1 means as large
+     *                                         as possible while fitting in it
      * @param {boolean} [options.immediately=false]
      * @param {boolean} [options.dontFitImage=false]
      * @param {boolean} [options.dontForceConstraints=false]
@@ -154,9 +171,10 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             layoutManager = seadragon.layoutManager,
             $container = seadragon.$container;
 
+        options = options || {};
         tiledImage = tiledImages[whichImage];
-        var tiledImageCallbacks = controller.tiledImagesCallbacks[whichImage];
 
+        var tiledImageCallbacks = controller.tiledImagesCallbacks[whichImage];
         if (!(tiledImage instanceof Seadragon.TiledImage) && !(tiledImageCallbacks instanceof Array)) {
             console.error('No Tiled Image shown or registered at number: ' + whichImage + '!');
             return this;
@@ -164,11 +182,9 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
 
         function getFitImageFunction(whichImage) {
             return function () {
-                layoutManager.fitImage(whichImage, false, true);
+                layoutManager.fitImage(whichImage, {immediately: true, visibility: options.visibility});
             };
         }
-
-        options = options || {};
 
         controller.showImage(whichImage, options.immediately);
 
