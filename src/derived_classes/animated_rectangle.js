@@ -75,7 +75,7 @@ Seadragon.AnimatedRectangle = function AnimatedRectangle(seadragon, bounds) {
         x: this.Spring(bounds.x),
         y: this.Spring(bounds.y),
         width: this.Spring(bounds.width),
-        height: this.Spring(bounds.height)
+        height: this.Spring(bounds.height),
     };
 };
 

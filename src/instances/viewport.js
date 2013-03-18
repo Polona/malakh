@@ -339,7 +339,7 @@ $.extend(Seadragon.Viewport.prototype,
             }
 
             if (setMinMaxZoom) { // all data collected, we're not really applying constraints now
-                return;
+                return this;
             }
 
             /// PANNING PART
