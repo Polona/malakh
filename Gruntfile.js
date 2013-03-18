@@ -1,5 +1,5 @@
-/*jshint camelcase: false */
-/*global module: false, process: false, require: false, Buffer: false */
+/* jshint camelcase: false */
+/* global module: false, process: false, require: false, Buffer: false */
 
 module.exports = function (grunt) {
     'use strict';
@@ -366,13 +366,12 @@ module.exports = function (grunt) {
     // Load grunt tasks from NPM packages
     grunt.loadNpmTasks('grunt-compare-size');
     grunt.loadNpmTasks('grunt-git-authors');
-    grunt.loadNpmTasks('grunt-update-submodules');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
     // Default grunt
-    grunt.registerTask('default', ['update_submodules', 'build:*:*', 'jshint', 'uglify', 'dist:*']);
+    grunt.registerTask('default', ['build:*:*', 'jshint', 'uglify', 'dist:*']);
 
     // Short list as a high frequency watch task
     grunt.registerTask('dev', ['build:*:*', 'jshint']);
