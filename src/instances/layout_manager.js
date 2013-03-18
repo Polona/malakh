@@ -48,7 +48,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             maxRowWidthOrColumnHeight = Infinity;
         }
 
-        tiledImages.forEach(function (tiledImage) {
+        u.forEach(tiledImages, function (tiledImage) {
             // Compute the current state.
             if (alingInRows) {
                 width = heightOrWidth * tiledImage.boundsSprings.getAspectRatio();

@@ -1,7 +1,7 @@
 {
-    "strict": true,
     "quotmark": "single",
     "unused": false,
+    "undef": true,
 
     "eqnull": true,
 
@@ -13,7 +13,9 @@
     "maxerr": 50,
     "maxlen": 120,
 
-    "predef": [
-        "requestAnimationFrame"
-    ]
+    "globals": {
+        "requestAnimationFrame": false,
+        "Seadragon": true,
+        "u": true
+    }
 }

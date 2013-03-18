@@ -2,7 +2,7 @@ var seadragonProxy = Object.create(Seadragon.prototype);
 
 // We're making seadragon fields accessible from any Seadragon class via this.field
 // instead of this.seadragon.field. But we still reflect all changes onto this.seadragon.field
-[
+u.forEach([
     // constructors: classes
     'AnimatedRectangle', 'DziImage', 'Spring', 'Tile', 'TiledImage',
 
@@ -16,7 +16,7 @@ var seadragonProxy = Object.create(Seadragon.prototype);
 
     // properties: other
     'config', '$container', '$canvas', 'canvasContext', 'tiledImages',
-].forEach(
+],
     function (field) {
         Object.defineProperty(seadragonProxy, field, {
             get: function () {

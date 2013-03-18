@@ -506,7 +506,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
         currentTime = Date.now();
 
         // Drawing all images.
-        tiledImages.forEach(function (tiledImage, whichImage) {
+        u.forEach(tiledImages, function (tiledImage, whichImage) {
             if (!(tiledImage instanceof Seadragon.DziImage) || tiledImage.isHidden()) {
                 return;
             }
@@ -710,7 +710,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
 
         for (level = viewport.maxLevel; level >= 0; level--) {
-            drawnImageNumbers.forEach(updateBestTileAtCurrentLevel);
+            u.forEach(drawnImageNumbers, updateBestTileAtCurrentLevel);
         }
 
         // Load next tile if there is one to load.

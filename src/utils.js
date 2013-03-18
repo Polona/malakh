@@ -9,7 +9,7 @@ var u = {};
      * @param thisArg
      * @returns {Function}
      */
-    u.bind = function (fn, thisArg) {
+    u.bind = function bind(fn, thisArg) {
         var boundArgs = [].slice.call(arguments, 2);
         return function () {
             var args = [].slice.call(arguments);
@@ -24,9 +24,19 @@ var u = {};
      * @param thisArg
      * @returns {Function}
      */
-    u.bindThis = function (fn, thisArg) {
+    u.bindThis = function bindThis(fn, thisArg) {
         return function () {
             return fn.apply(thisArg, arguments);
         };
+    };
+
+    u.forEach = function forEach(array, callback) {
+        var element;
+        for (var i = 0, length = array.length; i < length; i++) {
+            element = array[i];
+            if (element !== undefined) { // omit empty parameters, emulates Array.prototype.forEach
+                callback(element, i);
+            }
+        }
     };
 })();
