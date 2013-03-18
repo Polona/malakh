@@ -428,7 +428,7 @@ Seadragon.Controller = function Controller(seadragon) {
 
         var callbacks = tiledImagesCallbacks[index];
         if (callbacks) {
-            callbacks.forEach(function (callback) {
+            u.forEach(callbacks, function (callback) {
                 callback.call(tiledImage);
             });
             tiledImagesCallbacks[index] = null;
@@ -559,7 +559,7 @@ Seadragon.Controller = function Controller(seadragon) {
         if (forceAlign) {
             forceAlign = false;
             setTimeout(function () { // Making it more asynchronous.
-                tiledImages.forEach(function (tiledImage, whichImage) {
+                u.forEach(tiledImages, function (tiledImage, whichImage) {
                     if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
                         scheduleUpdateDziImageBounds(whichImage);
                     }
@@ -773,7 +773,7 @@ Seadragon.Controller = function Controller(seadragon) {
             return this;
         }
 
-        optionsArray.forEach(function (options) {
+        u.forEach(optionsArray, function (options) {
             tiledImagesToHandle--; // openDzi increases it again
             if (options.shown == null) {
                 options.shown = !hideByDefault;
@@ -857,7 +857,7 @@ Seadragon.Controller = function Controller(seadragon) {
             // Image not loaded yet, register a callback.
             var tiledImageCallbacks = this.tiledImagesCallbacks[whichImage];
             if (tiledImageCallbacks.length) { // no callbacks present => the hidden state is the default
-                tiledImageCallbacks.push(this.hideImage.bind(this, whichImage, immediately));
+                tiledImageCallbacks.push(u.bind(this.hideImage, this, whichImage, immediately));
             }
             return this;
         }

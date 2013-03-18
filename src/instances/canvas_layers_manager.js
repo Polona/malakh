@@ -65,7 +65,7 @@ $.extend(Seadragon.CanvasLayersManager.prototype,
                 canvasContext.save();
                 magnifier.drawPath(canvasContext);
             }
-            tilesOnLayer.forEach(function (tile) {
+            u.forEach(tilesOnLayer, function (tile) {
                 if (drawLayer1) {
                     zoom = config.magnifierZoom;
                 } else {
