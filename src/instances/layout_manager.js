@@ -36,7 +36,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         }
 
         if (controller.isLoading()) {
-            setTimeout(this._alignRowsOrColumns.bind(this), 100,
+            setTimeout(u.bindThis(this._alignRowsOrColumns, this), 100,
                 alingInRows, heightOrWidth, spaceBetweenImages,
                 maxRowWidthOrColumnHeight, immediately);
             return this;
@@ -224,7 +224,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         var seadragon = this.seadragon,
             controller = seadragon.controller;
         if (controller.isLoading()) {
-            setTimeout(this.alignCentersAndHeights.bind(this), 100, height, immediately);
+            setTimeout(u.bindThis(this.alignCentersAndHeights, this), 100, height, immediately);
             return this;
         }
 

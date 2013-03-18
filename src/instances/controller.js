@@ -857,7 +857,7 @@ Seadragon.Controller = function Controller(seadragon) {
             // Image not loaded yet, register a callback.
             var tiledImageCallbacks = this.tiledImagesCallbacks[whichImage];
             if (tiledImageCallbacks.length) { // no callbacks present => the hidden state is the default
-                tiledImageCallbacks.push(this.hideImage.bind(this, whichImage, immediately));
+                tiledImageCallbacks.push(u.bind(this.hideImage, this, whichImage, immediately));
             }
             return this;
         }

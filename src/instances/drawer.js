@@ -45,7 +45,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
     this.registerTiledImage = function registerTiledImage(tiledImage, index) {
         if (midUpdate) { // We don't want to add a new image during the update process, deferring.
             this.log('Deferred adding a DZI to Drawer');
-            setTimeout(this.registerTiledImage.bind(this), 100, tiledImage, index);
+            setTimeout(u.bindThis(this.registerTiledImage, this), 100, tiledImage, index);
             return this;
         }
         if (!tiledImage) {
@@ -163,7 +163,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @private
      */
     function loadTile(tile, time) {
-        that.seadragon.imageLoader.loadImage(tile, onTileLoad.bind(null, tile, time));
+        that.seadragon.imageLoader.loadImage(tile, u.bind(onTileLoad, null, tile, time));
     }
 
     /**

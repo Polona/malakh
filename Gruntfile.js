@@ -29,6 +29,7 @@ module.exports = function (grunt) {
                 dest: 'dist/seadragon.js',
                 src: [
                     'src/_intro.js',
+                    'src/utils.js',
 
                     {flag: 'polyfill_wheel', src: 'src/polyfills/jquery.wheel.js'},
                     {flag: 'polyfill_raf', src: 'src/polyfills/request_animation_frame.js'},
