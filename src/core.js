@@ -68,13 +68,17 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
 
 
         /**
-         * Time it takes to finish various animations in miliseconds.
+         * Time it takes to finish various shorter animations (e.g. panning) in miliseconds.
          * @type number
          */
-        animationTime: 500,
+        shortAnimationTime: 100,
+        /**
+         * Time it takes to finish various longer animations (e.g. zooming) in miliseconds.
+         * @type number
+         */
+        longAnimationTime: 500,
         /**
          * Time it takes to blend in/out tiles in miliseconds.
-         * WARNING: needs to be lower than animationTime!
          * @type number
          */
         blendTime: 500,

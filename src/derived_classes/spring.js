@@ -102,10 +102,13 @@ $.extend(Seadragon.Spring.prototype,
          * Changes the target value of the spring.
          *
          * @param {number} target
-         * @param {boolean} [immediately=false] If true, we immediately change
-         * <code>currentValue</code> to the target one.
+         * @param {boolean} [immediately=false] If true, we immediately change <code>currentValue</code>
+         *                                      to the target one.
+         * @param {string} [animationTimeConfigParameter='animationTime'] Animation time is determined by
+         *                 <code>this.config[animationTimeConfigParameter]</code>.
          */
-        springTo: function springTo(target, immediately) {
+        springTo: function springTo(target, immediately, animationTimeConfigParameter) {
+            animationTimeConfigParameter = animationTimeConfigParameter || 'shortAnimationTime';
             this.cacheIsAnimating = true;
             this.startValue = this.currentValue;
             this.startTime = Date.now();
@@ -113,7 +116,7 @@ $.extend(Seadragon.Spring.prototype,
             if (immediately) {
                 this.targetTime = this.startTime;
             } else {
-                this.targetTime = this.startTime + this.config.animationTime;
+                this.targetTime = this.startTime + this.config[animationTimeConfigParameter];
             }
             return this;
         },
