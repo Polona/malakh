@@ -22,7 +22,7 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
         dst: readOptionalJSON('dist/.destination.json'),
         compare_size: {
-            files: distpaths
+            files: distpaths,
         },
         build: {
             all: {
@@ -56,40 +56,40 @@ module.exports = function (grunt) {
                     {flag: 'layout_manager', src: 'src/instances/layout_manager.js'},
                     'src/instances/controller.js',
 
-                    'src/_outro.js'
+                    'src/_outro.js',
                 ]
-            }
+            },
         },
 
         jshint: {
             dist: {
                 src: ['dist/seadragon.js'],
                 options: {
-                    jshintrc: '.jshintrc'
-                }
+                    jshintrc: '.jshintrc',
+                },
             },
             grunt: {
                 src: ['Gruntfile.js'],
                 options: {
-                    jshintrc: '.jshintrc'
-                }
+                    jshintrc: '.jshintrc',
+                },
             }
         },
 
         watch: {
             files: ['<%= jshint.grunt.src %>', 'src/**/*.js'],
-            tasks: 'dev'
+            tasks: 'dev',
         },
 
         uglify: {
             all: {
                 files: {
-                    'dist/seadragon.min.js': [ 'dist/seadragon.js' ]
+                    'dist/seadragon.min.js': [ 'dist/seadragon.js' ],
                 },
                 options: {
                     banner: '/*! Seadragon v<%= pkg.version %> | (c) 2013 Laboratorium EE */',
-                    sourceMap: 'dist/seadragon.min.map'
-                }
+                    sourceMap: 'dist/seadragon.min.map',
+                },
             }
         }
     });
