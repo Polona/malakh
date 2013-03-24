@@ -31,8 +31,9 @@ module.exports = function (grunt) {
                     'src/_intro.js',
                     'src/utils.js',
 
-                    {flag: 'polyfill_wheel', src: 'src/polyfills/jquery.wheel.js'},
+                    {flag: 'polyfill_static_methods', src: 'src/polyfills/static_methods.js'},
                     {flag: 'polyfill_raf', src: 'src/polyfills/request_animation_frame.js'},
+                    {flag: 'polyfill_wheel', src: 'src/polyfills/jquery.wheel.js'},
 
                     'src/core.js',
                     'src/seadragon_proxy.js',

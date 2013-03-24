@@ -62,7 +62,7 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
      * @default maximum image level
      */
     this.maxLevel = (options.maxLevel != null) ? options.maxLevel :
-        Math.ceil(Math.log(Math.max(options.width, options.height)) / Math.log(2));
+        Math.ceil(Math.log2(Math.max(options.width, options.height)));
 
     /**
      * Maximum width and height of a single tile image (in pixels).
@@ -176,7 +176,7 @@ $.extend(Seadragon.TiledImage.prototype,
          * (e.g. by using controller's aligning methods) and we want tile sizes to draw
          * to match their size on canvas after scaling the whole image (e.g. if bounds
          * for the image are its default parameters divided by 2 we want to load tiles
-         * one level lower so that they're not too small (and so that we don't load
+         * one level lower so that they're not too small -- and so that we don't load
          * too many of them!)
          *
          * @param {number} level
@@ -185,7 +185,7 @@ $.extend(Seadragon.TiledImage.prototype,
          */
         getTiledImageLevel: function getTiledImageLevel(level, current) {
             var scaledBounds = this.getDimensionsScale(current);
-            return level + Math.ceil(Math.log(Math.max(scaledBounds.x, scaledBounds.y)) / Math.log(2));
+            return level + Math.ceil(Math.log2(Math.max(scaledBounds.x, scaledBounds.y)));
         },
 
         /**
@@ -199,7 +199,7 @@ $.extend(Seadragon.TiledImage.prototype,
          */
         getViewportLevel: function getViewportLevel(level, current) {
             var scaledBounds = this.getDimensionsScale(current);
-            return level - Math.ceil(Math.log(Math.max(scaledBounds.x, scaledBounds.y)) / Math.log(2));
+            return level - Math.ceil(Math.log2(Math.max(scaledBounds.x, scaledBounds.y)));
         },
 
         /**
