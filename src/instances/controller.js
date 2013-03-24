@@ -474,7 +474,7 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function updateTiledImageBounds(whichImage, decreaseCounter) {
         var tiledImage = that.seadragon.tiledImages[whichImage];
-        forceAlign = tiledImage.boundsSprings.update() || forceAlign;
+        forceAlign = tiledImage.animatedBounds.update() || forceAlign;
         that.restoreUpdating();
         if (decreaseCounter) {
             tiledImageBoundsUpdatesNums[whichImage]--;
@@ -801,7 +801,7 @@ Seadragon.Controller = function Controller(seadragon) {
         function getFunctionConstrainingToImage(dontForceConstraints) {
             return function () {
                 viewport.constraintBounds = new Seadragon.Rectangle(
-                    this.boundsSprings.getRectangle());
+                    this.animatedBounds.getRectangle());
                 $container.trigger('seadragon:constraint_bounds_set');
                 if (!dontForceConstraints) {
                     config.constrainViewport = true;
@@ -925,7 +925,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @return {Seadragon.Rectangle}
      */
     this.tiledImageBoundsInPoints = function tiledImageBoundsInPoints(whichImage, current) {
-        return this.seadragon.tiledImages[whichImage].boundsSprings.getRectangle(current);
+        return this.seadragon.tiledImages[whichImage].animatedBounds.getRectangle(current);
     };
 
     /**

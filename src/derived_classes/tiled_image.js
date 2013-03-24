@@ -98,7 +98,7 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
      * Seadragon plane.
      * @type Seadragon.AnimatedRectangle
      */
-    this.boundsSprings = this.AnimatedRectangle(options.bounds);
+    this.animatedBounds = this.AnimatedRectangle(options.bounds);
 
     // For hiding/showing an image with animation:
     /**
@@ -207,7 +207,7 @@ $.extend(Seadragon.TiledImage.prototype,
          * @return {number}
          */
         getWidthScale: function getWidthScale(current) {
-            return this.boundsSprings.width.get(current) / this.width;
+            return this.animatedBounds.getWidth(current) / this.width;
         },
 
 
@@ -243,7 +243,7 @@ $.extend(Seadragon.TiledImage.prototype,
          * @return {Seadragon.Point}
          */
         getScaledDimensions: function getScaledDimensions(level, current) {
-            var bounds = this.boundsSprings.getRectangle(current);
+            var bounds = this.animatedBounds.getRectangle(current);
             return new Seadragon.Point(bounds.width, bounds.height).multiply(this.getScaledLevel(level));
         },
 
@@ -257,7 +257,7 @@ $.extend(Seadragon.TiledImage.prototype,
          */
         getTileAtPoint: function getTileAtPoint(level, point, current) {
             var scale = this.getWidthScale(current);
-            var bounds = this.boundsSprings.getRectangle(current);
+            var bounds = this.animatedBounds.getRectangle(current);
 
             point = point.minus(new Seadragon.Point(bounds.x, bounds.y));
             point.x /= scale;
@@ -283,7 +283,7 @@ $.extend(Seadragon.TiledImage.prototype,
             var scale, bounds, px, py, sx, sy, scaledLevel;
 
             scale = this.getWidthScale(current);
-            bounds = this.boundsSprings.getRectangle(current);
+            bounds = this.animatedBounds.getRectangle(current);
 
             // Find position, adjust for no overlap data on top and left edges.
             px = x === 0 ? 0 : this.tileSize * x - this.tileOverlap;
@@ -339,7 +339,7 @@ $.extend(Seadragon.TiledImage.prototype,
          */
         fitBounds: function fitBounds(bounds, immediately, preferWidthPerfectMatch) {
             var boundsCenter = bounds.getCenter();
-            var aspectRatio = this.boundsSprings.getAspectRatio(); // width/height
+            var aspectRatio = this.animatedBounds.getAspectRatio(); // width/height
             if (!bounds.height || (preferWidthPerfectMatch && bounds.width)) {
                 // Compute height from width and aspect ratio.
                 bounds.height = bounds.width / aspectRatio;
@@ -349,7 +349,7 @@ $.extend(Seadragon.TiledImage.prototype,
             }
             bounds.panTo(boundsCenter); // keep the planned center intact
 
-            this.boundsSprings.fitBounds(bounds, immediately);
+            this.animatedBounds.fitBounds(bounds, immediately);
             this.$container.trigger('seadragon:force_align');
             return this;
         },

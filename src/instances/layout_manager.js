@@ -51,7 +51,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         utils.forEach(tiledImages, function (tiledImage) {
             // Compute the current state.
             if (alingInRows) {
-                width = heightOrWidth * tiledImage.boundsSprings.getAspectRatio();
+                width = heightOrWidth * tiledImage.animatedBounds.getAspectRatio();
                 height = heightOrWidth;
                 if (widthSum + width > maxRowWidthOrColumnHeight) {
                     // Row width is now too much!
@@ -61,7 +61,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             }
             else { // Align in columns.
                 width = heightOrWidth;
-                height = heightOrWidth / tiledImage.boundsSprings.getAspectRatio();
+                height = heightOrWidth / tiledImage.animatedBounds.getAspectRatio();
                 if (heightSum + height > maxRowWidthOrColumnHeight) {
                     // Column height is now too much!
                     heightSum = 0;
@@ -136,7 +136,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             console.error('No image with number ' + whichImage);
             return this;
         }
-        var boundsRectangle = tiledImage.boundsSprings.getRectangle(options.current);
+        var boundsRectangle = tiledImage.animatedBounds.getRectangle(options.current);
         if (options.visibility !== 1) {
             // Enlarge bounds rectangle to match non-1 visibility while preserving the center.
             center = boundsRectangle.getCenter();

@@ -102,6 +102,46 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
         },
 
         /**
+         * Returns the current or target top left horizontal parameter.
+         *
+         * @param {boolean} [current=false]
+         * @return {number}
+         */
+        getX: function getWidthX(current) {
+            return this.springs.x.get(current);
+        },
+
+        /**
+         * Returns the current or target top left vertical parameter.
+         *
+         * @param {boolean} [current=false]
+         * @return {number}
+         */
+        getY: function getY(current) {
+            return this.springs.y.get(current);
+        },
+
+        /**
+         * Returns the current or target width.
+         *
+         * @param {boolean} [current=false]
+         * @return {number}
+         */
+        getWidth: function getWidth(current) {
+            return this.springs.width.get(current);
+        },
+
+        /**
+         * Returns the current or target height.
+         *
+         * @param {boolean} [current=false]
+         * @return {number}
+         */
+        getHeight: function getHeight(current) {
+            return this.springs.height.get(current);
+        },
+
+        /**
          * Returns aspect ratio of the rectangle (<code>width / height</code>).
          *
          * @param {boolean} [current=false]
