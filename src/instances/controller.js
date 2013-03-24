@@ -371,7 +371,7 @@ Seadragon.Controller = function Controller(seadragon) {
             tiledImages = seadragon.tiledImages,
             viewport = seadragon.viewport;
 
-        var viewportMaxLevel = 0, maxTiledImageLevel = 0, minTiledImageWidthScale = Infinity;
+        var viewportMaxLevel = 0, minTiledImageWidthScale = Infinity;
         for (var i = 0; i < tiledImages.length; i++) {
             var tiledImage = tiledImages[i];
             if (tiledImage instanceof Seadragon.TiledImage && tiledImage.opacity > 0) { // tiled image has been loaded
@@ -379,12 +379,10 @@ Seadragon.Controller = function Controller(seadragon) {
                     viewportMaxLevel,
                     tiledImage.getViewportLevel(tiledImage.maxLevel)
                 );
-                maxTiledImageLevel = Math.max(maxTiledImageLevel, tiledImage.maxLevel);
                 minTiledImageWidthScale = Math.min(minTiledImageWidthScale, tiledImage.getWidthScale());
             }
         }
         viewport.maxLevel = viewportMaxLevel;
-        viewport.maxTiledImageLevel = maxTiledImageLevel;
         viewport.minTiledImageWidthScale = minTiledImageWidthScale;
     }
 

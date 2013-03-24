@@ -60,19 +60,14 @@ Seadragon.Viewport = function Viewport(seadragon) {
     this.constraintBounds = undefined;
 
     /**
-     * Maximum <code>tiledImage.maxLevel</code> amongst all visible tiled images.
-     * @type number
-     */
-    this.maxTiledImageLevel = 0;
-    /**
-     * TODO document.
+     * Minimum <code>tiledImage.getWidthScale()</code> of all currently shown tiled images.
      * @type number
      */
     this.minTiledImageWidthScale = Infinity;
     /**
      * Maximum "viewport" level to be drawn. "Viewport level" translates to tiled images' levels; if tiled images
-     * were not scaled (i.e. their bounds width & height are equal to the source DZI width & height), it is
-     * equal to <code>this.maxTiledImageLevel</code>.
+     * are not scaled (i.e. their bounds width & height are equal to the source DZI width & height), it is
+     * equal to maximum of <code>maxLevel</code> of all currently shown tiled images.
      * @type number
      */
     this.maxLevel = 0;
