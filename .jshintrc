@@ -27,6 +27,6 @@
         "requestAnimationFrame": false,
         "Seadragon": true,
         "seadragonProxy": true,
-        "u": true
+        "utils": true
     }
 }

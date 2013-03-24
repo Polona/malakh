@@ -19,7 +19,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
      *     <code>var rectangle = new Seadragon.Rectangle(this.seadragon, 2, 3, 50, 23);</code>
      * etc.
      */
-    u.forEach(['AnimatedRectangle', 'CanvasLayersManager', 'Controller', 'Drawer',
+    utils.forEach(['AnimatedRectangle', 'CanvasLayersManager', 'Controller', 'Drawer',
         'DziImage', 'ImageLoader', 'LayoutManager', 'Magnifier', 'Markers', 'Picker',
         'Spring', 'Tile', 'TiledImage', 'Viewport'],
         function (name) {
@@ -321,7 +321,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
 
     this._defineProxyForAllFields = function _defineProxyForAllFields(member) {
         var that = this;
-        u.forEach(Object.keys(this[member]), function (field) {
+        utils.forEach(Object.keys(this[member]), function (field) {
             that._defineProxyForField(member, field);
         });
         return this;
@@ -462,7 +462,7 @@ $.extend(Seadragon.prototype,
          */
         ensureOptions: function ensureOptions(options, className, expectedOptionsArray) {
             var missingOption = !options;
-            u.forEach(expectedOptionsArray, function (expectedOption) {
+            utils.forEach(expectedOptionsArray, function (expectedOption) {
                 if (!(options.hasOwnProperty(expectedOption))) {
                     missingOption = true;
                 }
