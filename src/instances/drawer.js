@@ -579,7 +579,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
             }
 
             var drawLevel = false;
-            var pixelSizeCurrent = viewportZoom / tiledImage.getScaledLevel(level);
+            var pixelSizeCurrent = viewportZoom * tiledImage.getWidthScale() / tiledImage.getScaledLevel(adjustedLevel);
 
             if (config.enableMagnifier) {
                 // We need to load higher-level tiles as we need them
