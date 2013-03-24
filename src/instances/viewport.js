@@ -143,7 +143,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          * @param {Seadragon.Point} [refPoint]
          */
-        zoomTo: function zoomTo(zoom, immediately, refPoint, /* internal */ dontApplyConstraints) {
+        zoomTo: function zoomTo(zoom, immediately, refPoint, /* boolean INTERNAL */ dontApplyConstraints) {
             if (!(refPoint instanceof Seadragon.Point)) {
                 refPoint = this.getCenter();
             }
@@ -179,7 +179,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          * @param {Seadragon.Point} [refPoint]
          */
-        zoomBy: function zoomBy(factor, immediately, refPoint, /* internal */ dontApplyConstraints) {
+        zoomBy: function zoomBy(factor, immediately, refPoint, /* boolean INTERNAL */ dontApplyConstraints) {
             return this.zoomTo(this.getZoom() * factor, immediately, refPoint, dontApplyConstraints);
         },
 
@@ -189,7 +189,8 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {Seadragon.Point} center
          * @param {boolean} [immediately=false]
          */
-        panTo: function panTo(center, immediately, /* internal */ dontApplyConstraints, animationTimeConfigParameter) {
+        panTo: function panTo(center, immediately, /* boolean INTERNAL */ dontApplyConstraints, /* string INTERNAL */
+                              animationTimeConfigParameter) {
             parentPrototype.panTo.call(this, center, immediately, animationTimeConfigParameter);
             if (!dontApplyConstraints) {
                 this.applyConstraints(false);
@@ -204,7 +205,8 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {Seadragon.Point} delta A vector by which we pan the viewport.
          * @param {boolean} [immediately=false]
          */
-        panBy: function panBy(delta, immediately, /* internal */ dontApplyConstraints, animationTimeConfigParameter) {
+        panBy: function panBy(delta, immediately, /* boolean INTERNAL */ dontApplyConstraints, /* string INTERNAL */
+                              animationTimeConfigParameter) {
             return this.panTo(this.getCenter().plus(delta), immediately,
                 dontApplyConstraints, animationTimeConfigParameter);
         },
@@ -285,7 +287,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          * @param {Seadragon.Point} [refPoint]
          */
-        applyConstraints: function applyConstraints(immediately, refPoint, /* INTERNAL */ setMinMaxZoom) {
+        applyConstraints: function applyConstraints(immediately, refPoint, /* boolean INTERNAL */ setMinMaxZoom) {
             if (!this.config.constrainViewport) {
                 return this;
             }
@@ -321,6 +323,7 @@ $.extend(Seadragon.Viewport.prototype,
             if (!needToAdjust || setMinMaxZoom) {
                 // We check for `!needToAdjust` just in case the image is so small it would fit in both scenarios;
                 // we want to aviod flicker in some cases and we prefer zooming in too much than zooming out too much.
+
                 // TODO cache it?
                 pixelSize = this.getZoom() / Math.pow(0.5, this.maxTiledImageLevel - 1 - this.maxLevel);
                 if (pixelSize > config.maxTiledImageStretch || setMinMaxZoom) { // We've zoomed in too much

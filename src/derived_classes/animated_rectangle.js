@@ -191,7 +191,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
          * @param {Seadragon.Point} center
          * @param {boolean} [immediately=false]
          */
-        panTo: function panTo(center, immediately, /* internal */ animationTimeConfigParameter) {
+        panTo: function panTo(center, immediately, /* string INTERNAL */ animationTimeConfigParameter) {
             this.springs.x.springTo(center.x - this.springs.width.targetValue / 2, immediately,
                 animationTimeConfigParameter);
             this.springs.y.springTo(center.y - this.springs.height.targetValue / 2, immediately,
@@ -207,7 +207,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
          * @param {Seadragon.Point} delta
          * @param {boolean} [immediately=false]
          */
-        panBy: function panBy(delta, immediately, /* internal */ animationTimeConfigParameter) {
+        panBy: function panBy(delta, immediately, /* string INTERNAL */ animationTimeConfigParameter) {
             return this.panTo(this.getCenter().plus(delta), immediately, animationTimeConfigParameter);
         },
 

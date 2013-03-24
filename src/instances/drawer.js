@@ -579,7 +579,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
             }
 
             var drawLevel = false;
-            var pixelSizeCurrent = viewportZoom * tiledImage.getWidthScale() / tiledImage.getScaledLevel(adjustedLevel);
+            var pixelSize = viewportZoom * tiledImage.getWidthScale() / tiledImage.getScaledLevel(adjustedLevel);
 
             if (config.enableMagnifier) {
                 // We need to load higher-level tiles as we need them
@@ -590,11 +590,11 @@ Seadragon.Drawer = function Drawer(seadragon) {
                 // don't need to worry about the additional tiles to load
                 // since before they're loaded we still see tiles from lower
                 // levels so transitions are smooth.
-                pixelSizeCurrent *= config.magnifierZoom;
+                pixelSize *= config.magnifierZoom;
             }
 
             // If we haven't drawn yet, only draw level if tiles are big enough.
-            if ((!haveDrawns[whichImage] && pixelSizeCurrent >= config.minPixelRatio) ||
+            if ((!haveDrawns[whichImage] && pixelSize >= config.minPixelRatio) ||
                 adjustedLevel === tiledImage.minLevel) {
                 drawLevel = true;
                 haveDrawns[whichImage] = true;
