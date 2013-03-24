@@ -77,7 +77,7 @@ $.extend(Seadragon.ImageLoader.prototype,
                     tile.image = image;
 
                     // Call on a timeout to ensure asynchronous behavior.
-                    setTimeout(catchedCallback, 0);
+                    setTimeout(catchedCallback);
                 };
             }
 

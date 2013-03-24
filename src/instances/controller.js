@@ -564,7 +564,7 @@ Seadragon.Controller = function Controller(seadragon) {
                         scheduleUpdateDziImageBounds(whichImage);
                     }
                 });
-            }, 0);
+            });
         }
 
         if (animating) {
