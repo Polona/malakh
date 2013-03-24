@@ -443,7 +443,7 @@ Seadragon.Controller = function Controller(seadragon) {
     function scheduleUpdate() {
         if (!lockOnUpdates) {
             if (that.isLoading()) {
-                setTimeout(scheduleUpdate, 1);
+                setTimeout(scheduleUpdate);
                 return;
             }
             requestAnimationFrame(update);
