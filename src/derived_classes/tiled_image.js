@@ -184,8 +184,7 @@ $.extend(Seadragon.TiledImage.prototype,
          * @return {number}
          */
         getTiledImageLevel: function getTiledImageLevel(level, current) {
-            var scaledBounds = this.getDimensionsScale(current);
-            return level + Math.ceil(Math.log2(Math.max(scaledBounds.x, scaledBounds.y)));
+            return level + Math.ceil(Math.log2(this.getWidthScale(current)));
         },
 
         /**
@@ -198,23 +197,17 @@ $.extend(Seadragon.TiledImage.prototype,
          * @return {number}
          */
         getViewportLevel: function getViewportLevel(level, current) {
-            var scaledBounds = this.getDimensionsScale(current);
-            return level - Math.ceil(Math.log2(Math.max(scaledBounds.x, scaledBounds.y)));
+            return level - Math.ceil(Math.log2(this.getWidthScale(current)));
         },
 
         /**
-         * Returns bounds width & height with regards to original image dimensions.
+         * Returns bounds width with regards to original image width. Relies on the fact that aspect ratio is preserved.
          *
          * @param {boolean} [current=false]
-         * @return {Seadragon.Point}
+         * @return {number}
          */
-        getDimensionsScale: function getDimensionsScale(current) {
-            var bounds;
-            bounds = this.boundsSprings.getRectangle(current);
-            return new Seadragon.Point(
-                bounds.width / this.width,
-                bounds.height / this.height
-            );
+        getWidthScale: function getWidthScale(current) {
+            return this.boundsSprings.width.get(current) / this.width;
         },
 
 
@@ -263,12 +256,12 @@ $.extend(Seadragon.TiledImage.prototype,
          * @return {Seadragon.Point}
          */
         getTileAtPoint: function getTileAtPoint(level, point, current) {
-            var scale = this.getDimensionsScale(current);
+            var scale = this.getWidthScale(current);
             var bounds = this.boundsSprings.getRectangle(current);
 
             point = point.minus(new Seadragon.Point(bounds.x, bounds.y));
-            point.x /= scale.x;
-            point.y /= scale.y;
+            point.x /= scale;
+            point.y /= scale;
             var pixel = point.multiply(this.getScaledLevel(level));
 
             var tx = Math.floor(pixel.x / this.tileSize);
@@ -289,7 +282,7 @@ $.extend(Seadragon.TiledImage.prototype,
         getTileBounds: function getTileBounds(level, x, y, current) {
             var scale, bounds, px, py, sx, sy, scaledLevel;
 
-            scale = this.getDimensionsScale(current);
+            scale = this.getWidthScale(current);
             bounds = this.boundsSprings.getRectangle(current);
 
             // Find position, adjust for no overlap data on top and left edges.
@@ -314,10 +307,10 @@ $.extend(Seadragon.TiledImage.prototype,
             sy = Math.min(sy, this.height - py);
 
             // Adjust to bounds.
-            px = bounds.x + px * scale.x;
-            py = bounds.y + py * scale.y;
-            sx *= scale.x;
-            sy *= scale.y;
+            px = bounds.x + px * scale;
+            py = bounds.y + py * scale;
+            sx *= scale;
+            sy *= scale;
 
             return new Seadragon.Rectangle(px, py, sx, sy);
         },
