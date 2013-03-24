@@ -65,6 +65,11 @@ Seadragon.Viewport = function Viewport(seadragon) {
      */
     this.maxTiledImageLevel = 0;
     /**
+     * TODO document.
+     * @type number
+     */
+    this.minTiledImageWidthScale = Infinity;
+    /**
      * Maximum "viewport" level to be drawn. "Viewport level" translates to tiled images' levels; if tiled images
      * were not scaled (i.e. their bounds width & height are equal to the source DZI width & height), it is
      * equal to <code>this.maxTiledImageLevel</code>.
@@ -325,7 +330,7 @@ $.extend(Seadragon.Viewport.prototype,
                 // we want to aviod flicker in some cases and we prefer zooming in too much than zooming out too much.
 
                 // TODO cache it?
-                pixelSize = this.getZoom() / Math.pow(0.5, this.maxTiledImageLevel - 1 - this.maxLevel);
+                pixelSize = this.getZoom() * this.minTiledImageWidthScale;
                 if (pixelSize > config.maxTiledImageStretch || setMinMaxZoom) { // We've zoomed in too much
                     needToAdjust = !setMinMaxZoom;
                     scale = maxZoomScale = config.maxTiledImageStretch / pixelSize;

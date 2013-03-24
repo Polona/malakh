@@ -124,12 +124,9 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          */
         minVisibilityRatio: 1,
         /**
-         * <p>How much one can zoom in when constrained to a particular tiled image; 1 means native size.
+         * How much one can zoom in when constrained to a particular tiled image; 1 means native size.
          * If more than one tiled image is displayed, this condition is checked against each of them;
          * one positive result is enough.
-         *
-         * <p>NOTE: this value has certain tolerance; the actual experienced value is somewhere between
-         * <code>maxTiledImageStretch</code> and <code>2 * maxTiledImageStretch</code>.
          *
          * @type number
          */
@@ -153,6 +150,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          * prevents loading too large images conserving memory but, on the other hand,
          * causes a fuzzy effect. Level set here should be small enough to be contained
          * in one tile only.
+         *
          * @type number
          */
         minLevelToDraw: 8,
@@ -180,6 +178,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
         /**
          * Determines the size of the area surrounding picker borders which triggers resizing mode
          * when pressing the left mouse button when cursor is over it.
+         *
          * @type number
          */
         pickerHandleSize: 10,
@@ -203,6 +202,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
         /**
          * Color of background beneath drawn images. Needed for magnifier to correctly
          * redraw background in places where there are no tiles to display.
+         *
          * @type string
          */
         backgroundColor: '',
