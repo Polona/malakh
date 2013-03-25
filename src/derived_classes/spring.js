@@ -108,7 +108,7 @@ $.extend(Seadragon.Spring.prototype,
          *                 <code>this.config[animationTimeConfigParameter]</code>.
          */
         springTo: function springTo(target, immediately, animationTimeConfigParameter) {
-            animationTimeConfigParameter = animationTimeConfigParameter || 'shortAnimationTime';
+            animationTimeConfigParameter = animationTimeConfigParameter || 'animationTime';
             this.cacheIsAnimating = true;
             this.startValue = this.currentValue;
             this.startTime = Date.now();
