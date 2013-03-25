@@ -1,9 +1,9 @@
 (function () {
-    var log2;
+    var logNat2;
     if (!Math.log2) {
-        log2 = Math.log(2);
+        logNat2 = Math.log(2);
         Math.log2 = function log2(val) {
-            return Math.log(val) / log2;
+            return Math.log(val) / logNat2;
         };
     }
 })();
