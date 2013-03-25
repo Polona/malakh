@@ -1,4 +1,4 @@
-var u = {};
+var utils = {};
 
 (function () {
     // TODO benchmark it.
@@ -9,7 +9,7 @@ var u = {};
      * @param thisArg
      * @returns {Function}
      */
-    u.bind = function bind(fn, thisArg) {
+    utils.bind = function bind(fn, thisArg) {
         var boundArgs = [].slice.call(arguments, 2);
         return function () {
             var args = [].slice.call(arguments);
@@ -18,13 +18,13 @@ var u = {};
         };
     };
     /**
-     * A faster version of <code>u.bind</code> when only <code>this</code> binding is needed (i.e. no arguments).
+     * A faster version of <code>utils.bind</code> when only <code>this</code> binding is needed (i.e. no arguments).
      *
      * @param {Function} fn  Function to be bound.
      * @param thisArg
      * @returns {Function}
      */
-    u.bindThis = function bindThis(fn, thisArg) {
+    utils.bindThis = function bindThis(fn, thisArg) {
         return function () {
             return fn.apply(thisArg, arguments);
         };
@@ -38,7 +38,7 @@ var u = {};
      * @param {Function} callback  A function applied on every element; takes element as the first parameter
      *                             and its index in <code>array</code> as the second one.
      */
-    u.forEach = function forEach(array, callback) {
+    utils.forEach = function forEach(array, callback) {
         var element;
         for (var i = 0, length = array.length; i < length; i++) {
             element = array[i];

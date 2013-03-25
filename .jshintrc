@@ -1,15 +1,25 @@
 {
-    "quotmark": "single",
-    "unused": false,
+    "bitwise": true,
+    "curly": true,
+    "eqeqeq": true,
+    "forin": false,
+    "immed": true,
+    "newcap": true,
+    "noarg": true,
+    "noempty": true,
+    "nonew": true,
     "undef": true,
-
+    "unused": false,
+    "strict": true,
+    "trailing": true,
     "eqnull": true,
 
-    "es5": true,
     "browser": true,
     "devel": true,
+    "es5": true,
     "jquery": true,
 
+    "quotmark": "single",
     "maxerr": 50,
     "maxlen": 120,
 
@@ -17,6 +27,6 @@
         "requestAnimationFrame": false,
         "Seadragon": true,
         "seadragonProxy": true,
-        "u": true
+        "utils": true
     }
 }

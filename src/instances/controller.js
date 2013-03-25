@@ -371,7 +371,7 @@ Seadragon.Controller = function Controller(seadragon) {
             tiledImages = seadragon.tiledImages,
             viewport = seadragon.viewport;
 
-        var viewportMaxLevel = 0, maxTiledImageLevel = 0;
+        var viewportMaxLevel = 0, minTiledImageWidthScale = Infinity;
         for (var i = 0; i < tiledImages.length; i++) {
             var tiledImage = tiledImages[i];
             if (tiledImage instanceof Seadragon.TiledImage && tiledImage.opacity > 0) { // tiled image has been loaded
@@ -379,11 +379,11 @@ Seadragon.Controller = function Controller(seadragon) {
                     viewportMaxLevel,
                     tiledImage.getViewportLevel(tiledImage.maxLevel)
                 );
-                maxTiledImageLevel = Math.max(maxTiledImageLevel, tiledImage.maxLevel);
+                minTiledImageWidthScale = Math.min(minTiledImageWidthScale, tiledImage.getWidthScale());
             }
         }
         viewport.maxLevel = viewportMaxLevel;
-        viewport.maxTiledImageLevel = maxTiledImageLevel;
+        viewport.minTiledImageWidthScale = minTiledImageWidthScale;
     }
 
     /**
@@ -428,7 +428,7 @@ Seadragon.Controller = function Controller(seadragon) {
 
         var callbacks = tiledImagesCallbacks[index];
         if (callbacks) {
-            u.forEach(callbacks, function (callback) {
+            utils.forEach(callbacks, function (callback) {
                 callback.call(tiledImage);
             });
             tiledImagesCallbacks[index] = null;
@@ -443,7 +443,7 @@ Seadragon.Controller = function Controller(seadragon) {
     function scheduleUpdate() {
         if (!lockOnUpdates) {
             if (that.isLoading()) {
-                setTimeout(scheduleUpdate, 1);
+                setTimeout(scheduleUpdate);
                 return;
             }
             requestAnimationFrame(update);
@@ -474,7 +474,7 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function updateTiledImageBounds(whichImage, decreaseCounter) {
         var tiledImage = that.seadragon.tiledImages[whichImage];
-        forceAlign = tiledImage.boundsSprings.update() || forceAlign;
+        forceAlign = tiledImage.animatedBounds.update() || forceAlign;
         that.restoreUpdating();
         if (decreaseCounter) {
             tiledImageBoundsUpdatesNums[whichImage]--;
@@ -559,12 +559,12 @@ Seadragon.Controller = function Controller(seadragon) {
         if (forceAlign) {
             forceAlign = false;
             setTimeout(function () { // Making it more asynchronous.
-                u.forEach(tiledImages, function (tiledImage, whichImage) {
+                utils.forEach(tiledImages, function (tiledImage, whichImage) {
                     if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
                         scheduleUpdateDziImageBounds(whichImage);
                     }
                 });
-            }, 0);
+            });
         }
 
         if (animating) {
@@ -773,7 +773,7 @@ Seadragon.Controller = function Controller(seadragon) {
             return this;
         }
 
-        u.forEach(optionsArray, function (options) {
+        utils.forEach(optionsArray, function (options) {
             tiledImagesToHandle--; // openDzi increases it again
             if (options.shown == null) {
                 options.shown = !hideByDefault;
@@ -801,7 +801,7 @@ Seadragon.Controller = function Controller(seadragon) {
         function getFunctionConstrainingToImage(dontForceConstraints) {
             return function () {
                 viewport.constraintBounds = new Seadragon.Rectangle(
-                    this.boundsSprings.getRectangle());
+                    this.animatedBounds.getRectangle());
                 $container.trigger('seadragon:constraint_bounds_set');
                 if (!dontForceConstraints) {
                     config.constrainViewport = true;
@@ -857,7 +857,7 @@ Seadragon.Controller = function Controller(seadragon) {
             // Image not loaded yet, register a callback.
             var tiledImageCallbacks = this.tiledImagesCallbacks[whichImage];
             if (tiledImageCallbacks.length) { // no callbacks present => the hidden state is the default
-                tiledImageCallbacks.push(u.bind(this.hideImage, this, whichImage, immediately));
+                tiledImageCallbacks.push(utils.bind(this.hideImage, this, whichImage, immediately));
             }
             return this;
         }
@@ -925,7 +925,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @return {Seadragon.Rectangle}
      */
     this.tiledImageBoundsInPoints = function tiledImageBoundsInPoints(whichImage, current) {
-        return this.seadragon.tiledImages[whichImage].boundsSprings.getRectangle(current);
+        return this.seadragon.tiledImages[whichImage].animatedBounds.getRectangle(current);
     };
 
     /**

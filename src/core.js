@@ -19,7 +19,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
      *     <code>var rectangle = new Seadragon.Rectangle(this.seadragon, 2, 3, 50, 23);</code>
      * etc.
      */
-    u.forEach(['AnimatedRectangle', 'CanvasLayersManager', 'Controller', 'Drawer',
+    utils.forEach(['AnimatedRectangle', 'CanvasLayersManager', 'Controller', 'Drawer',
         'DziImage', 'ImageLoader', 'LayoutManager', 'Magnifier', 'Markers', 'Picker',
         'Spring', 'Tile', 'TiledImage', 'Viewport'],
         function (name) {
@@ -71,12 +71,12 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          * Time it takes to finish various shorter animations (e.g. panning) in miliseconds.
          * @type number
          */
-        shortAnimationTime: 100,
+        animationTime: 100,
         /**
          * Time it takes to finish various longer animations (e.g. zooming) in miliseconds.
          * @type number
          */
-        longAnimationTime: 500,
+        zoomAnimationTime: 500,
         /**
          * Time it takes to blend in/out tiles in miliseconds.
          * @type number
@@ -124,12 +124,9 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          */
         minVisibilityRatio: 1,
         /**
-         * <p>How much one can zoom in when constrained to a particular tiled image; 1 means native size.
+         * How much one can zoom in when constrained to a particular tiled image; 1 means native size.
          * If more than one tiled image is displayed, this condition is checked against each of them;
          * one positive result is enough.
-         *
-         * <p>NOTE: this value has certain tolerance; the actual experienced value is somewhere between
-         * <code>maxTiledImageStretch</code> and <code>2 * maxTiledImageStretch</code>.
          *
          * @type number
          */
@@ -153,6 +150,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          * prevents loading too large images conserving memory but, on the other hand,
          * causes a fuzzy effect. Level set here should be small enough to be contained
          * in one tile only.
+         *
          * @type number
          */
         minLevelToDraw: 8,
@@ -180,6 +178,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
         /**
          * Determines the size of the area surrounding picker borders which triggers resizing mode
          * when pressing the left mouse button when cursor is over it.
+         *
          * @type number
          */
         pickerHandleSize: 10,
@@ -203,6 +202,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
         /**
          * Color of background beneath drawn images. Needed for magnifier to correctly
          * redraw background in places where there are no tiles to display.
+         *
          * @type string
          */
         backgroundColor: '',
@@ -321,7 +321,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
 
     this._defineProxyForAllFields = function _defineProxyForAllFields(member) {
         var that = this;
-        u.forEach(Object.keys(this[member]), function (field) {
+        utils.forEach(Object.keys(this[member]), function (field) {
             that._defineProxyForField(member, field);
         });
         return this;
@@ -462,7 +462,7 @@ $.extend(Seadragon.prototype,
          */
         ensureOptions: function ensureOptions(options, className, expectedOptionsArray) {
             var missingOption = !options;
-            u.forEach(expectedOptionsArray, function (expectedOption) {
+            utils.forEach(expectedOptionsArray, function (expectedOption) {
                 if (!(options.hasOwnProperty(expectedOption))) {
                     missingOption = true;
                 }

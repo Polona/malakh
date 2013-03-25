@@ -45,7 +45,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
     this.registerTiledImage = function registerTiledImage(tiledImage, index) {
         if (midUpdate) { // We don't want to add a new image during the update process, deferring.
             this.log('Deferred adding a DZI to Drawer');
-            setTimeout(u.bindThis(this.registerTiledImage, this), 100, tiledImage, index);
+            setTimeout(utils.bindThis(this.registerTiledImage, this), 100, tiledImage, index);
             return this;
         }
         if (!tiledImage) {
@@ -142,7 +142,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
         tile = tileMatrix[level][x][y];
 
-        if (!boundsAlreadyUpdated && tiledImage.boundsSprings.version > tile.version) {
+        if (!boundsAlreadyUpdated && tiledImage.animatedBounds.version > tile.version) {
             bounds = tiledImage.getTileBounds(level, x, y, current);
             tile.bounds = bounds;
             tile.updateVersion();
@@ -163,7 +163,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
      * @private
      */
     function loadTile(tile, time) {
-        that.seadragon.imageLoader.loadImage(tile, u.bind(onTileLoad, null, tile, time));
+        that.seadragon.imageLoader.loadImage(tile, utils.bind(onTileLoad, null, tile, time));
     }
 
     /**
@@ -506,15 +506,15 @@ Seadragon.Drawer = function Drawer(seadragon) {
         currentTime = Date.now();
 
         // Drawing all images.
-        u.forEach(tiledImages, function (tiledImage, whichImage) {
+        utils.forEach(tiledImages, function (tiledImage, whichImage) {
             if (!(tiledImage instanceof Seadragon.DziImage) || tiledImage.isHidden()) {
                 return;
             }
 
             // We don't need to compute these two things on each update but filtering out cases where it's not needed
             // would create a little overhead on its own so it's probably not worth doing that.
-            tiledImageTLs[whichImage] = tiledImage.boundsSprings.getTopLeft();
-            tiledImageBRs[whichImage] = tiledImage.boundsSprings.getBottomRight();
+            tiledImageTLs[whichImage] = tiledImage.animatedBounds.getTopLeft();
+            tiledImageBRs[whichImage] = tiledImage.animatedBounds.getBottomRight();
 
             var tiledImageTL = tiledImageTLs[whichImage];
             var tiledImageBR = tiledImageBRs[whichImage];
@@ -579,7 +579,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
             }
 
             var drawLevel = false;
-            var pixelSizeCurrent = viewportZoom / tiledImage.getScaledLevel(level);
+            var pixelSize = viewportZoom * tiledImage.getWidthScale() / tiledImage.getScaledLevel(adjustedLevel);
 
             if (config.enableMagnifier) {
                 // We need to load higher-level tiles as we need them
@@ -590,11 +590,11 @@ Seadragon.Drawer = function Drawer(seadragon) {
                 // don't need to worry about the additional tiles to load
                 // since before they're loaded we still see tiles from lower
                 // levels so transitions are smooth.
-                pixelSizeCurrent *= config.magnifierZoom;
+                pixelSize *= config.magnifierZoom;
             }
 
             // If we haven't drawn yet, only draw level if tiles are big enough.
-            if ((!haveDrawns[whichImage] && pixelSizeCurrent >= config.minPixelRatio) ||
+            if ((!haveDrawns[whichImage] && pixelSize >= config.minPixelRatio) ||
                 adjustedLevel === tiledImage.minLevel) {
                 drawLevel = true;
                 haveDrawns[whichImage] = true;
@@ -710,7 +710,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
 
         for (level = viewport.maxLevel; level >= 0; level--) {
-            u.forEach(drawnImageNumbers, updateBestTileAtCurrentLevel);
+            utils.forEach(drawnImageNumbers, updateBestTileAtCurrentLevel);
         }
 
         // Load next tile if there is one to load.

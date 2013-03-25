@@ -2,8 +2,7 @@
     "name": "seadragon",
     "title": "Seadragon",
     "description": "",
-    "version": "0.10.0pre",
-    "homepage": "http://jquery.com",
+    "version": "0.10.0-pre",
     "author": {
         "name": "Michał Gołębiowski <michal.golebiowski@laboratorium.ee>",
         "url": ""

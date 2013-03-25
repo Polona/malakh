@@ -60,14 +60,14 @@ Seadragon.Viewport = function Viewport(seadragon) {
     this.constraintBounds = undefined;
 
     /**
-     * Maximum <code>tiledImage.maxLevel</code> amongst all visible tiled images.
+     * Minimum <code>tiledImage.getWidthScale()</code> of all currently shown tiled images.
      * @type number
      */
-    this.maxTiledImageLevel = 0;
+    this.minTiledImageWidthScale = Infinity;
     /**
      * Maximum "viewport" level to be drawn. "Viewport level" translates to tiled images' levels; if tiled images
-     * were not scaled (i.e. their bounds width & height are equal to the source DZI width & height), it is
-     * equal to <code>this.maxTiledImageLevel</code>.
+     * are not scaled (i.e. their bounds width & height are equal to the source DZI width & height), it is
+     * equal to maximum of <code>maxLevel</code> of all currently shown tiled images.
      * @type number
      */
     this.maxLevel = 0;
@@ -143,7 +143,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          * @param {Seadragon.Point} [refPoint]
          */
-        zoomTo: function zoomTo(zoom, immediately, refPoint, /* internal */ dontApplyConstraints) {
+        zoomTo: function zoomTo(zoom, immediately, refPoint, /* boolean INTERNAL */ dontApplyConstraints) {
             if (!(refPoint instanceof Seadragon.Point)) {
                 refPoint = this.getCenter();
             }
@@ -156,12 +156,12 @@ $.extend(Seadragon.Viewport.prototype,
                 distanceToTopLeft.x / oldBounds.width,
                 distanceToTopLeft.y / oldBounds.height);
 
-            this.springs.width.springTo(this.containerSize.x / zoom, immediately, 'longAnimationTime');
-            this.springs.height.springTo(this.springs.width.targetValue / aspect, immediately, 'longAnimationTime');
+            this.springs.width.springTo(this.containerSize.x / zoom, immediately, 'zoomAnimationTime');
+            this.springs.height.springTo(this.springs.width.targetValue / aspect, immediately, 'zoomAnimationTime');
             this.springs.x.springTo(refPoint.x - refPointRelativeDimensions.x * this.springs.width.targetValue,
-                immediately, 'longAnimationTime');
+                immediately, 'zoomAnimationTime');
             this.springs.y.springTo(refPoint.y - refPointRelativeDimensions.y * this.springs.height.targetValue,
-                immediately, 'longAnimationTime');
+                immediately, 'zoomAnimationTime');
 
             if (!dontApplyConstraints) {
                 this.applyConstraints(immediately, refPoint);
@@ -179,7 +179,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          * @param {Seadragon.Point} [refPoint]
          */
-        zoomBy: function zoomBy(factor, immediately, refPoint, /* internal */ dontApplyConstraints) {
+        zoomBy: function zoomBy(factor, immediately, refPoint, /* boolean INTERNAL */ dontApplyConstraints) {
             return this.zoomTo(this.getZoom() * factor, immediately, refPoint, dontApplyConstraints);
         },
 
@@ -189,7 +189,8 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {Seadragon.Point} center
          * @param {boolean} [immediately=false]
          */
-        panTo: function panTo(center, immediately, /* internal */ dontApplyConstraints, animationTimeConfigParameter) {
+        panTo: function panTo(center, immediately, /* boolean INTERNAL */ dontApplyConstraints, /* string INTERNAL */
+                              animationTimeConfigParameter) {
             parentPrototype.panTo.call(this, center, immediately, animationTimeConfigParameter);
             if (!dontApplyConstraints) {
                 this.applyConstraints(false);
@@ -204,7 +205,8 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {Seadragon.Point} delta A vector by which we pan the viewport.
          * @param {boolean} [immediately=false]
          */
-        panBy: function panBy(delta, immediately, /* internal */ dontApplyConstraints, animationTimeConfigParameter) {
+        panBy: function panBy(delta, immediately, /* boolean INTERNAL */ dontApplyConstraints, /* string INTERNAL */
+                              animationTimeConfigParameter) {
             return this.panTo(this.getCenter().plus(delta), immediately,
                 dontApplyConstraints, animationTimeConfigParameter);
         },
@@ -285,7 +287,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          * @param {Seadragon.Point} [refPoint]
          */
-        applyConstraints: function applyConstraints(immediately, refPoint, /* INTERNAL */ setMinMaxZoom) {
+        applyConstraints: function applyConstraints(immediately, refPoint, /* boolean INTERNAL */ setMinMaxZoom) {
             if (!this.config.constrainViewport) {
                 return this;
             }
@@ -321,8 +323,9 @@ $.extend(Seadragon.Viewport.prototype,
             if (!needToAdjust || setMinMaxZoom) {
                 // We check for `!needToAdjust` just in case the image is so small it would fit in both scenarios;
                 // we want to aviod flicker in some cases and we prefer zooming in too much than zooming out too much.
+
                 // TODO cache it?
-                pixelSize = this.getZoom() / Math.pow(0.5, this.maxTiledImageLevel - 1 - this.maxLevel);
+                pixelSize = this.getZoom() * this.minTiledImageWidthScale;
                 if (pixelSize > config.maxTiledImageStretch || setMinMaxZoom) { // We've zoomed in too much
                     needToAdjust = !setMinMaxZoom;
                     scale = maxZoomScale = config.maxTiledImageStretch / pixelSize;
@@ -388,9 +391,9 @@ $.extend(Seadragon.Viewport.prototype,
             }
 
             if (needToAdjust) {
-                // 'longAnimationTime' is needed because correcting a long animation using a short one
+                // 'zoomAnimationTime' is needed because correcting a long animation using a short one
                 // causes a jumping effect (and very visible one at that).
-                this.panTo(vR.getCenter(), immediately, true, 'longAnimationTime');
+                this.panTo(vR.getCenter(), immediately, true, 'zoomAnimationTime');
             }
 
             return this;
