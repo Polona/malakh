@@ -10,7 +10,7 @@
     "nonew": true,
     "undef": true,
     "unused": false,
-    "strict": true,
+    "strict": false,
     "trailing": true,
     "eqnull": true,
 
