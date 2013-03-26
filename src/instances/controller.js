@@ -853,7 +853,7 @@ Seadragon.Controller = function Controller(seadragon) {
     this.hideImage = function hideImage(whichImage, immediately) {
         var tiledImage = that.tiledImages[whichImage];
 
-        if (!(tiledImage instanceof Seadragon.TiledImage)) { // tiled image has been loaded
+        if (!(tiledImage instanceof Seadragon.TiledImage)) {
             // Image not loaded yet, register a callback.
             var tiledImageCallbacks = this.tiledImagesCallbacks[whichImage];
             if (tiledImageCallbacks.length) { // no callbacks present => the hidden state is the default
@@ -865,6 +865,20 @@ Seadragon.Controller = function Controller(seadragon) {
         this.drawer.hideImage(whichImage, immediately);
         this.$container.trigger('seadragon:hidden_tiled_image');
         return this.restoreUpdating();
+    };
+
+
+    /**
+     * Force loading the image without showing it (if it weren't loaded actually). Useful for neighbor pre-caching.
+     *
+     * @param {number} whichImage We force-load the <code>this.tiledImages[whichImage]</code> image.
+     */
+    this.loadImageWithoutShowing = function loadImageWithoutShowing(whichImage) {
+        if (!(this.tiledImages[whichImage] instanceof Seadragon.TiledImage)) {
+            this.tiledImagesCallbacks[whichImage].push(utils.bind(this.hideImage, this, whichImage, true));
+            this.showImage(whichImage, true); // it'll get hidden immediately anyway
+        }
+        return this;
     };
 
 

@@ -161,6 +161,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * @param {boolean} [options.immediately=false]
      * @param {boolean} [options.dontFitImage=false]
      * @param {boolean} [options.dontForceConstraints=false]
+     * @param {boolean} [options.preCacheNeighbors=false]
      */
     this.showOnlyImage = function showOnlyImage(whichImage, options) {
         var tiledImage;
@@ -197,10 +198,11 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
         }
 
         for (var i = 0; i < tiledImages.length; i++) {
-            tiledImage = tiledImages[i];
             if (i !== whichImage) {
                 if (controller.imageLoadingStarted(i)) { // otherwise it's already hidden
                     controller.hideImage(i, options.immediately);
+                } else if (options.preCacheNeighbors && Math.abs(i - whichImage) === 1) {
+                    controller.loadImageWithoutShowing(i);
                 }
             }
         }
