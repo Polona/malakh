@@ -25,6 +25,7 @@
         "grunt-contrib-watch": ">=0.3.1",
         "grunt-contrib-jshint": ">=0.3.0",
         "grunt-contrib-uglify": ">=0.1.2",
+        "grunt-devtools": ">=0.1.0",
         "grunt": "0.4.1"
     },
     "keywords": ["seadragon", "deep zoom"]
