@@ -1,7 +1,6 @@
 var utils = {};
 
 (function () {
-    // TODO benchmark it.
     /**
      * A faster version of <code>Function.prototype.bind</code>.
      *

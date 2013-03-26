@@ -323,8 +323,6 @@ $.extend(Seadragon.Viewport.prototype,
             if (!needToAdjust || setMinMaxZoom) {
                 // We check for `!needToAdjust` just in case the image is so small it would fit in both scenarios;
                 // we want to aviod flicker in some cases and we prefer zooming in too much than zooming out too much.
-
-                // TODO cache it?
                 pixelSize = this.getZoom() * this.minTiledImageWidthScale;
                 if (pixelSize > config.maxTiledImageStretch || setMinMaxZoom) { // We've zoomed in too much
                     needToAdjust = !setMinMaxZoom;
