@@ -63,7 +63,7 @@ Seadragon.Markers = function Markers(seadragon) {
                 left: pixelRectangle.x,
                 top: pixelRectangle.y,
                 width: pixelRectangle.width,
-                height: pixelRectangle.height
+                height: pixelRectangle.height,
             });
         });
 

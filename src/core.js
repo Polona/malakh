@@ -206,6 +206,13 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          * @type string
          */
         backgroundColor: '',
+
+        /**
+         * Text to display on the screen when a critical error occurs.
+         *
+         * @type string
+         */
+        criticalErrorText: 'A critical error occured. Please refresh the site.',
     };
 
     $.extend(this.config, configOverrides);
@@ -216,10 +223,10 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
     this.$container = $(containerSelectorOrElement);
     if (this.$container.length === 0) {
         console.log('Received containerSelectorOrElement:', containerSelectorOrElement);
-        throw new Error('Can\'t create a Controller instance without a container!');
+        this.fail('Can\'t create a Controller instance without a container!');
     }
     this.$container.empty().css({
-        backgroundColor: this.config.backgroundColor
+        backgroundColor: this.config.backgroundColor,
     });
 
     Object.defineProperties(this,
@@ -300,7 +307,6 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
      * @param {string} member  A field of the member of <code>this</code> indicated by this string is proxied.
      * @param {string} field  The field's name.
      * @param {boolean} enumerable  Value of field's planned <code>enumerable</code> flag.
-     * @return {*} this
      * @private
      */
     this._defineProxyForField = function _defineProxyForField(member, field, enumerable) {
@@ -408,6 +414,23 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
     this.config.blockZoom = configProxies.blockZoom;
 };
 
+(function () {
+    var NativeError = Error;
+    /**
+     * Constructs a <code>Seadragon.Error</code> instance.
+     *
+     * @class A Seadragon <code>Error</code> wrapper.
+     *
+     * @param {string} [message]
+     */
+    Seadragon.Error = function Error(message) {
+        var error = new NativeError(message);
+        error.constructor = Seadragon.Error;
+        return error;
+    };
+    Seadragon.Error.prototype = Object.create(Error.prototype);
+})();
+
 $.extend(Seadragon.prototype,
     /**
      * @lends Seadragon.prototype
@@ -440,7 +463,7 @@ $.extend(Seadragon.prototype,
                     '    new Seadragon.' + className + '(' + namesWithSeadragon + ')\n';
 
                 console.log('Received arguments:', [].slice.call(args));
-                throw new Error(errorString);
+                this.fail(errorString);
             }
 
             /**
@@ -458,7 +481,6 @@ $.extend(Seadragon.prototype,
          * @param {string} className  The name of the class used to create the object; needed for an error message.
          * @param {Array.<string>} expectedOptionsArray  An array of key names expected in the <code>options</code>
          *                                               object.
-         * @return {*} this
          */
         ensureOptions: function ensureOptions(options, className, expectedOptionsArray) {
             var missingOption = !options;
@@ -469,20 +491,57 @@ $.extend(Seadragon.prototype,
             });
             if (missingOption) {
                 console.log('Received options:', options);
-                throw new Error('Seadragon.' + className + ' needs a JSON parameter with at least the following ' +
-                    'fields: ' + expectedOptionsArray.join(', ') + '.');
+                this.fail('Seadragon.' + className + ' needs a JSON parameter with at least the ' +
+                    'following fields: ' + expectedOptionsArray.join(', ') + '.');
             }
             return this;
         },
         /**
          * Invokes <code>console.log</code> iff <code>config.debugMode</code> is true.
-         * @return {*} this
          */
         log: function log() {
             if (this.config.debugMode) {
                 console.log.apply(console, arguments);
             }
             return this;
+        },
+        /**
+         * Displays an error message on Seadragon canvas and throws a new <code>Seadragon.Error</code>.
+         * @param {string} [errorText]
+         */
+        fail: function fail(errorText) {
+            var offset = this.$canvas.position();
+
+            this.$container
+                .append($('<div>')
+                    .css({
+                        position: 'absolute',
+                        top: offset.top,
+                        left: offset.left,
+                        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                        color: 'white',
+                        fontSize: 40,
+                        textAlign: 'center',
+                        display: 'table',
+                        width: '100%',
+                        height: '100%',
+                    })
+                    .append($('<div>')
+                        .css({
+                            display: 'table-cell',
+                            verticalAlign: 'middle',
+                        })
+                        .append($('<div>')
+                            .css({
+                                display: 'block',
+                                margin: '0 auto',
+                            })
+                            .text(this.config.criticalErrorText)
+                        )
+                    )
+                );
+
+            throw new Seadragon.Error(errorText);
         },
     }
 );

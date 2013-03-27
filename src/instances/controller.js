@@ -88,8 +88,8 @@ Seadragon.Controller = function Controller(seadragon) {
         /**
          * Toggles magnifier's state - shows it if it was hidden; hides it otherwise.
          *
-         * @param {boolean} enable  If provided, falls back to <code>enableMagnifier</code>
-         *                          or <code>disableMagnifier</code>.
+         * @param {boolean} [enable]  If provided, falls back to <code>enableMagnifier</code>
+         *                            or <code>disableMagnifier</code>.
          */
         this.toggleMagnifier = function toggleMagnifier(enable) {
             if (enable == null) {
@@ -132,8 +132,8 @@ Seadragon.Controller = function Controller(seadragon) {
         /**
          * Toggles picker's state - shows it if it was hidden; hides it otherwise.
          *
-         * @param {boolean} enable  If provided, falls back to <code>enablePicker</code>
-         *                          or <code>disablePicker</code>.
+         * @param {boolean} [enable]  If provided, falls back to <code>enablePicker</code>
+         *                            or <code>disablePicker</code>.
          */
         this.togglePicker = function togglePicker(enable) {
             if (enable == null) {
@@ -193,7 +193,7 @@ Seadragon.Controller = function Controller(seadragon) {
                 scale = parseFloat($container.css('height'));
                 break;
             default:
-                throw new Error('SeadragonManagerView#toggleBlockZoom: deltaMode not recognized', evt.deltaMode, evt);
+                that.fail('SeadragonManagerView#toggleBlockZoom: deltaMode not recognized', evt.deltaMode, evt);
         }
         deltaX = scale * evt.deltaX;
         deltaY = scale * evt.deltaY;
@@ -230,7 +230,7 @@ Seadragon.Controller = function Controller(seadragon) {
                 $(document).on('mousemove.seadragon', dragCanvas);
             },
 
-            'wheel.seadragon': wheelToZoom
+            'wheel.seadragon': wheelToZoom,
         });
 
         that.$container.on({
@@ -280,8 +280,8 @@ Seadragon.Controller = function Controller(seadragon) {
     /**
      * Toggles `wheel` event behavior between panning and zooming.
      *
-     * @param {boolean} enable  If provided, falls back to <code>enableWheelToPan</code>
-     *                          or <code>disableWheelToPan</code>.
+     * @param {boolean} [enable]  If provided, falls back to <code>enableWheelToPan</code>
+     *                            or <code>disableWheelToPan</code>.
      */
     this.toggleWheelToPan = function toggleWheelToPan(enable) {
         if (enable == null) {
@@ -599,8 +599,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {Object} options An object containing all given options.
      * @param {Document} options.data An object representing a DZI file.
      * @param {string} options.dziUrl See <a href="#createFromDzi"><code>Seadragon.DziImage.createFromDzi</code></a>.
-     * @param {jQuery} options.$container See <a href="#createFromDzi">
-     *                                    <code>Seadragon.DziImage.createFromDzi</code></a>.
+     * @param {string} [options.tilesUrl] See <a href="#createFromDzi"><code>Seadragon.DziImage.createFromDzi</code></a>
      * @param {Document} [options.bounds] Bounds in which an image must fit. If not given, we assume the rectangle
      *                                    <code>[0, 0, width x height]</code> where <code>width</code> and
      *                                    <code>height</code> are taken from DZI.
@@ -613,7 +612,7 @@ Seadragon.Controller = function Controller(seadragon) {
     function processDzi(options) {
         var imageNode = $(options.data.documentElement);
         if (!imageNode || imageNode.prop('tagName') !== 'Image') {
-            throw new Error('Sorry, we only support Deep Zoom Image!');
+            that.fail('Sorry, we only support Deep Zoom Image!');
         }
 
         var fileFormat = imageNode.attr('Format');
@@ -622,7 +621,7 @@ Seadragon.Controller = function Controller(seadragon) {
 
         var invalidFormatMessage = 'This doesn\'t appear to be a valid Deep Zoom Image.';
         if (!sizeNode) {
-            throw new Error(invalidFormatMessage);
+            that.fail(invalidFormatMessage);
         }
 
         var width = parseInt(sizeNode.attr('Width'), 10);
@@ -631,7 +630,7 @@ Seadragon.Controller = function Controller(seadragon) {
         var tileOverlap = parseInt(imageNode.attr('Overlap'), 10);
 
         if (!width || !height || !tileSize) {
-            throw new Error(invalidFormatMessage);
+            that.fail(invalidFormatMessage);
         }
 
         // If tilesUrl were not provided, the default path is the same as dziUrl with ".dzi" changed into "_files".
@@ -648,7 +647,7 @@ Seadragon.Controller = function Controller(seadragon) {
             tileOverlap: tileOverlap,
             tilesUrl: tilesUrl,
             fileFormat: fileFormat,
-            bounds: options.bounds
+            bounds: options.bounds,
         });
     }
 
@@ -657,7 +656,9 @@ Seadragon.Controller = function Controller(seadragon) {
      * Creates a DziImage instance from the DZI file.
      *
      * @param {Object} options  An object containing all given options.
-     * @param {string} options.dziUrl  An URL/path to the DZI file.
+     * @param {string} options.dziUrl  The URL/path to the DZI file.
+     * @param {string} [options.tilesUrl]  The URL/path to the tiles directory; by default it's the same
+     *                                     as <code>dziUrl<code> with '.dzi' changed to '_files'.
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
      * @param {number} [options.index]  If specified, an image is loaded into
@@ -677,7 +678,7 @@ Seadragon.Controller = function Controller(seadragon) {
                 onOpen(processDzi(options), options.index);
             },
             error: function (_, statusText) {
-                throw new Error('Unable to retrieve the given DZI file, does it really exist?\n' + statusText);
+                this.fail('Unable to retrieve the given DZI file, does it really exist?\n' + statusText);
             }
         });
 
@@ -689,10 +690,11 @@ Seadragon.Controller = function Controller(seadragon) {
      *
      * @param {string} dziUrl  The URL/path to the DZI file.
      * @param {Object} options  An object containing all given options.
-     * @param {string} options.tilesUrl  The URL/path to the tiles directory; by default it's the same
-     *                                   as <code>dziUrl<code> with '.dzi' changed to '_files'.
-     * @param {number} options.index  If specified, an image is loaded into <code>controller.tiledImages[index]</code>.
-     *                                Otherwise it's put at the end of the table.
+     * @param {string} [options.tilesUrl]  The URL/path to the tiles directory; by default it's the same
+     *                                     as <code>dziUrl<code> with '.dzi' changed to '_files'.
+     * @param {number} [options.index]  If specified, an image is loaded into
+     *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
+     *                                  the table.
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
      *//**
@@ -700,10 +702,11 @@ Seadragon.Controller = function Controller(seadragon) {
      *
      * @param {Object} options  An object containing all given options.
      * @param {string} options.dziUrl  The URL/path to the DZI file.
-     * @param {string} options.tilesUrl  The URL/path to the tiles directory; by default it's the same
-     *                                   as <code>dziUrl<code> with '.dzi' changed to '_files'.
-     * @param {number} options.index  If specified, an image is loaded into <code>controller.tiledImages[index]</code>.
-     *                                Otherwise it's put at the end of the table.
+     * @param {string} [options.tilesUrl]  The URL/path to the tiles directory; by default it's the same
+     *                                     as <code>dziUrl<code> with '.dzi' changed to '_files'.
+     * @param {number} [options.index]  If specified, an image is loaded into
+     *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
+     *                                  the table.
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
      */
@@ -716,7 +719,7 @@ Seadragon.Controller = function Controller(seadragon) {
         // Handling signature variations.
         var arguments0 = arguments[0];
         if (arguments0 == null) { // wrong invocation, reverting changes
-            throw new Error('No arguments passed to openDzi!');
+            this.fail('No arguments passed to openDzi!');
         }
         if (arguments0.dziUrl) {
             // Signature openDzi(options).
