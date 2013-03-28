@@ -329,7 +329,9 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function touchPointsNumberChanged(evt) {
         evt.preventDefault();
-        that.disableMagnifier(); // TODO handle magnifier in touch mode, too?
+        if (Seadragon.Magnifier) {
+            that.disableMagnifier(); // TODO handle magnifier in touch mode, too?
+        }
 
         $(document).off('touchmove.seadragon', onTouchMove); // we'll register it again
 
