@@ -228,7 +228,7 @@ Seadragon.Controller = function Controller(seadragon) {
             viewport = seadragon.viewport,
             blockMovement = seadragon.config.blockMovement;
 
-        var delta = position.minus(lastPosition);
+        var delta = lastPosition.minus(position);
         lastPosition = position;
 
         if (blockMovement.horizontal) {
@@ -237,7 +237,7 @@ Seadragon.Controller = function Controller(seadragon) {
         if (blockMovement.vertical) {
             delta.y = 0;
         }
-        viewport.panBy(viewport.deltaPointsFromPixels(delta.negate()), immediately);
+        viewport.panBy(viewport.deltaPointsFromPixels(delta), immediately);
     }
 
     /**
@@ -258,20 +258,17 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function zoomCanvas(evt) {
         var seadragon = that.seadragon,
-            config = seadragon.config,
-            viewport = seadragon.viewport;
+            viewport = seadragon.viewport,
+            config = seadragon.config;
 
-        if (config.blockZoom) {
-            return;
+        if (!config.blockZoom) {
+            viewport.zoomBy(
+                evt.deltaY > 0 ? // zooming out
+                    1 / config.zoomPerScroll :
+                    config.zoomPerScroll,
+                false,
+                viewport.pointFromPixel(that.getMousePosition(evt), true));
         }
-        var factor = config.zoomPerScroll;
-        if (evt.deltaY > 0) { // zooming out
-            factor = 1 / factor;
-        }
-        viewport.zoomBy(
-            factor,
-            false,
-            viewport.pointFromPixel(that.getMousePosition(evt), true));
     }
 
     /**
@@ -287,17 +284,16 @@ Seadragon.Controller = function Controller(seadragon) {
             viewport = seadragon.viewport,
             blockZoom = seadragon.config.blockZoom;
 
-        var touchStretch, zoomFactor;
+        var touchStretch;
         var targetTouches = evt.originalEvent.targetTouches;
 
         panToNewPosition(getTouchCenter(targetTouches), true); // pan immediately, touch devices are slow
 
         if (!blockZoom && targetTouches.length > 1) {
             touchStretch = getLastTouchStretch(targetTouches[0]);
-            zoomFactor = touchStretch / lastTouchStretch;
 
             viewport.zoomBy(
-                zoomFactor,
+                touchStretch / lastTouchStretch,
                 true, // touch zoom should be applied immediately
                 viewport.pointFromPixel(lastPosition, true));
 
