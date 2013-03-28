@@ -63,7 +63,7 @@ Seadragon.Picker = function Picker(seadragon) {
      */
     this.hide = function hide() {
         $(document).off({
-            'mouseup.seadragon': onMouseUp
+            'mouseup.seadragon': onMouseUp,
         });
         $pickerArea.hide();
         $pickerOverlay.detach();
@@ -99,7 +99,7 @@ Seadragon.Picker = function Picker(seadragon) {
         var Pos = {
             begin: 0,
             middle: 1,
-            end: 2
+            end: 2,
         };
         var xPos, yPos;
 
@@ -185,8 +185,8 @@ Seadragon.Picker = function Picker(seadragon) {
      * @param {number} left Position of the left edge of the rectangle when we move its right side.
      *                      Changes to mean position of the right side when mouse moves far to the left.
      * @param {number} top Like above but with 'left' changed to 'top' and 'right' to 'bottom'.
-     * @param {boolean} horizontally Do we allow horizontal resizing? Can be blocked if we drag by the edge.
-     * @param {boolean} vertically Do we allow vertical resizing?
+     * @param {boolean} [horizontally] Do we allow horizontal resizing? Can be blocked if we drag by the edge.
+     * @param {boolean} [vertically] Do we allow vertical resizing?
      * @private
      */
     function keepAdjustingArea(left, top, horizontally, vertically) {
@@ -209,13 +209,13 @@ Seadragon.Picker = function Picker(seadragon) {
                     if (pickerAreaMode.toBottom) {
                         $pickerArea.css({
                             top: top,
-                            height: mousePosition.y - top
+                            height: mousePosition.y - top,
                         });
                         cursorType += 's';
                     } else {
                         $pickerArea.css({
                             top: mousePosition.y,
-                            height: top - mousePosition.y
+                            height: top - mousePosition.y,
                         });
                         cursorType += 'n';
                     }
@@ -226,13 +226,13 @@ Seadragon.Picker = function Picker(seadragon) {
                     if (pickerAreaMode.toRight) {
                         $pickerArea.css({
                             left: left,
-                            width: mousePosition.x - left
+                            width: mousePosition.x - left,
                         });
                         cursorType += 'e';
                     } else {
                         $pickerArea.css({
                             left: mousePosition.x,
-                            width: left - mousePosition.x
+                            width: left - mousePosition.x,
                         });
                         cursorType += 'w';
                     }
@@ -347,7 +347,7 @@ Seadragon.Picker = function Picker(seadragon) {
                             left: left,
                             top: top,
                             width: 0,
-                            height: 0
+                            height: 0,
                         });
                         $pickerArea.show();
                         keepAdjustingArea(left, top);

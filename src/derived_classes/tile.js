@@ -158,7 +158,7 @@ $.extend(Seadragon.Tile.prototype,
          */
         draw: function draw(zoom, mousePosition) {
             if (!this.loaded) {
-                throw new Error('Attempting to draw tile ' + this.toString() + ' when it\'s not yet loaded.');
+                this.fail('Attempting to draw tile ' + this.toString() + ' when it\'s not yet loaded.');
             }
 
             var context = this.canvasContext,

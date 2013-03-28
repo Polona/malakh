@@ -36,7 +36,7 @@ Seadragon.DziImage = function DziImage(seadragon, options) {
         tileOverlap: options.tileOverlap,
         bounds: options.bounds,
         minLevel: options.minLevel,
-        maxLevel: options.maxLevel
+        maxLevel: options.maxLevel,
     });
 
     /**
