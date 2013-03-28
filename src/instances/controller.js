@@ -27,7 +27,7 @@ Seadragon.Controller = function Controller(seadragon) {
         tiledImagesCallbacks, // map: imageNumber -> functions to execute when image is loaded
         tiledImageBoundsUpdatesNums,
         tiledImagesToHandle,
-        lastPosition,
+        lastPosition, lastTouchStretch,
         containerSize,
         lockOnUpdates,
         wheelToPanEnabled;
@@ -149,7 +149,7 @@ Seadragon.Controller = function Controller(seadragon) {
     }
 
     /**
-     * Returns mouse position extracted from <code>event</code>.
+     * Returns mouse position extracted from <code>event</code> relative to the Seadragon canvas.
      *
      * @param {jQuery.Event} evt Mouse event.
      * @return {Seadragon.Point}
@@ -158,11 +158,6 @@ Seadragon.Controller = function Controller(seadragon) {
         var offset = that.$container.offset();
         return new Seadragon.Point(evt.pageX - offset.left, evt.pageY - offset.top);
     };
-
-    function onDocumentMouseUp() {
-        $(document).off('mousemove.seadragon', dragCanvas);
-        that.restoreUpdating();
-    }
 
     function wheelToZoom(evt) {
         if (that.config.enableMagnifier) {
@@ -208,6 +203,156 @@ Seadragon.Controller = function Controller(seadragon) {
         viewport.panBy(viewport.deltaPointsFromPixels(new Seadragon.Point(deltaX, deltaY)));
     }
 
+    /**
+     * Compute touch stretch (i.e. the current distance of the touch point to <code>lastPosition</code>,
+     * which is the center of gravity of all current touch points. This method is used to handle pinch-to-zoom.
+     *
+     * @param {Touch} touch
+     * @returns {number}
+     */
+    function getLastTouchStretch(touch) {
+        return lastPosition.minus(that.getMousePosition(touch)).distanceToCenter();
+    }
+
+    /**
+     * Pan from remembered <code>lastPosition</code> to provided <code>position</code>. When using mouse,
+     * <code>position</code> is the usual mouse position relative to Seadragon canvas. When using touch,
+     * it's a center of gravity of all current touch points.
+     *
+     * @param {Seadragon.Point} position
+     * @param {boolean} [immediately=false]
+     * @private
+     */
+    function panToNewPosition(position, immediately) {
+        var seadragon = that.seadragon,
+            viewport = seadragon.viewport,
+            blockMovement = seadragon.config.blockMovement;
+
+        var delta = position.minus(lastPosition);
+        lastPosition = position;
+
+        if (blockMovement.horizontal) {
+            delta.x = 0;
+        }
+        if (blockMovement.vertical) {
+            delta.y = 0;
+        }
+        viewport.panBy(viewport.deltaPointsFromPixels(delta.negate()), immediately);
+    }
+
+    /**
+     * Handler executed when user drags the canvas using their mouse.
+     *
+     * @param {jQuery.Event} evt Mouse event.
+     * @private
+     */
+    function dragCanvas(evt) {
+        panToNewPosition(that.getMousePosition(evt));
+    }
+
+    /**
+     * Handler executed when zooming using mouse wheel.
+     *
+     * @param {jQuery.Event} evt Mouse `wheel` event.
+     * @private
+     */
+    function zoomCanvas(evt) {
+        var seadragon = that.seadragon,
+            config = seadragon.config,
+            viewport = seadragon.viewport;
+
+        if (config.blockZoom) {
+            return;
+        }
+        var factor = config.zoomPerScroll;
+        if (evt.deltaY > 0) { // zooming out
+            factor = 1 / factor;
+        }
+        viewport.zoomBy(
+            factor,
+            false,
+            viewport.pointFromPixel(that.getMousePosition(evt), true));
+    }
+
+    /**
+     * `touchmove` event handler.
+     *
+     * @param {jQuery.Event} evt Touch `touchmove` event.
+     * @private
+     */
+    function onTouchMove(evt) {
+        evt.preventDefault();
+
+        var seadragon = that.seadragon,
+            viewport = seadragon.viewport,
+            blockZoom = seadragon.config.blockZoom;
+
+        var touchStretch, zoomFactor;
+        var targetTouches = evt.originalEvent.targetTouches;
+
+        panToNewPosition(getTouchCenter(targetTouches), true); // pan immediately, touch devices are slow
+
+        if (!blockZoom && targetTouches.length > 1) {
+            touchStretch = getLastTouchStretch(targetTouches[0]);
+            zoomFactor = touchStretch / lastTouchStretch;
+
+            viewport.zoomBy(
+                zoomFactor,
+                true, // touch zoom should be applied immediately
+                viewport.pointFromPixel(lastPosition, true));
+
+            lastTouchStretch = touchStretch;
+        }
+    }
+
+    /**
+     * Returns the center of gravity of all current touch points.
+     *
+     * @param {TouchList} touches
+     * @returns {Seadragon.Point}
+     * @private
+     */
+    function getTouchCenter(touches) {
+        var touchesX = 0, touchesY = 0, touchesLength = touches.length;
+        for (var i = 0; i < touchesLength; i++) {
+            var relativeTouch = that.getMousePosition(touches[i]);
+            touchesX += relativeTouch.x;
+            touchesY += relativeTouch.y;
+        }
+        touchesX /= touchesLength;
+        touchesY /= touchesLength;
+        return new Seadragon.Point(touchesX, touchesY);
+    }
+
+    /**
+     * Event handler for `touchstart` or `touchend`. Each time the number of touch points changes their center
+     * of gravity is computed as well as the current distance of the first touch point to this gravity center. This
+     * distance, saved in a <code>lastTouchStretch</code> variable is used to implement pinch-to-zoom.
+     *
+     * @param {jQuery.Event} evt  `touchstart` or `touchend` jQuery event.
+     */
+    function touchPointsNumberChanged(evt) {
+        evt.preventDefault();
+        that.disableMagnifier(); // TODO handle magnifier in touch mode, too?
+
+        $(document).off('touchmove.seadragon', onTouchMove); // we'll register it again
+
+        var targetTouches = evt.originalEvent.targetTouches;
+        var targetTouchesLength = targetTouches.length;
+
+        if (targetTouchesLength > 0) {
+            lastPosition = getTouchCenter(targetTouches);
+            if (targetTouchesLength > 1) {
+                // Count the distance of the first touch point to the center;
+                // pinch-to-zoom will be handled using it.
+                lastTouchStretch = getLastTouchStretch(targetTouches[0]);
+            }
+            $(document).on('touchmove.seadragon', onTouchMove);
+        }
+
+        that.restoreUpdating();
+    }
+
     function bindEvents() {
         that.$canvas.on({
             'mouseenter.seadragon': function () {
@@ -231,6 +376,9 @@ Seadragon.Controller = function Controller(seadragon) {
             },
 
             'wheel.seadragon': wheelToZoom,
+
+            'touchstart.seadragon': touchPointsNumberChanged,
+            'touchend.seadragon': touchPointsNumberChanged,
         });
 
         that.$container.on({
@@ -245,7 +393,11 @@ Seadragon.Controller = function Controller(seadragon) {
             }
         });
 
-        $(document).on('mouseup.seadragon', onDocumentMouseUp);
+        $(document).on({
+            'mouseup.seadragon': function () {
+                $(document).off('mousemove.seadragon', dragCanvas);
+            },
+        });
         $(window).on('resize.seadragon', that.restoreUpdating);
     }
 
@@ -294,57 +446,6 @@ Seadragon.Controller = function Controller(seadragon) {
         }
         return this;
     };
-
-    /**
-     * Handler executed when user drags the canvas using their mouse.
-     *
-     * @param {jQuery.Event} evt Mouse event.
-     * @private
-     */
-    function dragCanvas(evt) {
-        var seadragon = that.seadragon,
-            viewport = seadragon.viewport,
-            config = seadragon.config;
-
-        var position = that.getMousePosition(evt);
-        var delta = position.minus(lastPosition);
-
-        var blockMovement = config.blockMovement;
-        if (blockMovement.horizontal) {
-            delta.x = 0;
-        }
-        if (blockMovement.vertical) {
-            delta.y = 0;
-        }
-        viewport.panBy(viewport.deltaPointsFromPixels(delta.negate()));
-
-        lastPosition = position;
-    }
-
-    /**
-     * Handler executed when zooming using mouse wheel.
-     *
-     * @param {jQuery.Event} evt Mouse 'wheel' event.
-     * @private
-     */
-    function zoomCanvas(evt) {
-        var seadragon = that.seadragon,
-            config = seadragon.config,
-            viewport = seadragon.viewport;
-
-        if (config.blockZoom) {
-            return;
-        }
-        var factor = config.zoomPerScroll;
-        if (evt.deltaY > 0) { // zooming out
-            factor = 1 / factor;
-        }
-        viewport.zoomBy(
-            factor,
-            false,
-            viewport.pointFromPixel(that.getMousePosition(evt), true));
-    }
-
 
     /**
      * Moves the magnifier to mouse position determined by <code>event</code>.
