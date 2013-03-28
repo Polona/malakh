@@ -113,6 +113,16 @@ $.extend(Seadragon.Point.prototype,
         },
 
         /**
+         * Calculates a distance to (0, 0).
+         *
+         * @return {number}
+         */
+        distanceToCenter: function distanceToCenter() {
+            // There should be a point here but we use its x & y parameters only anyway.
+            return this.distanceTo({x: 0, y: 0});
+        },
+
+        /**
          * Applies a function to both of point fields.
          *
          * @param {function} func
