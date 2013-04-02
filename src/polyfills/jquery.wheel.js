@@ -1,8 +1,8 @@
 /**
- * Author: Michał Gołębiowski <michal.golebiowski@laboratorium.ee>
- * Author: Brandon Aaron (http://brandonaaron.net)
- * Copyright (c) 2011 Brandon Aaron (http://brandonaaron.net)
- * Copyright (c) 2013 Laboratorium EE (http://laboratorium.ee)
+ * Author & Copyright: Michał Gołębiowski <m.goleb@gmail.com>
+ * License: MIT
+ *
+ * Thanks to Brandon Aaron (http://brandonaaron.net) for the idea of this plugin.
  */
 
 (function ($) {
@@ -10,8 +10,12 @@
         return;
     }
 
-    // Modern browsers support 'wheel', others - 'mousewheel'.
-    var nativeEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
+    // Modern browsers support `wheel`, WebKit & Opera - `mousewheel`.
+    var nativeEvent = ('onwheel' in document.createElement('div') ||
+        // IE>=9 supports `wheel` via `addEventListener` but exposes no `onwheel` attribute on DOM elements
+        // making feature detection impossible :(
+        navigator.appName === 'Microsoft Internet Explorer' && document.documentMode > 8) ?
+        'wheel' : 'mousewheel';
 
     // Normalizing event properties for the 'wheel' event (like event.which etc.).
     if (nativeEvent === 'wheel') {
@@ -23,7 +27,6 @@
     }
 
     function handler(orgEvent) {
-        // Handler for the 'mousewheel' event (Chrome, Opera, Safari).
         /* jshint validthis: true */ // event handler
 
         var event = $.event.fix(orgEvent);
