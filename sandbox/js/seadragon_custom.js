@@ -52,8 +52,8 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
 
     // Buttons.
     $('#animations_off').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             animationsOff = !animationsOff;
@@ -68,8 +68,8 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     });
 
     $('#dont_center').on({
-        click: function () {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             seadragon.config.centerWhenZoomedOut = !seadragon.config.centerWhenZoomedOut;
@@ -78,8 +78,8 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     });
 
     $('#zoom_off').on({
-        click: function () {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             seadragon.config.blockZoom = !seadragon.config.blockZoom;
@@ -88,8 +88,8 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     });
 
     $('#tile_borders').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             seadragon.config.debugTileBorders = !seadragon.config.debugTileBorders;
@@ -100,12 +100,12 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     var $magnifier = $('#magnifier');
     if (Seadragon.Magnifier) {
         $magnifier.on({
-            click: function (event) {
-                if (event.which !== 1) { // Only left-click is supported.
+            click: function (evt) {
+                if (evt.which !== 1) { // Only left-click is supported.
                     return;
                 }
                 if (seadragon.config.enablePicker) {
-                    $('#picker').trigger(event); // turn off the picker
+                    $('#picker').trigger(evt); // turn off the picker
                 }
                 seadragon.toggleMagnifier();
                 $(this).css('background-color', buttonColors[seadragon.config.enableMagnifier]);
@@ -118,12 +118,12 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     var $picker = $('#picker');
     if (Seadragon.Picker) {
         $picker.on({
-            click: function (event) {
-                if (event.which !== 1) { // Only left-click is supported.
+            click: function (evt) {
+                if (evt.which !== 1) { // Only left-click is supported.
                     return;
                 }
                 if (seadragon.config.enableMagnifier) {
-                    $('#magnifier').trigger(event); // turn off the magnifier
+                    $('#magnifier').trigger(evt); // turn off the magnifier
                 }
                 seadragon.togglePicker();
                 $(this).css('background-color', buttonColors[seadragon.config.enablePicker]);
@@ -135,102 +135,102 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
 
 
     $('#align_row').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             if (constrainToImage2 || constrainToImage16) {
                 return;
             }
             if (seadragon.config.enablePicker) {
-                $('#picker').trigger(event); // turn off the picker
+                $('#picker').trigger(evt); // turn off the picker
             }
             seadragon.alignRows(6000, 100, Infinity);
         }
     });
 
     $('#align_column').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             if (constrainToImage2 || constrainToImage16) {
                 return;
             }
             if (seadragon.config.enablePicker) {
-                $('#picker').trigger(event); // turn off the picker
+                $('#picker').trigger(evt); // turn off the picker
             }
             seadragon.alignColumns(6000, 100, Infinity);
         }
     });
 
     $('#align_rows').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             if (constrainToImage2 || constrainToImage16) {
                 return;
             }
             if (seadragon.config.enablePicker) {
-                $('#picker').trigger(event); // turn off the picker
+                $('#picker').trigger(evt); // turn off the picker
             }
             seadragon.alignRows(6000, 100, 100000);
         }
     });
 
     $('#align_columns').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             if (constrainToImage2 || constrainToImage16) {
                 return;
             }
             if (seadragon.config.enablePicker) {
-                $('#picker').trigger(event); // turn off the picker
+                $('#picker').trigger(evt); // turn off the picker
             }
             seadragon.alignColumns(6000, 100, 100000);
         }
     });
 
     $('#fit_image_2').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             if (constrainToImage16) {
                 return;
             }
             if (seadragon.config.enablePicker) {
-                $('#picker').trigger(event); // turn off the picker
+                $('#picker').trigger(evt); // turn off the picker
             }
             seadragon.fitImage(2);
         }
     });
 
     $('#fit_image_16').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             if (constrainToImage2) {
                 return;
             }
             if (seadragon.config.enablePicker) {
-                $('#picker').trigger(event); // turn off the picker
+                $('#picker').trigger(evt); // turn off the picker
             }
             seadragon.fitImage(16);
         }
     });
 
     $('#constrain_to_image_2').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             if (seadragon.config.enablePicker) {
-                $('#picker').trigger(event); // turn off the picker
+                $('#picker').trigger(evt); // turn off the picker
             }
             constrainToImage2 = !constrainToImage2;
             $(this).css('background-color', buttonColors[constrainToImage2]);
@@ -246,12 +246,12 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     });
 
     $('#constrain_to_image_16').on({
-        click: function (event) {
-            if (event.which !== 1) { // Only left-click is supported.
+        click: function (evt) {
+            if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
             if (seadragon.config.enablePicker) {
-                $('#picker').trigger(event); // turn off the picker
+                $('#picker').trigger(evt); // turn off the picker
             }
             constrainToImage16 = !constrainToImage16;
             $(this).css('background-color', buttonColors[constrainToImage16]);
