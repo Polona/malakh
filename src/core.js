@@ -164,6 +164,15 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
 
 
         /**
+         * How much to scale <code>wheel</code> <code>deltaX</code> and <code>deltaY</code> values when
+         * using the <code>wheel</code> event to pan instead of zooming.
+         *
+         * @type number
+         */
+        wheelToPanScale: 0.5,
+
+
+        /**
          * Maximum number of tile images to keep in cache.
          * @type number
          */

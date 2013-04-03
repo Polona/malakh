@@ -160,6 +160,8 @@ Seadragon.Controller = function Controller(seadragon) {
     };
 
     function wheelToZoom(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
         if (that.config.enableMagnifier) {
             return;
         }
@@ -169,7 +171,7 @@ Seadragon.Controller = function Controller(seadragon) {
 
     function wheelToPan(evt) {
         evt.preventDefault(); // block gestures for back/forward history navigation
-        evt.stopImmediatePropagation();
+        evt.stopPropagation();
 
         var deltaX, deltaY, scale;
 
@@ -190,6 +192,7 @@ Seadragon.Controller = function Controller(seadragon) {
             default:
                 that.fail('SeadragonManagerView#toggleBlockZoom: deltaMode not recognized', evt.deltaMode, evt);
         }
+        scale *= seadragon.config.wheelToPanScale; // panning using wheel can have different speed than zooming
         deltaX = scale * evt.deltaX;
         deltaY = scale * evt.deltaY;
 
