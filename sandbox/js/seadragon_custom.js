@@ -58,10 +58,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             }
             animationsOff = !animationsOff;
             if (animationsOff) {
-                seadragon.config.shortAnimationTime = seadragon.config.longAnimationTime = 0;
+                seadragon.config.animationTime = seadragon.config.zoomAnimationTime = 0;
             } else {
-                seadragon.config.shortAnimationTime = initialShortAnimationTime;
-                seadragon.config.longAnimationTime = initialLongAnimationTime;
+                seadragon.config.animationTime = initialShortAnimationTime;
+                seadragon.config.zoomAnimationTime = initialLongAnimationTime;
             }
             $(this).css('background-color', buttonColors[animationsOff]);
         }
