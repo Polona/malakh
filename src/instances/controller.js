@@ -209,7 +209,11 @@ Seadragon.Controller = function Controller(seadragon) {
         deltaX = scale * evt.deltaX;
         deltaY = scale * evt.deltaY;
 
-        viewport.panBy(viewport.deltaPointsFromPixels(new Seadragon.Point(deltaX, deltaY)));
+        viewport.panBy(
+            viewport.deltaPointsFromPixels(new Seadragon.Point(deltaX, deltaY)),
+            false, {
+                animationTimeConfigParameter: 'mouseAnimationTime', // panning by mouse should be slower
+            });
     }
 
     /**
