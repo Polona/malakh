@@ -156,12 +156,12 @@ $.extend(Seadragon.Viewport.prototype,
                 distanceToTopLeft.x / oldBounds.width,
                 distanceToTopLeft.y / oldBounds.height);
 
-            this.springs.width.springTo(this.containerSize.x / zoom, immediately, 'zoomAnimationTime');
-            this.springs.height.springTo(this.springs.width.targetValue / aspect, immediately, 'zoomAnimationTime');
+            this.springs.width.springTo(this.containerSize.x / zoom, immediately, 'mouseAnimationTime');
+            this.springs.height.springTo(this.springs.width.targetValue / aspect, immediately, 'mouseAnimationTime');
             this.springs.x.springTo(refPoint.x - refPointRelativeDimensions.x * this.springs.width.targetValue,
-                immediately, 'zoomAnimationTime');
+                immediately, 'mouseAnimationTime');
             this.springs.y.springTo(refPoint.y - refPointRelativeDimensions.y * this.springs.height.targetValue,
-                immediately, 'zoomAnimationTime');
+                immediately, 'mouseAnimationTime');
 
             if (!dontApplyConstraints) {
                 this.applyConstraints(immediately, refPoint);
@@ -389,9 +389,9 @@ $.extend(Seadragon.Viewport.prototype,
             }
 
             if (needToAdjust) {
-                // 'zoomAnimationTime' is needed because correcting a long animation using a short one
+                // 'mouseAnimationTime' is needed because correcting a long animation using a short one
                 // causes a jumping effect (and very visible one at that).
-                this.panTo(vR.getCenter(), immediately, true, 'zoomAnimationTime');
+                this.panTo(vR.getCenter(), immediately, true, 'mouseAnimationTime');
             }
 
             return this;
