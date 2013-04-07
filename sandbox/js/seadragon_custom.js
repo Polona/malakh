@@ -9,7 +9,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         true: '#2e8b57',
     };
     var dziPrefix = 'seadragon_data/';
-    var initialShortAnimationTime, initialLongAnimationTime;
+    var initialAnimationTime, initialMouseAnimationTime;
 
     var animationsOff = false;
 
@@ -21,8 +21,8 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     // Seadragon initialization:
     seadragon = new Seadragon(containerSelectorOrElement,
         $.extend({}, {backgroundColor: '#2d2a2b'}, configOverrides));
-    initialShortAnimationTime = seadragon.config.animationTime;
-    initialLongAnimationTime = seadragon.config.zoomAnimationTime;
+    initialAnimationTime = seadragon.config.animationTime;
+    initialMouseAnimationTime = seadragon.config.mouseAnimationTime;
 
     function openNorblinDZIsInARow() {
         dziDataArray = [];
@@ -58,10 +58,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             }
             animationsOff = !animationsOff;
             if (animationsOff) {
-                seadragon.config.animationTime = seadragon.config.zoomAnimationTime = 0;
+                seadragon.config.animationTime = seadragon.config.mouseAnimationTime = 0;
             } else {
-                seadragon.config.animationTime = initialShortAnimationTime;
-                seadragon.config.zoomAnimationTime = initialLongAnimationTime;
+                seadragon.config.animationTime = initialAnimationTime;
+                seadragon.config.mouseAnimationTime = initialMouseAnimationTime;
             }
             $(this).css('background-color', buttonColors[animationsOff]);
         }

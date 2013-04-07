@@ -165,7 +165,22 @@ Seadragon.Controller = function Controller(seadragon) {
         if (that.config.enableMagnifier) {
             return;
         }
-        zoomCanvas(evt);
+
+        var seadragon = that.seadragon,
+            viewport = seadragon.viewport,
+            config = seadragon.config;
+
+        if (!config.blockZoom) {
+            if (evt.deltaY) { // deltaY can be 0 if we're scrolling horizontally
+                viewport.zoomBy(
+                    evt.deltaY > 0 ? // zooming out
+                        1 / config.zoomPerScroll :
+                        config.zoomPerScroll,
+                    false,
+                    viewport.pointFromPixel(that.getMousePosition(evt), true));
+            }
+        }
+
         that.restoreUpdating();
     }
 
@@ -173,11 +188,9 @@ Seadragon.Controller = function Controller(seadragon) {
         evt.preventDefault(); // block gestures for back/forward history navigation
         evt.stopPropagation();
 
-        var deltaX, deltaY, scale;
-
-        var seadragon = that.seadragon,
-            viewport = seadragon.viewport,
-            $container = seadragon.$container;
+        var scale, deltaX, deltaY,
+            seadragon = that.seadragon,
+            viewport = seadragon.viewport;
 
         switch (evt.deltaMode) {
             case 0: // deltas in pixels
@@ -187,7 +200,7 @@ Seadragon.Controller = function Controller(seadragon) {
                 scale = 14; // default line-height, I guess
                 break;
             case 2: // deltas in pages
-                scale = parseFloat($container.css('height'));
+                scale = parseFloat(seadragon.$container.css('height'));
                 break;
             default:
                 that.fail('SeadragonManagerView#toggleBlockZoom: deltaMode not recognized', evt.deltaMode, evt);
@@ -196,14 +209,11 @@ Seadragon.Controller = function Controller(seadragon) {
         deltaX = scale * evt.deltaX;
         deltaY = scale * evt.deltaY;
 
-        if (evt.shiftKey) {
-            // Swap deltaX & deltaY (thus, if deltaX is missing, we can scroll horizontally).
-            var oldDeltaX = deltaX;
-            deltaX = deltaY;
-            deltaY = oldDeltaX;
-        }
-
-        viewport.panBy(viewport.deltaPointsFromPixels(new Seadragon.Point(deltaX, deltaY)));
+        viewport.panBy(
+            viewport.deltaPointsFromPixels(new Seadragon.Point(deltaX, deltaY)),
+            false, {
+                animationTimeConfigParameter: 'mouseAnimationTime', // panning by mouse should be slower
+            });
     }
 
     /**
@@ -251,27 +261,6 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function dragCanvas(evt) {
         panToNewPosition(that.getMousePosition(evt));
-    }
-
-    /**
-     * Handler executed when zooming using mouse wheel.
-     *
-     * @param {jQuery.Event} evt Mouse `wheel` event.
-     * @private
-     */
-    function zoomCanvas(evt) {
-        var seadragon = that.seadragon,
-            viewport = seadragon.viewport,
-            config = seadragon.config;
-
-        if (!config.blockZoom) {
-            viewport.zoomBy(
-                evt.deltaY > 0 ? // zooming out
-                    1 / config.zoomPerScroll :
-                    config.zoomPerScroll,
-                false,
-                viewport.pointFromPixel(that.getMousePosition(evt), true));
-        }
     }
 
     /**

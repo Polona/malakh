@@ -156,12 +156,12 @@ $.extend(Seadragon.Viewport.prototype,
                 distanceToTopLeft.x / oldBounds.width,
                 distanceToTopLeft.y / oldBounds.height);
 
-            this.springs.width.springTo(this.containerSize.x / zoom, immediately, 'zoomAnimationTime');
-            this.springs.height.springTo(this.springs.width.targetValue / aspect, immediately, 'zoomAnimationTime');
+            this.springs.width.springTo(this.containerSize.x / zoom, immediately, 'mouseAnimationTime');
+            this.springs.height.springTo(this.springs.width.targetValue / aspect, immediately, 'mouseAnimationTime');
             this.springs.x.springTo(refPoint.x - refPointRelativeDimensions.x * this.springs.width.targetValue,
-                immediately, 'zoomAnimationTime');
+                immediately, 'mouseAnimationTime');
             this.springs.y.springTo(refPoint.y - refPointRelativeDimensions.y * this.springs.height.targetValue,
-                immediately, 'zoomAnimationTime');
+                immediately, 'mouseAnimationTime');
 
             if (!dontApplyConstraints) {
                 this.applyConstraints(immediately, refPoint);
@@ -189,10 +189,10 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {Seadragon.Point} center
          * @param {boolean} [immediately=false]
          */
-        panTo: function panTo(center, immediately, /* boolean INTERNAL */ dontApplyConstraints, /* string INTERNAL */
-                              animationTimeConfigParameter) {
-            parentPrototype.panTo.call(this, center, immediately, animationTimeConfigParameter);
-            if (!dontApplyConstraints) {
+        panTo: function panTo(center, immediately, /* Object INTERNAL */ options) {
+            options = options || {};
+            parentPrototype.panTo.call(this, center, immediately, options.animationTimeConfigParameter);
+            if (!options.dontApplyConstraints) {
                 this.applyConstraints(false);
             }
             this.$container.trigger('seadragon:force_redraw');
@@ -205,10 +205,8 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {Seadragon.Point} delta A vector by which we pan the viewport.
          * @param {boolean} [immediately=false]
          */
-        panBy: function panBy(delta, immediately, /* boolean INTERNAL */ dontApplyConstraints, /* string INTERNAL */
-                              animationTimeConfigParameter) {
-            return this.panTo(this.getCenter().plus(delta), immediately,
-                dontApplyConstraints, animationTimeConfigParameter);
+        panBy: function panBy(delta, immediately, /* Object INTERNAL */ options) {
+            return this.panTo(this.getCenter().plus(delta), immediately, options);
         },
 
         /**
@@ -389,9 +387,9 @@ $.extend(Seadragon.Viewport.prototype,
             }
 
             if (needToAdjust) {
-                // 'zoomAnimationTime' is needed because correcting a long animation using a short one
+                // 'mouseAnimationTime' is needed because correcting a long animation using a short one
                 // causes a jumping effect (and very visible one at that).
-                this.panTo(vR.getCenter(), immediately, true, 'zoomAnimationTime');
+                this.panTo(vR.getCenter(), immediately, true, 'mouseAnimationTime');
             }
 
             return this;
