@@ -189,10 +189,10 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {Seadragon.Point} center
          * @param {boolean} [immediately=false]
          */
-        panTo: function panTo(center, immediately, /* boolean INTERNAL */ dontApplyConstraints, /* string INTERNAL */
-                              animationTimeConfigParameter) {
-            parentPrototype.panTo.call(this, center, immediately, animationTimeConfigParameter);
-            if (!dontApplyConstraints) {
+        panTo: function panTo(center, immediately, /* Object INTERNAL */ options) {
+            options = options || {};
+            parentPrototype.panTo.call(this, center, immediately, options.animationTimeConfigParameter);
+            if (!options.dontApplyConstraints) {
                 this.applyConstraints(false);
             }
             this.$container.trigger('seadragon:force_redraw');
@@ -205,10 +205,8 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {Seadragon.Point} delta A vector by which we pan the viewport.
          * @param {boolean} [immediately=false]
          */
-        panBy: function panBy(delta, immediately, /* boolean INTERNAL */ dontApplyConstraints, /* string INTERNAL */
-                              animationTimeConfigParameter) {
-            return this.panTo(this.getCenter().plus(delta), immediately,
-                dontApplyConstraints, animationTimeConfigParameter);
+        panBy: function panBy(delta, immediately, /* Object INTERNAL */ options) {
+            return this.panTo(this.getCenter().plus(delta), immediately, options);
         },
 
         /**

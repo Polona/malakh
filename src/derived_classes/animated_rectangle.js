@@ -186,7 +186,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
         },
 
         /**
-         * Pans the viewport to a given center.
+         * Pans the animated rectangle to a given center.
          *
          * @param {Seadragon.Point} center
          * @param {boolean} [immediately=false]
@@ -203,7 +203,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
         },
 
         /**
-         * Pans the viewport by a given <code>delta</code> vector.
+         * Pans the animated rectangle by a given <code>delta</code> vector.
          * @param {Seadragon.Point} delta
          * @param {boolean} [immediately=false]
          */
