@@ -88,7 +88,7 @@ $.extend(Seadragon.Spring.prototype,
          * current or target value is returned.
          *
          * @param {boolean} [current=false] Do we want the current value to be returned?
-         * @return {boolean}
+         * @return {number}
          */
         get: function get(current) {
             if (current) {
