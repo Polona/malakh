@@ -389,8 +389,8 @@ $.extend(Seadragon.Viewport.prototype,
             if (needToAdjust) {
                 // 'mouseAnimationTime' is needed because correcting a long animation using a short one
                 // causes a jumping effect (and very visible one at that).
-                this.panTo(vR.getCenter(), immediately, {
-                    immediately: true,
+                this.panTo(vR.getCenter(), true, {
+                    dontApplyConstraints: true,
                     animationTimeConfigParameter: 'mouseAnimationTime'
                 });
             }
