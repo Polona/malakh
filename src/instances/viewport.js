@@ -293,18 +293,18 @@ $.extend(Seadragon.Viewport.prototype,
                 console.error('Can\'t apply constraints because constraintBounds is not set.');
                 return this;
             }
-            var scale, minZoomScale, maxZoomScale, pixelSize;
+            var scale, minZoomScale, maxZoomScale, pixelSize,
 
-            var needToAdjust = false;
-            var whatToScale = 'height';
+                needToAdjust = false,
+                whatToScale = 'height',
 
-            var config = this.seadragon.config;
+                config = this.seadragon.config,
 
-            var cR = this.constraintBounds; // constraints rectangle
-            var vR = this.getRectangle(); // viewport rectangle
+                cR = this.constraintBounds, // constraints rectangle
+                vR = this.getRectangle(), // viewport rectangle
 
-            var viewportRatio = vR.getAspectRatio();
-            var constraintsRatio = cR.width / cR.height;
+                viewportRatio = vR.getAspectRatio(),
+                constraintsRatio = cR.width / cR.height;
 
             if (viewportRatio < constraintsRatio) { // Empty borders on top and bottom.
                 // We will turn this case into the latter one.
@@ -342,6 +342,9 @@ $.extend(Seadragon.Viewport.prototype,
             }
 
             /// PANNING PART
+            // The viewport rectangle gets adjusted to take margins into account but only for panning, not zooming.
+            vR.scaleAroundCenter(1 - 2 * config.marginFactor);
+
             var parameterPairs = [
                 {start: 'x', length: 'width'},
                 {start: 'y', length: 'height'}
@@ -352,13 +355,14 @@ $.extend(Seadragon.Viewport.prototype,
                 var length = pair.length;
 
                 if (vR[length] > cR[length]) {
-                    if (config.centerWhenZoomedOut) {
+                    if (config.centerWhenZoomedOut && config.marginFactor === 0) {
                         // If the image is zoomed out so that its height/width is
                         // smaller than constraints, center it.
+                        // marginFactor === 0 is required because otherwise implementation would be inconsistent.
                         needToAdjust = true;
                         vR[start] = cR[start] + cR[length] / 2 - vR[length] / 2;
                     } else {
-                        // Just don't allow going outside of the container.
+                        // Just don't allow going too far outside of the container.
                         if (vR[start] > cR[start]) {
                             needToAdjust = true;
                             vR[start] = cR[start];
@@ -368,8 +372,10 @@ $.extend(Seadragon.Viewport.prototype,
                         }
                     }
                 }
-                else if ((vR[start] < cR[start] && vR[start] + vR[length] < cR[start] + cR[length]) ||
-                    (vR[start] > cR[start] && vR[start] + vR[length] > cR[start] + cR[length])) {
+                else if ((vR[start] < cR[start] &&
+                    vR[start] + vR[length] < cR[start] + cR[length]) ||
+                    (vR[start] > cR[start] &&
+                        vR[start] + vR[length] > cR[start] + cR[length])) {
                     // Too far on the left/top.
                     needToAdjust = true;
 
