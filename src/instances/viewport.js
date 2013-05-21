@@ -293,18 +293,18 @@ $.extend(Seadragon.Viewport.prototype,
                 console.error('Can\'t apply constraints because constraintBounds is not set.');
                 return this;
             }
-            var scale, minZoomScale, maxZoomScale, pixelSize;
+            var scale, minZoomScale, maxZoomScale, pixelSize,
 
-            var needToAdjust = false;
-            var whatToScale = 'height';
+                adjustmendNeeded = false,
+                whatToScale = 'height',
 
-            var config = this.seadragon.config;
+                config = this.seadragon.config,
 
-            var cR = this.constraintBounds; // constraints rectangle
-            var vR = this.getRectangle(); // viewport rectangle
+                cR = this.constraintBounds, // rectangle of constraints
+                vR = this.getRectangle(), // viewport rectangle
 
-            var viewportRatio = vR.getAspectRatio();
-            var constraintsRatio = cR.width / cR.height;
+                viewportRatio = vR.getAspectRatio(),
+                constraintsRatio = cR.width / cR.height;
 
             if (viewportRatio < constraintsRatio) { // Empty borders on top and bottom.
                 // We will turn this case into the latter one.
@@ -315,15 +315,15 @@ $.extend(Seadragon.Viewport.prototype,
             // Now we assume viewportRatio < constraintsRatio which means empty borders on sides.
             if (vR[whatToScale] * this.config.minVisibilityRatio > cR[whatToScale] || setMinMaxZoom) {
                 // Too small, we need to zoom in.
-                needToAdjust = !setMinMaxZoom;
+                adjustmendNeeded = !setMinMaxZoom;
                 scale = minZoomScale = vR[whatToScale] * this.config.minVisibilityRatio / cR[whatToScale];
             }
-            if (!needToAdjust || setMinMaxZoom) {
-                // We check for `!needToAdjust` just in case the image is so small it would fit in both scenarios;
+            if (!adjustmendNeeded || setMinMaxZoom) {
+                // We check for `!adjustmendNeeded` just in case the image is so small it would fit in both scenarios;
                 // we want to aviod flicker in some cases and we prefer zooming in too much than zooming out too much.
                 pixelSize = this.getZoom() * this.minTiledImageWidthScale;
                 if (pixelSize > config.maxTiledImageStretch || setMinMaxZoom) { // We've zoomed in too much
-                    needToAdjust = !setMinMaxZoom;
+                    adjustmendNeeded = !setMinMaxZoom;
                     scale = maxZoomScale = config.maxTiledImageStretch / pixelSize;
                 }
             }
@@ -332,7 +332,7 @@ $.extend(Seadragon.Viewport.prototype,
                 this._maxZoom = this.getZoom() * maxZoomScale;
             }
 
-            if (needToAdjust) {
+            if (adjustmendNeeded) {
                 this.zoomBy(scale, immediately, refPoint, true);
                 vR = this.getRectangle();
             }
@@ -342,6 +342,9 @@ $.extend(Seadragon.Viewport.prototype,
             }
 
             /// PANNING PART
+            // The viewport rectangle gets adjusted to take margins into account but only for panning, not zooming.
+            vR.scaleAroundCenter(1 - 2 * config.marginFactor);
+
             var parameterPairs = [
                 {start: 'x', length: 'width'},
                 {start: 'y', length: 'height'}
@@ -352,26 +355,29 @@ $.extend(Seadragon.Viewport.prototype,
                 var length = pair.length;
 
                 if (vR[length] > cR[length]) {
-                    if (config.centerWhenZoomedOut) {
+                    if (config.centerWhenZoomedOut && config.marginFactor === 0) {
                         // If the image is zoomed out so that its height/width is
                         // smaller than constraints, center it.
-                        needToAdjust = true;
+                        // marginFactor === 0 is required because otherwise implementation would be inconsistent.
+                        adjustmendNeeded = true;
                         vR[start] = cR[start] + cR[length] / 2 - vR[length] / 2;
                     } else {
-                        // Just don't allow going outside of the container.
+                        // Just don't allow going too far outside of the container.
                         if (vR[start] > cR[start]) {
-                            needToAdjust = true;
+                            adjustmendNeeded = true;
                             vR[start] = cR[start];
                         } else if (vR[start] + vR[length] < cR[start] + cR[length]) {
-                            needToAdjust = true;
+                            adjustmendNeeded = true;
                             vR[start] = cR[start] + cR[length] - vR[length];
                         }
                     }
                 }
-                else if ((vR[start] < cR[start] && vR[start] + vR[length] < cR[start] + cR[length]) ||
-                    (vR[start] > cR[start] && vR[start] + vR[length] > cR[start] + cR[length])) {
+                else if ((vR[start] < cR[start] &&
+                    vR[start] + vR[length] < cR[start] + cR[length]) ||
+                    (vR[start] > cR[start] &&
+                        vR[start] + vR[length] > cR[start] + cR[length])) {
                     // Too far on the left/top.
-                    needToAdjust = true;
+                    adjustmendNeeded = true;
 
                     // We need to choose the smaller delta so that we don't make
                     // the image jump from side to side.
@@ -386,7 +392,7 @@ $.extend(Seadragon.Viewport.prototype,
                 }
             }
 
-            if (needToAdjust) {
+            if (adjustmendNeeded) {
                 // 'mouseAnimationTime' is needed because correcting a long animation using a short one
                 // causes a jumping effect (and very visible one at that).
                 this.panTo(vR.getCenter(), immediately, {

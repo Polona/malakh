@@ -132,6 +132,15 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          */
         maxTiledImageStretch: 1,
         /**
+         * <p>This parameter enlarges the target constraints rectangle when using <code>LayoutManager#fitImage</code>.
+         * This makes it possible to pan the zoomed image a little further from edges.
+         *
+         * <p>The margin size is treated as percent of the smaller edge.
+         *
+         * @type number
+         */
+        marginFactor: 0,
+        /**
          * <p>Modern browsers support subpixel precision when drawing on canvas. Utilizing it eliminates
          * the ugly "jumping effect" between tiles.
          *
@@ -377,9 +386,12 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
     // Setup getters/setters.
     this
     /**
-     * If image is zoomed out so that its width is smaller than the container width, this switch means
+     * <p>If image is zoomed out so that its width is smaller than the container width, this switch means
      * the image is being kept centered horizontally; the same applies to height. Otherwise, user is free
      * to move the image as long as it doesn't go outside of the container.
+     *
+     * <p>This setting has effect only if <code>marginFactor === 0</code>.
+     *
      * @type boolean
      */
         ._setupVariableAndForceRedraw('centerWhenZoomedOut', true)

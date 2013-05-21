@@ -237,8 +237,8 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             constrainToImage16 = false;
             $('#constrain_to_image_16').css('background-color', buttonColors[false]);
             if (constrainToImage2) {
-                seadragon.constrainToImage(16);
-                seadragon.fitImage(16);
+                seadragon.constrainToImage(2);
+                seadragon.fitImage(2);
             } else {
                 seadragon.config.constrainViewport = false;
             }

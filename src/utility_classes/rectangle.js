@@ -139,6 +139,21 @@ $.extend(Seadragon.Rectangle.prototype,
         },
 
         /**
+         * Enlarges the rectangle by the given factor while maintaining its center.
+         *
+         * @param {number} factor
+         */
+        scaleAroundCenter: function scaleAroundCenter(factor) {
+            var center = this.getCenter(),
+                boundsHalfWidth = this.width / 2,
+                boundsHalfHeight = this.height / 2;
+            this.x = center.x - boundsHalfWidth * factor;
+            this.y = center.y - boundsHalfHeight * factor;
+            this.width *= factor;
+            this.height *= factor;
+        },
+
+        /**
          * Checks if the rectangle contains a given point.
          *
          * @param {Seadragon.Point} point

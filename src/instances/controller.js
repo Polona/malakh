@@ -788,7 +788,8 @@ Seadragon.Controller = function Controller(seadragon) {
      *                                  the table.
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
-     *//**
+     * @also
+     *
      * Opens Deep Zoom Image (DZI).
      *
      * @param {Object} options  An object containing all given options.
@@ -886,7 +887,8 @@ Seadragon.Controller = function Controller(seadragon) {
      *                                                don't enforce it at the moment.
      */
     this.constrainToImage = function constrainToImage(whichImage, dontForceConstraints) {
-        var seadragon = this.seadragon,
+        var tiledImage,
+            seadragon = this.seadragon,
             viewport = seadragon.viewport,
             $container = seadragon.$container,
             tiledImages = seadragon.tiledImages,
@@ -903,7 +905,7 @@ Seadragon.Controller = function Controller(seadragon) {
             };
         }
 
-        var tiledImage = tiledImages[whichImage];
+        tiledImage = tiledImages[whichImage];
         if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
             getFunctionConstrainingToImage(dontForceConstraints).call(tiledImage);
         } else { // register a callback

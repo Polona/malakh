@@ -118,35 +118,27 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * while still being contained within the viewport.
      *
      * @param {number} whichImage  We fit the <code>this.tiledImages[whichImage]</code> image
-     * @param {Object} [options]
+     * @param {Object} [options]  An object containing all given options.
      * @param {number} [options.visibility=1]  How large is the image in the viewport; visibility 1 means as large
      *                                         as possible while fitting in it
      * @param {boolean} [options.current=false]
      * @param {boolean} [options.immediately=false]
      */
     this.fitImage = function fitImage(whichImage, options) {
-        var center, boundsHalfWidth, boundsHalfHeight;
+        var boundsRectangle,
+            seadragon = this.seadragon,
+            tiledImage = seadragon.tiledImages[whichImage];
+
         options = options || {};
         options.visibility = options.visibility || 1; // visibility 0 doesn't make sense
 
-        var seadragon = this.seadragon,
-            tiledImage = seadragon.tiledImages[whichImage];
 
         if (!(tiledImage instanceof Seadragon.TiledImage)) {
             console.error('No image with number ' + whichImage);
             return this;
         }
-        var boundsRectangle = tiledImage.animatedBounds.getRectangle(options.current);
-        if (options.visibility !== 1) {
-            // Enlarge bounds rectangle to match non-1 visibility while preserving the center.
-            center = boundsRectangle.getCenter();
-            boundsHalfWidth = boundsRectangle.width / 2;
-            boundsHalfHeight = boundsRectangle.height / 2;
-            boundsRectangle.x = center.x - boundsHalfWidth / options.visibility;
-            boundsRectangle.y = center.y - boundsHalfHeight / options.visibility;
-            boundsRectangle.width /= options.visibility;
-            boundsRectangle.height /= options.visibility;
-        }
+        boundsRectangle = tiledImage.animatedBounds.getRectangle(options.current);
+        boundsRectangle.scaleAroundCenter(options.visibility);
         seadragon.viewport.fitBounds(boundsRectangle, options.immediately);
         return this;
     };
@@ -155,7 +147,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
      * Hides currently visible images and shows only the given one.
      *
      * @param {number} whichImage  Index of the image to show.
-     * @param {boolean} [options={}] Object  containing optional configuration.
+     * @param {Object} [options]  Object containing optional configuration.
      * @param {number} [options.visibility=1]  How large is the image in the viewport; visibility 1 means as large
      *                                         as possible while fitting in it
      * @param {boolean} [options.immediately=false]
