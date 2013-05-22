@@ -181,7 +181,7 @@ Seadragon.Controller = function Controller(seadragon) {
             }
         }
 
-        that.restoreUpdating();
+        seadragon.$container.trigger('seadragon:user_action');
     }
 
     function wheelToPan(evt) {
@@ -214,6 +214,8 @@ Seadragon.Controller = function Controller(seadragon) {
             false, {
                 animationTimeConfigParameter: 'mouseAnimationTime', // panning by mouse should be slower
             });
+
+        seadragon.$container.trigger('seadragon:user_action');
     }
 
     /**
@@ -261,6 +263,7 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function dragCanvas(evt) {
         panToNewPosition(that.getMousePosition(evt));
+        seadragon.$container.trigger('seadragon:user_action');
     }
 
     /**
@@ -291,6 +294,8 @@ Seadragon.Controller = function Controller(seadragon) {
 
             lastTouchStretch = touchStretch;
         }
+
+        seadragon.$container.trigger('seadragon:user_action');
     }
 
     /**
@@ -341,6 +346,7 @@ Seadragon.Controller = function Controller(seadragon) {
         }
 
         that.restoreUpdating();
+        seadragon.$container.trigger('seadragon:user_action');
     }
 
     function bindEvents() {
@@ -780,7 +786,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * Opens Deep Zoom Image (DZI).
      *
      * @param {string} dziUrl  The URL/path to the DZI file.
-     * @param {Object} options  An object containing all given options.
+     * @param {Object} [options]  An object containing all given options.
      * @param {string} [options.tilesUrl]  The URL/path to the tiles directory; by default it's the same
      *                                     as <code>dziUrl<code> with '.dzi' changed to '_files'.
      * @param {number} [options.index]  If specified, an image is loaded into
@@ -818,7 +824,7 @@ Seadragon.Controller = function Controller(seadragon) {
             options = arguments0;
         } else {
             // Signature openDzi(dziUrl, options).
-            options = arguments[1];
+            options = arguments[1] || {};
             options.dziUrl = arguments0;
         }
 
