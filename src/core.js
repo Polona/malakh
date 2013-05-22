@@ -243,7 +243,14 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
         console.log('Received containerSelectorOrElement:', containerSelectorOrElement);
         this.fail('Can\'t create a Controller instance without a container!');
     }
+    var originalContainerPosition = this.$container.css('position');
     this.$container.empty().css({
+        // we need the container to be positioned
+        position: originalContainerPosition === '' || originalContainerPosition === 'static' ?
+            'relative' :
+            originalContainerPosition,
+        boxSizing: 'content-box',
+        padding: 0,
         backgroundColor: this.config.backgroundColor,
     });
 
@@ -274,7 +281,13 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
         }
     );
 
-    this.$canvas = $('<canvas>');
+    this.$canvas = $('<canvas>').css({
+        boxSizing: 'border-box',
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        margin: 0,
+    });
     this.$container.append(this.$canvas);
 
     this.imageLoader = this.ImageLoader();

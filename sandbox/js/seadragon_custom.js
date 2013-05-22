@@ -20,7 +20,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
 
     // Seadragon initialization:
     seadragon = new Seadragon(containerSelectorOrElement,
-        $.extend({}, {backgroundColor: '#2d2a2b'}, configOverrides));
+        $.extend({backgroundColor: '#2d2a2b'}, configOverrides));
     initialAnimationTime = seadragon.config.animationTime;
     initialMouseAnimationTime = seadragon.config.mouseAnimationTime;
 
