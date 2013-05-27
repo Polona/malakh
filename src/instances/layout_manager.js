@@ -138,7 +138,7 @@ Seadragon.LayoutManager = function LayoutManager(seadragon) {
             return this;
         }
         boundsRectangle = tiledImage.animatedBounds.getRectangle(options.current);
-        boundsRectangle.scaleAroundCenter(options.visibility);
+        boundsRectangle.scaleAroundCenter(1 / options.visibility);
         seadragon.viewport.fitBounds(boundsRectangle, options.immediately);
         return this;
     };
