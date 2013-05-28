@@ -904,10 +904,10 @@ Seadragon.Controller = function Controller(seadragon) {
             return function () {
                 viewport.constraintBounds = new Seadragon.Rectangle(
                     this.animatedBounds.getRectangle());
-                $container.trigger('seadragon:constraint_bounds_set');
                 if (!dontForceConstraints) {
                     config.constrainViewport = true;
                 }
+                $container.trigger('seadragon:constraint_bounds_set');
             };
         }
 
