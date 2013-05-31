@@ -49,8 +49,8 @@ module.exports = function (grunt) {
                     'src/derived_classes/tile.js',
                     'src/derived_classes/animated_rectangle.js',
                     'src/derived_classes/tiled_image.js',
-                    'src/derived_classes/single_image.js',
-                    'src/derived_classes/dzi_image.js',
+                    {flag: 'single_image', src: 'src/derived_classes/single_image.js'},
+                    {flag: 'dzi', src: 'src/derived_classes/dzi_image.js'},
 
                     'src/instances/image_loader.js',
                     {flag: 'magnifier', src: 'src/instances/magnifier.js'},
