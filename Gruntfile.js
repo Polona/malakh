@@ -1,4 +1,4 @@
-/* jshint camelcase: false */
+/* jshint strict: true */
 /* global module: false, process: false, require: false, Buffer: false */
 
 module.exports = function (grunt) {
@@ -16,7 +16,10 @@ module.exports = function (grunt) {
             } catch (e) {
             }
             return data;
-        };
+        },
+        srcHintOptions = readOptionalJSON('.jshintrc');
+
+    srcHintOptions.strict = true; // this is disabled for non-concatenated files so that IDEs don't complain
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -46,6 +49,7 @@ module.exports = function (grunt) {
                     'src/derived_classes/tile.js',
                     'src/derived_classes/animated_rectangle.js',
                     'src/derived_classes/tiled_image.js',
+                    'src/derived_classes/single_image.js',
                     'src/derived_classes/dzi_image.js',
 
                     'src/instances/image_loader.js',
@@ -66,15 +70,11 @@ module.exports = function (grunt) {
         jshint: {
             dist: {
                 src: ['dist/seadragon.js'],
-                options: {
-                    jshintrc: '.jshintrc',
-                },
+                options: srcHintOptions,
             },
             grunt: {
                 src: ['Gruntfile.js'],
-                options: {
-                    jshintrc: '.jshintrc',
-                },
+                options: srcHintOptions,
             }
         },
 

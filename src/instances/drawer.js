@@ -89,8 +89,8 @@ Seadragon.Drawer = function Drawer(seadragon) {
      */
     function getPixelOnImageSizeMax(whichImage, level) {
         if (!cachePixelOnImageSizeMax[whichImage][level]) {
-            var pixelOnImageSize = that.seadragon.tiledImages[whichImage].getScaledDimensions(level).invert();
-            cachePixelOnImageSizeMax[whichImage][level] = Math.max(pixelOnImageSize.x, pixelOnImageSize.y);
+            cachePixelOnImageSizeMax[whichImage][level] =
+                that.seadragon.tiledImages[whichImage].getPixelOnImageSize(level);
         }
 
         return cachePixelOnImageSizeMax[whichImage][level];
@@ -507,7 +507,7 @@ Seadragon.Drawer = function Drawer(seadragon) {
 
         // Drawing all images.
         utils.forEach(tiledImages, function (tiledImage, whichImage) {
-            if (!(tiledImage instanceof Seadragon.DziImage) || tiledImage.isHidden()) {
+            if (!(tiledImage instanceof Seadragon.TiledImage) || tiledImage.isHidden()) {
                 return;
             }
 

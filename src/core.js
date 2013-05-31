@@ -21,7 +21,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
      */
     utils.forEach(['AnimatedRectangle', 'CanvasLayersManager', 'Controller', 'Drawer',
         'DziImage', 'ImageLoader', 'LayoutManager', 'Magnifier', 'Markers', 'Picker',
-        'Spring', 'Tile', 'TiledImage', 'Viewport'],
+        'SingleImage', 'Spring', 'Tile', 'TiledImage', 'Viewport'],
         function (name) {
             seadragon[name] = function () {
                 var args = [].slice.call(arguments, 0);

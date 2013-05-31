@@ -695,12 +695,12 @@ Seadragon.Controller = function Controller(seadragon) {
      *
      * @param {Object} options An object containing all given options.
      * @param {Document} options.data An object representing a DZI file.
-     * @param {string} options.dziUrl See <a href="#createFromDzi"><code>Seadragon.DziImage.createFromDzi</code></a>.
+     * @param {string} options.imageDataUrl See <a href="#createFromDzi">
+     *                                      <code>Seadragon.DziImage.createFromDzi</code></a>.
      * @param {string} [options.tilesUrl] See <a href="#createFromDzi"><code>Seadragon.DziImage.createFromDzi</code></a>
      * @param {Document} [options.bounds] Bounds in which an image must fit. If not given, we assume the rectangle
      *                                    <code>[0, 0, width x height]</code> where <code>width</code> and
      *                                    <code>height</code> are taken from DZI.
-     * @param {boolean} [options.shown] See <a href="#createFromDzi"><code>Seadragon.DziImage.createFromDzi</code></a>.
      * @return {Seadragon.DziImage}
      *
      * @memberof Seadragon.Controller~
@@ -730,8 +730,9 @@ Seadragon.Controller = function Controller(seadragon) {
             that.fail(invalidFormatMessage);
         }
 
-        // If tilesUrl were not provided, the default path is the same as dziUrl with ".dzi" changed into "_files".
-        var tilesUrl = options.tilesUrl || options.dziUrl.replace(/\.dzi$/, '_files/');
+        // If tilesUrl were not provided, the default path is the same as imageDataUrl with ".dzi"
+        // changed into "_files".
+        var tilesUrl = options.tilesUrl || options.imageDataUrl.replace(/\.dzi$/, '_files/');
 
         if (!options.bounds) {
             options.bounds = new Seadragon.Rectangle(0, 0, width, height); // default bounds copied from DZI
@@ -753,22 +754,21 @@ Seadragon.Controller = function Controller(seadragon) {
      * Creates a DziImage instance from the DZI file.
      *
      * @param {Object} options  An object containing all given options.
-     * @param {string} options.dziUrl  The URL/path to the DZI file.
+     * @param {string} options.imageDataUrl  The URL/path to the DZI file.
      * @param {string} [options.tilesUrl]  The URL/path to the tiles directory; by default it's the same
-     *                                     as <code>dziUrl<code> with '.dzi' changed to '_files'.
+     *                                     as <code>imageDataUrl<code> with '.dzi' changed to '_files'.
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
      * @param {number} [options.index]  If specified, an image is loaded into
      *                                  <code>controller.tiledImages[index]</code>.
      *                                  Otherwise it's put at the end of the table.
-     * @param {boolean} [options.shown=true]  If false, image is not drawn. It can be made visible later.
      */
     this.createFromDzi = function createFromDzi(options) {
-        this.ensureOptions(options, 'DziImage.createFromDzi', ['dziUrl']);
+        this.ensureOptions(options, 'DziImage.createFromDzi', ['imageDataUrl']);
 
         $.ajax({
             type: 'GET',
-            url: options.dziUrl,
+            url: options.imageDataUrl,
             dataType: 'xml',
             success: function (data) {
                 options.data = data;
@@ -776,56 +776,88 @@ Seadragon.Controller = function Controller(seadragon) {
             },
             error: function (_, statusText) {
                 this.fail('Unable to retrieve the given DZI file, does it really exist?\n' + statusText);
-            }
+            }.bind(this),
         });
 
         return this;
     };
 
     /**
-     * Opens Deep Zoom Image (DZI).
-     *
-     * @param {string} dziUrl  The URL/path to the DZI file.
-     * @param {Object} [options]  An object containing all given options.
-     * @param {string} [options.tilesUrl]  The URL/path to the tiles directory; by default it's the same
-     *                                     as <code>dziUrl<code> with '.dzi' changed to '_files'.
-     * @param {number} [options.index]  If specified, an image is loaded into
-     *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
-     *                                  the table.
-     * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
-     *                                                Seadragon plane.
-     * @also
-     *
-     * Opens Deep Zoom Image (DZI).
+     * Creates a DziImage instance from the single image file (e.g. JPG or PNG).
      *
      * @param {Object} options  An object containing all given options.
-     * @param {string} options.dziUrl  The URL/path to the DZI file.
-     * @param {string} [options.tilesUrl]  The URL/path to the tiles directory; by default it's the same
-     *                                     as <code>dziUrl<code> with '.dzi' changed to '_files'.
-     * @param {number} [options.index]  If specified, an image is loaded into
-     *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
-     *                                  the table.
+     * @param {string} options.imageDataUrl  The URL/path to the DZI file.
      * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
      *                                                Seadragon plane.
+     * @param {number} [options.index]  If specified, an image is loaded into
+     *                                  <code>controller.tiledImages[index]</code>.
+     *                                  Otherwise it's put at the end of the table.
+     * @param {string} [options.fileFormat]  File format (PNG or JPG). If none provided, it's taken from file extension.
      */
-    this.openDzi = function openDzi() {
-        var options;
+    this.createFromSingleImage = function createFromSingleImage(options) {
+        this.ensureOptions(options, 'DziImage.createFromSingleImage', ['imageDataUrl']);
 
-        var seadragon = this.seadragon,
+        var timeout,
+            that = this,
+            image = new Image();
+
+        function handleFailure() {
+            clearTimeout(timeout);
+            that.fail('Unable to retrieve the given image file, does it really exist?');
+        }
+
+        image.onabort = image.onerror = function () {
+            handleFailure();
+        };
+
+        image.onload = function () {
+            clearTimeout(timeout);
+
+            var singleImage = that.SingleImage({
+                width: image.width,
+                height: image.height,
+                bounds: options.bounds,
+                imageUrl: options.imageDataUrl,
+            });
+
+            onOpen(singleImage, options.index);
+        };
+
+        timeout = setTimeout(handleFailure, this.config.imageLoaderTimeout);
+        image.src = options.imageDataUrl;
+
+        return this;
+    };
+
+    function openTiledImage(kind) {
+        /* jshint validthis: true */ // this is used only with bind(this)
+        var options, methodName,
+            seadragon = this.seadragon,
             tiledImages = seadragon.tiledImages;
 
+        switch (kind) {
+            case 'dzi':
+                methodName = 'createFromDzi';
+                break;
+            case 'singleImage':
+                methodName = 'createFromSingleImage';
+                break;
+            default:
+                this.fail('openTiledImage: incorrect `kind` parameter provided: ' + kind);
+        }
+
         // Handling signature variations.
-        var arguments0 = arguments[0];
-        if (arguments0 == null) { // wrong invocation, reverting changes
+        var arguments1 = arguments[1];
+        if (arguments1 == null) { // wrong invocation, reverting changes
             this.fail('No arguments passed to openDzi!');
         }
-        if (arguments0.dziUrl) {
+        if (arguments1.imageDataUrl) {
             // Signature openDzi(options).
-            options = arguments0;
+            options = arguments1;
         } else {
-            // Signature openDzi(dziUrl, options).
-            options = arguments[1] || {};
-            options.dziUrl = arguments0;
+            // Signature openDzi(imageDataUrl, options).
+            options = arguments[2] || {};
+            options.imageDataUrl = arguments1;
         }
 
 
@@ -848,17 +880,75 @@ Seadragon.Controller = function Controller(seadragon) {
             tiledImagesToHandle++;
 
             try {
-                this.createFromDzi(options);
+                this[methodName](options);
             } catch (error) {
                 // We try to keep working even after a failed attempt to load a new DZI.
                 tiledImagesToHandle--;
                 tiledImages[options.index] = null;
-                console.error('DZI failed to load; provided options:', options);
+                console.error('Controller, openTiledImage, kind: ' + kind +
+                    ': image data failed to load; provided options:', options);
                 console.log(error.stack);
             }
         }
 
         return this;
+    }
+
+    /**
+     * Opens Deep Zoom Image (DZI).
+     *
+     * @param {string} imageDataUrl  The URL/path to the DZI file.
+     * @param {Object} [options]  An object containing all given options.
+     * @param {string} [options.tilesUrl]  The URL/path to the tiles directory; by default it's the same
+     *                                     as <code>imageDataUrl<code> with '.dzi' changed to '_files'.
+     * @param {number} [options.index]  If specified, an image is loaded into
+     *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
+     *                                  the table.
+     * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
+     *                                                Seadragon plane.
+     * @also
+     *
+     * Opens Deep Zoom Image (DZI).
+     *
+     * @param {Object} options  An object containing all given options.
+     * @param {string} options.imageDataUrl  The URL/path to the DZI file.
+     * @param {string} [options.tilesUrl]  The URL/path to the tiles directory; by default it's the same
+     *                                     as <code>imageDataUrl<code> with '.dzi' changed to '_files'.
+     * @param {number} [options.index]  If specified, an image is loaded into
+     *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
+     *                                  the table.
+     * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
+     *                                                Seadragon plane.
+     */
+    this.openDzi = function openDzi() {
+        var args = [].slice.call(arguments);
+        args.unshift('dzi');
+        return openTiledImage.apply(this, args);
+    };
+
+    /**
+     * Opens a single JPG/PNG image in Seadragon.
+     *
+     * @param {string} imageUrl  The URL/path to the image file.
+     * @param {Object} [options]  An object containing all given options.
+     * @param {number} [options.index]  If specified, an image is loaded into
+     *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
+     *                                  the table.
+     *
+     * @also
+     *
+     * Opens a single JPG/PNG image in Seadragon.
+     *
+     * @param {Object} options  An object containing all given options.
+     * @param {string} options.imageUrl  The URL/path to the image file.
+     * @param {number} [options.index]  If specified, an image is loaded into
+     *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
+     *                                  the table.
+     */
+    this.openSingleImage = function openSingleImage() {
+        var args = [].slice.call(arguments);
+        args.unshift('singleImage');
+        return openTiledImage.apply(this, args);
     };
 
     /**

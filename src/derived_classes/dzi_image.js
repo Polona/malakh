@@ -26,8 +26,8 @@
  * @param {number} [options.maxLevel] Sets this.maxLevel.
  */
 Seadragon.DziImage = function DziImage(seadragon, options) {
-    this.ensureArguments(arguments, 'Drawer', ['options']);
-    this.ensureOptions(options, 'Drawer', ['width', 'height', 'tileSize', 'tilesUrl', 'fileFormat']);
+    this.ensureArguments(arguments, 'DziImage', ['options']);
+    this.ensureOptions(options, 'DziImage', ['width', 'height', 'tileSize', 'tilesUrl', 'fileFormat']);
 
     Seadragon.TiledImage.call(this, this.seadragon, {
         width: options.width,
@@ -70,6 +70,15 @@ $.extend(Seadragon.DziImage.prototype,
          */
         getTileUrl: function getTileUrl(level, x, y) {
             return this.tilesUrl + level + '/' + x + '_' + y + '.' + this.fileFormat;
+        },
+
+        /**
+         * Returns how much scaled is a pixel at a given level.
+         * @param {number} level The image level.
+         * @return {number}
+         */
+        getPixelOnImageSize: function getPixelOnImageSize(level) {
+            return this.getScaledDimensions(level).invert();
         },
     }
 );
