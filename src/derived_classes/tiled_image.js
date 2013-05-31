@@ -171,8 +171,8 @@ $.extend(Seadragon.TiledImage.prototype,
         },
 
         /**
-         * Scales the "virtual" canvas level to the current DZI image one.
-         * This is important since DZIs can be scaled by changing their bounds
+         * Scales the "virtual" canvas level to the current tiled image one.
+         * This is important since tiled images can be scaled by changing their bounds
          * (e.g. by using controller's aligning methods) and we want tile sizes to draw
          * to match their size on canvas after scaling the whole image (e.g. if bounds
          * for the image are its default parameters divided by 2 we want to load tiles

@@ -485,7 +485,7 @@ Seadragon.Controller = function Controller(seadragon) {
 
     /**
      * Checks if the image was scheduled to open and the opening process has already started. <code>false</code>
-     * can occur if <code>openDzi</code> was invoked on an image hidden by default as its loading is then deferred.
+     * can occur if opening was invoked on an image hidden by default as its loading is then deferred.
      *
      * @param {number} index  Index in the <code>this.tiledImages</code> table where <code>tiledImage</code> is put.
      * @return {boolean}
@@ -566,7 +566,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {boolean} decreaseCounter  If provided, decreases the counted number of
      *                                   <code>updateTiledImageBounds</code> invocations on the <code>tiledImage</code>
      *                                   with a given index. Parameter used only by the
-     *                                   <code>scheduleUpdateDziImageBounds</code> function.
+     *                                   <code>scheduleUpdateTiledImageBounds</code> function.
      * @private
      */
     function updateTiledImageBounds(whichImage, decreaseCounter) {
@@ -600,7 +600,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {boolean} [forceExecution=false]
      * @private
      */
-    function scheduleUpdateDziImageBounds(whichImage, forceExecution) {
+    function scheduleUpdateTiledImageBounds(whichImage, forceExecution) {
         var tiledImageBoundsUpdatesNum = tiledImageBoundsUpdatesNums[whichImage];
 
         if (tiledImageBoundsUpdatesNum === 0 ||
@@ -614,7 +614,7 @@ Seadragon.Controller = function Controller(seadragon) {
         else if (tiledImageBoundsUpdatesNum === 1) {
             // one function instance was dispatched on tiledImage, trying in a moment
             tiledImageBoundsUpdatesNums[whichImage]++;
-            setTimeout(scheduleUpdateDziImageBounds, 100, whichImage, true);
+            setTimeout(scheduleUpdateTiledImageBounds, 100, whichImage, true);
         }
         /* else {} // one function instance already waits, no need for a new one */
     }
@@ -658,7 +658,7 @@ Seadragon.Controller = function Controller(seadragon) {
             setTimeout(function () { // Making it more asynchronous.
                 utils.forEach(tiledImages, function (tiledImage, whichImage) {
                     if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
-                        scheduleUpdateDziImageBounds(whichImage);
+                        scheduleUpdateTiledImageBounds(whichImage);
                     }
                 });
             });
@@ -782,52 +782,55 @@ Seadragon.Controller = function Controller(seadragon) {
         return this;
     };
 
-    /**
-     * Creates a DziImage instance from the single image file (e.g. JPG or PNG).
-     *
-     * @param {Object} options  An object containing all given options.
-     * @param {string} options.imageDataUrl  The URL/path to the DZI file.
-     * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
-     *                                                Seadragon plane.
-     * @param {number} [options.index]  If specified, an image is loaded into
-     *                                  <code>controller.tiledImages[index]</code>.
-     *                                  Otherwise it's put at the end of the table.
-     * @param {string} [options.fileFormat]  File format (PNG or JPG). If none provided, it's taken from file extension.
-     */
-    this.createFromSingleImage = function createFromSingleImage(options) {
-        this.ensureOptions(options, 'DziImage.createFromSingleImage', ['imageDataUrl']);
+    if (Seadragon.SingleImage) {
+        /**
+         * Creates a TiledImage instance from the single image file (e.g. JPG or PNG).
+         *
+         * @param {Object} options  An object containing all given options.
+         * @param {string} options.imageDataUrl  The URL/path to the image file.
+         * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the
+         *                                                virtual Seadragon plane.
+         * @param {number} [options.index]  If specified, an image is loaded into
+         *                                  <code>controller.tiledImages[index]</code>.
+         *                                  Otherwise it's put at the end of the table.
+         * @param {string} [options.fileFormat]  File format (PNG or JPG). If none provided, it's taken from file
+         *                                       extension.
+         */
+        this.createFromSingleImage = function createFromSingleImage(options) {
+            this.ensureOptions(options, 'DziImage.createFromSingleImage', ['imageDataUrl']);
 
-        var timeout,
-            that = this,
-            image = new Image();
+            var timeout,
+                that = this,
+                image = new Image();
 
-        function handleFailure() {
-            clearTimeout(timeout);
-            that.fail('Unable to retrieve the given image file, does it really exist?');
-        }
+            function handleFailure() {
+                clearTimeout(timeout);
+                that.fail('Unable to retrieve the given image file, does it really exist?');
+            }
 
-        image.onabort = image.onerror = function () {
-            handleFailure();
+            image.onabort = image.onerror = function () {
+                handleFailure();
+            };
+
+            image.onload = function () {
+                clearTimeout(timeout);
+
+                var singleImage = that.SingleImage({
+                    width: image.width,
+                    height: image.height,
+                    bounds: options.bounds,
+                    imageUrl: options.imageDataUrl,
+                });
+
+                onOpen(singleImage, options.index);
+            };
+
+            timeout = setTimeout(handleFailure, this.config.imageLoaderTimeout);
+            image.src = options.imageDataUrl;
+
+            return this;
         };
-
-        image.onload = function () {
-            clearTimeout(timeout);
-
-            var singleImage = that.SingleImage({
-                width: image.width,
-                height: image.height,
-                bounds: options.bounds,
-                imageUrl: options.imageDataUrl,
-            });
-
-            onOpen(singleImage, options.index);
-        };
-
-        timeout = setTimeout(handleFailure, this.config.imageLoaderTimeout);
-        image.src = options.imageDataUrl;
-
-        return this;
-    };
+    }
 
     function openTiledImage(kind) {
         /* jshint validthis: true */ // this is used only with bind(this)
@@ -852,10 +855,10 @@ Seadragon.Controller = function Controller(seadragon) {
             this.fail('No arguments passed to openDzi!');
         }
         if (arguments1.imageDataUrl) {
-            // Signature openDzi(options).
+            // Signature openSth(options).
             options = arguments1;
         } else {
-            // Signature openDzi(imageDataUrl, options).
+            // Signature openSth(imageDataUrl, options).
             options = arguments[2] || {};
             options.imageDataUrl = arguments1;
         }
@@ -873,8 +876,8 @@ Seadragon.Controller = function Controller(seadragon) {
         if (!shown) { // register image options to show later
             tiledImagesOptions[options.index] = options;
         }
-        else { // actually open the DZI image
-            // Removing options so that we don't try to open the same DZI twice.
+        else { // actually open the tiled image
+            // Removing options so that we don't try to open the same tiled image twice.
             tiledImagesOptions[options.index] = null;
 
             tiledImagesToHandle++;
@@ -882,7 +885,7 @@ Seadragon.Controller = function Controller(seadragon) {
             try {
                 this[methodName](options);
             } catch (error) {
-                // We try to keep working even after a failed attempt to load a new DZI.
+                // We try to keep working even after a failed attempt to load a new tiled image.
                 tiledImagesToHandle--;
                 tiledImages[options.index] = null;
                 console.error('Controller, openTiledImage, kind: ' + kind +
@@ -927,31 +930,6 @@ Seadragon.Controller = function Controller(seadragon) {
     };
 
     /**
-     * Opens a single JPG/PNG image in Seadragon.
-     *
-     * @param {string} imageUrl  The URL/path to the image file.
-     * @param {Object} [options]  An object containing all given options.
-     * @param {number} [options.index]  If specified, an image is loaded into
-     *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
-     *                                  the table.
-     *
-     * @also
-     *
-     * Opens a single JPG/PNG image in Seadragon.
-     *
-     * @param {Object} options  An object containing all given options.
-     * @param {string} options.imageUrl  The URL/path to the image file.
-     * @param {number} [options.index]  If specified, an image is loaded into
-     *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
-     *                                  the table.
-     */
-    this.openSingleImage = function openSingleImage() {
-        var args = [].slice.call(arguments);
-        args.unshift('singleImage');
-        return openTiledImage.apply(this, args);
-    };
-
-    /**
      * Opens an array of DZIs.
      *
      * @param {Array.<string>} optionsArray Array of objects containing data of particular DZIs.
@@ -973,6 +951,33 @@ Seadragon.Controller = function Controller(seadragon) {
         });
         return this;
     };
+
+    if (Seadragon.SingleImage) {
+        /**
+         * Opens a single JPG/PNG image in Seadragon.
+         *
+         * @param {string} imageUrl  The URL/path to the image file.
+         * @param {Object} [options]  An object containing all given options.
+         * @param {number} [options.index]  If specified, an image is loaded into
+         *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
+         *                                  the table.
+         *
+         * @also
+         *
+         * Opens a single JPG/PNG image in Seadragon.
+         *
+         * @param {Object} options  An object containing all given options.
+         * @param {string} options.imageUrl  The URL/path to the image file.
+         * @param {number} [options.index]  If specified, an image is loaded into
+         *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
+         *                                  the table.
+         */
+        this.openSingleImage = function openSingleImage() {
+            var args = [].slice.call(arguments);
+            args.unshift('singleImage');
+            return openTiledImage.apply(this, args);
+        };
+    }
 
 
     /**
