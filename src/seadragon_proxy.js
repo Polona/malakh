@@ -4,7 +4,7 @@ var seadragonProxy = Object.create(Seadragon.prototype);
 // instead of this.seadragon.field. But we still reflect all changes onto this.seadragon.field
 utils.forEach([
     // constructors: classes
-    'AnimatedRectangle', 'DziImage', 'Spring', 'Tile', 'TiledImage',
+    'AnimatedRectangle', 'DziImage', 'SingleImage', 'Spring', 'Tile', 'TiledImage',
 
     // constructors: class single instances
     'CanvasLayersManager', 'Controller', 'Drawer', 'ImageLoader',

@@ -28,7 +28,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         dziDataArray = [];
         dziNamesArray.forEach(function (dziName, index) {
             dziDataArray[index] = {
-                dziUrl: dziPrefix + dziName + '.dzi',
+                imageDataUrl: dziPrefix + dziName + '.dzi',
                 bounds: new Seadragon.Rectangle(1000000, 1000000, 1000, 1000),
             };
         });
@@ -41,7 +41,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     function openOneTestDZIFromAcademica() {
         seadragon
             .openDzi({
-                dziUrl: 'http://127.0.0.1:8107/resource/image/280189/?DeepZoom=279868.tif.dzi',
+                imageDataUrl: 'http://127.0.0.1:8107/resource/image/280189/?DeepZoom=279868.tif.dzi',
                 tilesUrl: 'http://127.0.0.1:8107/resource/image/280189/?DeepZoom=279868.tif_files/',
             }).showOnlyImage(0, {
                 dontForceConstraints: true,

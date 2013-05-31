@@ -324,7 +324,17 @@ $.extend(Seadragon.TiledImage.prototype,
          */
         getTileUrl: function getTileUrl(level, x, y) {
             console.error('Method not implemented; arguments:', level, x, y);
-            return '';
+            return null;
+        },
+
+        /**
+         * Returns how much scaled is a pixel at a given level.
+         * @param {number} level The image level.
+         * @return {number}
+         */
+        getPixelOnImageSize: function getTileUrl(level) {
+            console.error('Method not implemented; arguments:', level);
+            return null;
         },
 
         /**
