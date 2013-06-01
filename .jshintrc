@@ -16,7 +16,6 @@
 
     "browser": true,
     "devel": true,
-    "es5": true,
     "jquery": true,
 
     "quotmark": "single",

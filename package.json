@@ -20,9 +20,9 @@
     "devDependencies": {
         "grunt-compare-size": "~0.4.0",
         "grunt-git-authors": ">=1.2.0",
-        "grunt-contrib-watch": ">=0.3.1",
-        "grunt-contrib-jshint": ">=0.3.0",
-        "grunt-contrib-uglify": ">=0.2.0",
+        "grunt-contrib-watch": ">=0.4.4",
+        "grunt-contrib-jshint": ">=0.5.4",
+        "grunt-contrib-uglify": ">=0.2.1",
         "grunt-devtools": ">=0.1.0",
         "grunt": ">=0.4.1"
     },
