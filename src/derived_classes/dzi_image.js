@@ -78,7 +78,7 @@ $.extend(Seadragon.DziImage.prototype,
          * @return {number}
          */
         getPixelOnImageSize: function getPixelOnImageSize(level) {
-            return this.getScaledDimensions(level).invert();
+            return this.getScaledDimensions(level).invert().x;
         },
     }
 );
