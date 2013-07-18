@@ -9,7 +9,7 @@ How to build your own Seadragon
 First, clone a copy of the main Seadragon git repo by running:
 
 ```bash
-git clone git@bitbucket.org:laboratorium_ee/seadragon.git
+git clone ssh://git@defilada.laboratorium.ee:7999/sd/seadragon.git
 ```
 
 Install the grunt-cli package so that you will have the correct version of grunt available from any project that needs it. This should be done as a global install:
@@ -27,7 +27,7 @@ cd seadragon && npm install
 Make sure you have `grunt` installed by testing:
 
 ```bash
-grunt -version
+grunt --version
 ```
 
 Then, to get a complete, minified (w/ Uglify.js), linted (w/ JSHint) version of Seadragon, type the following:

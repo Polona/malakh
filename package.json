@@ -9,7 +9,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git@bitbucket.org:laboratorium_ee/seadragon.git"
+        "url": "ssh://git@defilada.laboratorium.ee:7999/sd/seadragon.git"
     },
     "licenses": [
         {
@@ -18,13 +18,16 @@
         }
     ],
     "devDependencies": {
-        "grunt-compare-size": "~0.4.0",
-        "grunt-git-authors": ">=1.2.0",
-        "grunt-contrib-watch": ">=0.4.4",
-        "grunt-contrib-jshint": ">=0.5.4",
-        "grunt-contrib-uglify": ">=0.2.1",
-        "grunt-devtools": ">=0.1.0",
-        "grunt": ">=0.4.1"
+        "grunt": "~0.4.1",
+        "grunt-compare-size": "~0.4.0-rc.3",
+        "grunt-contrib-jshint": "~0.6.0",
+        "grunt-contrib-uglify": "~0.2.2",
+        "grunt-contrib-watch": "~0.4.4",
+        "grunt-devtools": "0.1.0-7",
+        "grunt-git-authors": "~1.2.0"
     },
-    "keywords": ["seadragon", "deep zoom"]
+    "keywords": [
+        "seadragon",
+        "deep zoom"
+    ]
 }
