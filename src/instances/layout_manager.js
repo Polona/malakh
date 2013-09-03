@@ -5,7 +5,7 @@
  *
  * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.LayoutManager = function LayoutManager(seadragon) {
+Seadragon.LayoutManager = function LayoutManager(/* seadragon */) {
     this.ensureArguments(arguments, 'LayoutManager');
 
 

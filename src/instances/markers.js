@@ -14,7 +14,7 @@
  *
  * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.Markers = function Markers(seadragon) {
+Seadragon.Markers = function Markers(/* seadragon */) {
     this.ensureArguments(arguments, 'Markers');
 
     var that = this;

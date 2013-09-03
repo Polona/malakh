@@ -12,7 +12,7 @@
  *
  * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.Picker = function Picker(seadragon) {
+Seadragon.Picker = function Picker(/* seadragon */) {
     this.ensureArguments(arguments, 'Picker');
 
     var that = this,

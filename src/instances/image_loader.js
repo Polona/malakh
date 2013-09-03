@@ -13,7 +13,7 @@
  *
  * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.ImageLoader = function ImageLoader(seadragon) {
+Seadragon.ImageLoader = function ImageLoader(/* seadragon */) {
     this.ensureArguments(arguments, 'ImageLoader');
 
     /**

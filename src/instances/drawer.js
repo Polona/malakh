@@ -16,7 +16,7 @@
  *
  * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.Drawer = function Drawer(seadragon) {
+Seadragon.Drawer = function Drawer(/* seadragon */) {
     this.ensureArguments(arguments, 'Drawer');
 
     var that = this;

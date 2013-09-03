@@ -13,7 +13,7 @@
  *
  * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.CanvasLayersManager = function CanvasLayersManager(seadragon) {
+Seadragon.CanvasLayersManager = function CanvasLayersManager(/* seadragon */) {
     this.ensureArguments(arguments, 'CanvasLayersManager');
     /**
      * An array containing all tiles currently scheduled to draw

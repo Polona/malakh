@@ -31,7 +31,7 @@
  *
  * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
  */
-Seadragon.Viewport = function Viewport(seadragon) {
+Seadragon.Viewport = function Viewport(/* seadragon */) {
     this.ensureArguments(arguments, 'Viewport');
 
     var containerDimensions = this.$container.css(['width', 'height']);
