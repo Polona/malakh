@@ -775,7 +775,8 @@ Seadragon.Controller = function Controller(seadragon) {
                 onOpen(processDzi(options), options.index);
             },
             error: function (_, statusText) {
-                this.fail('Unable to retrieve the given DZI file, does it really exist?\n' + statusText);
+                this.fail('Unable to retrieve the DZI under URL: "' + options.imageDataUrl +
+                    '", does it really exist?\n' + statusText);
             }.bind(this),
         });
 
@@ -805,7 +806,8 @@ Seadragon.Controller = function Controller(seadragon) {
 
             function handleFailure() {
                 clearTimeout(timeout);
-                that.fail('Unable to retrieve the given image file, does it really exist?');
+                that.fail('Unable to retrieve the image file under URL: "' + options.imageDataUrl +
+                    '", does it really exist?');
             }
 
             image.onabort = image.onerror = function () {
