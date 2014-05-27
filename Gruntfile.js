@@ -24,9 +24,6 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         dst: readOptionalJSON('dist/.destination.json'),
-        compare_size: {
-            files: distpaths,
-        },
         build: {
             all: {
                 dest: 'dist/seadragon.js',
@@ -360,9 +357,6 @@ module.exports = function (grunt) {
     });
 
     // Load grunt tasks from NPM packages
-    grunt.loadNpmTasks('grunt-compare-size');
-    grunt.loadNpmTasks('grunt-git-authors');
-    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-devtools');

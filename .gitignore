@@ -1,8 +1,8 @@
 *~
 .*~
-.idea
-*.pyc
-node_modules
-dist
-doc
-seadragon_data
+
+/.idea
+/node_modules
+/dist
+/doc
+/sandbox/seadragon_data
