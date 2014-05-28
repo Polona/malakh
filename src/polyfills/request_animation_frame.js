@@ -6,7 +6,7 @@
 
     var lastTime = 0;
 
-    window.requestAnimationFrame = window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
+    window.requestAnimationFrame = window.webkitRequestAnimationFrame ||
         function (callback) {
             var currTime = Date.now(); // not supported in IE<9!
             var timeToCall = Math.max(0, 16 - (currTime - lastTime));
@@ -18,7 +18,7 @@
             return id;
         };
 
-    window.cancelAnimationFrame = window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame ||
+    window.cancelAnimationFrame = window.webkitCancelAnimationFrame ||
         function (id) {
             clearTimeout(id);
         };
