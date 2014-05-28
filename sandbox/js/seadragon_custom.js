@@ -38,6 +38,20 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         seadragon.viewport.panTo(new Seadragon.Point(7000, 3000), true);
     }
 
+    function openSomeNorblinDZIsInARow() {
+        dziDataArray = [];
+        dziNamesArray.forEach(function (dziName, index) {
+            dziDataArray[index] = {
+                imageDataUrl: dziPrefix + dziName + '.dzi',
+                bounds: new Seadragon.Rectangle(1000000, 1000000, 1000, 1000),
+            };
+        });
+        seadragon.openDziArray(dziDataArray.slice(0, 27));
+        seadragon.alignRows(6000, 0, Infinity, true);
+        seadragon.viewport.zoomTo(0.1, true);
+        seadragon.viewport.panTo(new Seadragon.Point(7000, 3000), true);
+    }
+
     function openOneTestDZIFromAcademica() {
         seadragon
             .openDzi({
