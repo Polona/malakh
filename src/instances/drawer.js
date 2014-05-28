@@ -511,10 +511,8 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
                 return;
             }
 
-            // We don't need to compute these two things on each update but filtering out cases where it's not needed
-            // would create a little overhead on its own so it's probably not worth doing that.
-            tiledImageTLs[whichImage] = tiledImage.animatedBounds.getTopLeft();
-            tiledImageBRs[whichImage] = tiledImage.animatedBounds.getBottomRight();
+            tiledImageTLs[whichImage] = tiledImage.animatedBounds.getTopLeft(true);
+            tiledImageBRs[whichImage] = tiledImage.animatedBounds.getBottomRight(true);
 
             var tiledImageTL = tiledImageTLs[whichImage];
             var tiledImageBR = tiledImageBRs[whichImage];
