@@ -71,12 +71,12 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          * Time it takes to finish various shorter animations (e.g. panning) in miliseconds.
          * @type number
          */
-        animationTime: 100,
+        animationTime: 1200,
         /**
          * Time it takes to finish various longer animations (e.g. zooming) in miliseconds.
          * @type number
          */
-        mouseAnimationTime: 500,
+        mouseAnimationTime: 1200,
         /**
          * Time it takes to blend in/out tiles in miliseconds.
          * @type number
@@ -88,7 +88,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          * Defines sharpness of springs moves; springs are used for animations.
          * @type number
          */
-        springStiffness: 8,
+        springStiffness: 6.5,
 
 
         /**
