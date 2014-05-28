@@ -175,7 +175,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (seadragon.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
-            seadragon.alignRows(6000, 100, 100000);
+            seadragon.alignRows(6000, 100, 50000);
         }
     });
 
@@ -190,7 +190,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (seadragon.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
-            seadragon.alignColumns(6000, 100, 100000);
+            seadragon.alignColumns(6000, 100, 50000);
         }
     });
 
