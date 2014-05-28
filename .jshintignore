@@ -1,3 +1,2 @@
-dist/**
 **/*.min.js
 sandbox/js/jquery*
