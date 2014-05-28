@@ -359,7 +359,6 @@ module.exports = function (grunt) {
     // Load grunt tasks from NPM packages
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-devtools');
 
     // Default grunt
     grunt.registerTask('default', ['build:*:*', 'jshint', 'uglify', 'dist:*']);
