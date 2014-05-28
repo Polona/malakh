@@ -88,7 +88,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
          * Defines sharpness of springs moves; springs are used for animations.
          * @type number
          */
-        springStiffness: 6,
+        springStiffness: 8,
 
 
         /**
