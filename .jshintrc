@@ -9,10 +9,7 @@
     "noarg": true,
     "noempty": true,
     "nonew": true,
-    "strict": false,
-    "trailing": true,
     "undef": true,
-    "unused": true,
 
     "browser": true,
     "devel": true,
@@ -27,6 +24,7 @@
         "requestAnimationFrame": false,
         "Seadragon": true,
         "seadragonProxy": true,
+        "seadragonCustom": true,
         "utils": true
     }
 }
