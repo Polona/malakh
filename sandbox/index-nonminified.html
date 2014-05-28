@@ -36,16 +36,48 @@
 <![endif]-->
 <script src="js/jquery-2.1.1.js"></script>
 <script src="js/dzi_names_array.js"></script>
-<script src="../dist/seadragon.js"></script>
+
+<script>var Seadragon;</script>
+
+<script src="../src/utils.js"></script>
+
+<script src="../src/polyfills/static_methods.js"></script>
+<script src="../src/polyfills/request_animation_frame.js"></script>
+<script src="../src/polyfills/jquery.wheel.js"></script>
+
+<script src="../src/core.js"></script>
+<script src="../src/seadragon_proxy.js"></script>
+
+<script src="../src/utility_classes/point.js"></script>
+<script src="../src/utility_classes/segment.js"></script>
+<script src="../src/utility_classes/rectangle.js"></script>
+
+<script src="../src/derived_classes/spring.js"></script>
+<script src="../src/derived_classes/tile.js"></script>
+<script src="../src/derived_classes/animated_rectangle.js"></script>
+<script src="../src/derived_classes/tiled_image.js"></script>
+<script src="../src/derived_classes/single_image.js"></script>
+<script src="../src/derived_classes/dzi_image.js"></script>
+
+<script src="../src/instances/image_loader.js"></script>
+<script src="../src/instances/magnifier.js"></script>
+<script src="../src/instances/viewport.js"></script>
+<script src="../src/instances/picker.js"></script>
+<script src="../src/instances/markers.js"></script>
+<script src="../src/instances/canvas_layers_manager.js"></script>
+<script src="../src/instances/drawer.js"></script>
+<script src="../src/instances/layout_manager.js"></script>
+<script src="../src/instances/controller.js"></script>
+
 <script src="js/seadragon_custom.js"></script>
 <script>
     $(function () {
         seadragonCustom('#seadragon_container', {
             debugMode: true,
 //            debugTileBorders: true,
-//            animationTime: 0,
-//            mouseAnimationTime: 0,
-//            blendTime: 0,
+            animationTime: 1000,
+            mouseAnimationTime: 1000,
+            blendTime: 0,
         });
     });
 </script>
