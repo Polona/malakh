@@ -9,22 +9,22 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @extends Seadragon.TiledImage
+ * @extends Malakh.TiledImage
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  *
  * @param {Object} options An object containing all given options.
  * @param {number} options.width Sets <code>this.width</code>.
  * @param {number} options.height Sets <code>this.height</code>.
  * @param {number} options.imageUrl Sets <code>this.imageUrl</code>.
- * @param {Seadragon.Rectangle} [options.bounds=new Seadragon.Rectangle(0, 0, options.width, options.height)]
+ * @param {Malakh.Rectangle} [options.bounds=new Malakh.Rectangle(0, 0, options.width, options.height)]
  *                              Sets <code>this.bounds</code>.
  */
-Seadragon.SingleImage = function SingleImage(seadragon, options) {
+Malakh.SingleImage = function SingleImage(malakh, options) {
     this.ensureArguments(arguments, 'SingleImage', ['options']);
     this.ensureOptions(options, 'SingleImage', ['width', 'height', 'imageUrl']);
 
-    Seadragon.TiledImage.call(this, this.seadragon, {
+    Malakh.TiledImage.call(this, this.malakh, {
         width: options.width,
         height: options.height,
         tileSize: Math.max(options.width, options.height),
@@ -41,11 +41,11 @@ Seadragon.SingleImage = function SingleImage(seadragon, options) {
     this.imageUrl = options.imageUrl;
 };
 
-Seadragon.SingleImage.prototype = Object.create(Seadragon.TiledImage.prototype);
+Malakh.SingleImage.prototype = Object.create(Malakh.TiledImage.prototype);
 
-$.extend(Seadragon.SingleImage.prototype,
+$.extend(Malakh.SingleImage.prototype,
     /**
-     * @lends Seadragon.SingleImage.prototype
+     * @lends Malakh.SingleImage.prototype
      */
     {
         /**

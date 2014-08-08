@@ -15,10 +15,10 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  * @param {number} [initialValue=0]
  */
-Seadragon.Spring = function Spring(seadragon, initialValue) {
+Malakh.Spring = function Spring(malakh, initialValue) {
     this.ensureArguments(arguments, 'Spring');
 
     /**
@@ -62,11 +62,11 @@ Seadragon.Spring = function Spring(seadragon, initialValue) {
     this.cacheIsAnimating = true;
 };
 
-Seadragon.Spring.prototype = Object.create(seadragonProxy);
+Malakh.Spring.prototype = Object.create(malakhProxy);
 
-$.extend(Seadragon.Spring.prototype,
+$.extend(Malakh.Spring.prototype,
     /**
-     * @lends Seadragon.Spring.prototype
+     * @lends Malakh.Spring.prototype
      */
     {
         /**
@@ -147,7 +147,7 @@ $.extend(Seadragon.Spring.prototype,
 
         /**
          * Updates the current value of the spring based on current time and start and target values.
-         * This method has to be invoked manually which is done by Seadragon.Drawer.
+         * This method has to be invoked manually which is done by Malakh.Drawer.
          */
         update: function update() {
             var currentTime = Date.now();

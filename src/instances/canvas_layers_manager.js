@@ -11,13 +11,13 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  */
-Seadragon.CanvasLayersManager = function CanvasLayersManager(/* seadragon */) {
+Malakh.CanvasLayersManager = function CanvasLayersManager(/* malakh */) {
     this.ensureArguments(arguments, 'CanvasLayersManager');
     /**
      * An array containing all tiles currently scheduled to draw
-     * @type Array.<Array.<Seadragon.Tile>>
+     * @type Array.<Array.<Malakh.Tile>>
      */
     this.tiles = [
         [],
@@ -25,11 +25,11 @@ Seadragon.CanvasLayersManager = function CanvasLayersManager(/* seadragon */) {
     ];
 };
 
-Seadragon.CanvasLayersManager.prototype = Object.create(seadragonProxy);
+Malakh.CanvasLayersManager.prototype = Object.create(malakhProxy);
 
-$.extend(Seadragon.CanvasLayersManager.prototype,
+$.extend(Malakh.CanvasLayersManager.prototype,
     /**
-     * @lends Seadragon.CanvasLayersManager.prototype
+     * @lends Malakh.CanvasLayersManager.prototype
      */
     {
         /**
@@ -37,7 +37,7 @@ $.extend(Seadragon.CanvasLayersManager.prototype,
          * Magnifier's layer number is 1, the "standard" layer is 0.
          *
          * @param {number} layerNum
-         * @param {Seadragon.Tile} tile
+         * @param {Malakh.Tile} tile
          */
         addToLayer: function addToLayer(layerNum, tile) {
             this.tiles[layerNum].push(tile);
@@ -52,11 +52,11 @@ $.extend(Seadragon.CanvasLayersManager.prototype,
         drawLayer: function drawLayer(layerNum) {
             var tilesOnLayer, drawLayer1, zoom;
 
-            var seadragon = this.seadragon,
-                canvasContext = seadragon.canvasContext,
-                magnifier = seadragon.magnifier,
-                config = seadragon.config,
-                viewport = seadragon.viewport;
+            var malakh = this.malakh,
+                canvasContext = malakh.canvasContext,
+                magnifier = malakh.magnifier,
+                config = malakh.config,
+                viewport = malakh.viewport;
 
             tilesOnLayer = this.tiles[layerNum];
             drawLayer1 = layerNum === 1 && config.enableMagnifier && magnifier;

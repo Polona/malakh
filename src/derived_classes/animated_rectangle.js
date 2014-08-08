@@ -2,7 +2,7 @@
  * Constructs an animated rectangle.
  *
  * @class <p>Represents a rectangle that can be moved using animations. It's represented
- * by a set of four <code>Seadragon.Springs</code> which handle animating.
+ * by a set of four <code>Malakh.Springs</code> which handle animating.
  *
  * <p>All <code>AnimatedRectangle</code>'s methods follow the same conventions with respect
  * to <code>current</code> and <code>immediately</code> parameters as <code>Viewport</code>'s ones.
@@ -13,15 +13,15 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @see Seadragon.Viewport
+ * @see Malakh.Viewport
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
- * @param {Seadragon.Rectangle} bounds  A rectangle representing the initial value of the animated rectangle.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
+ * @param {Malakh.Rectangle} bounds  A rectangle representing the initial value of the animated rectangle.
  */
-Seadragon.AnimatedRectangle = function AnimatedRectangle(seadragon, bounds) {
+Malakh.AnimatedRectangle = function AnimatedRectangle(malakh, bounds) {
     this.ensureArguments(arguments, 'AnimatedRectangle', ['bounds']);
-    if (!(bounds instanceof Seadragon.Rectangle)) {
-        bounds = new Seadragon.Rectangle(bounds);
+    if (!(bounds instanceof Malakh.Rectangle)) {
+        bounds = new Malakh.Rectangle(bounds);
     }
 
     var that = this;
@@ -36,7 +36,7 @@ Seadragon.AnimatedRectangle = function AnimatedRectangle(seadragon, bounds) {
     var version = Date.now();
     Object.defineProperties(this,
         /**
-         * @lends Seadragon.AnimatedRectangle#
+         * @lends Malakh.AnimatedRectangle#
          */
         {
             /**
@@ -57,7 +57,7 @@ Seadragon.AnimatedRectangle = function AnimatedRectangle(seadragon, bounds) {
                     return version;
                 },
                 set: function () {
-                    console.error('Seadragon.AnimatedRectangle\'s version parameter can\'t be manually changed');
+                    console.error('Malakh.AnimatedRectangle\'s version parameter can\'t be manually changed');
                 },
                 enumerable: true,
             },
@@ -66,10 +66,10 @@ Seadragon.AnimatedRectangle = function AnimatedRectangle(seadragon, bounds) {
 
     /**
      * @type Object
-     * @property {Seadragon.Spring} x A spring representing the top-left horizontal parameter.
-     * @property {Seadragon.Spring} y A spring representing the top-left vertical parameter.
-     * @property {Seadragon.Spring} width A spring representing width of the rectangle.
-     * @property {Seadragon.Spring} height A spring representing height of the rectangle.
+     * @property {Malakh.Spring} x A spring representing the top-left horizontal parameter.
+     * @property {Malakh.Spring} y A spring representing the top-left vertical parameter.
+     * @property {Malakh.Spring} width A spring representing width of the rectangle.
+     * @property {Malakh.Spring} height A spring representing height of the rectangle.
      */
     this.springs = {
         x: this.Spring(bounds.x),
@@ -79,21 +79,21 @@ Seadragon.AnimatedRectangle = function AnimatedRectangle(seadragon, bounds) {
     };
 };
 
-Seadragon.AnimatedRectangle.prototype = Object.create(seadragonProxy);
+Malakh.AnimatedRectangle.prototype = Object.create(malakhProxy);
 
-$.extend(Seadragon.AnimatedRectangle.prototype,
+$.extend(Malakh.AnimatedRectangle.prototype,
     /**
-     * @lends Seadragon.AnimatedRectangle.prototype
+     * @lends Malakh.AnimatedRectangle.prototype
      */
     {
         /**
-         * Returns the usual Seadragon.Rectangle instance from the current or target state.
+         * Returns the usual Malakh.Rectangle instance from the current or target state.
          *
          * @param {boolean} [current=false]
-         * @return {Seadragon.Rectangle}
+         * @return {Malakh.Rectangle}
          */
         getRectangle: function getRectangle(current) {
-            return new Seadragon.Rectangle(
+            return new Malakh.Rectangle(
                 this.springs.x.get(current),
                 this.springs.y.get(current),
                 this.springs.width.get(current),
@@ -153,7 +153,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
 
         /**
          * @param {boolean} [current=false]
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         getTopLeft: function getTopLeft(current) {
             return this.getRectangle(current).getTopLeft();
@@ -161,7 +161,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
 
         /**
          * @param {boolean} [current=false]
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         getBottomRight: function getBottomRight(current) {
             return this.getRectangle(current).getBottomRight();
@@ -171,7 +171,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
          * Returns a point <code>(width, height)</code>.
          *
          * @param {boolean} [current=false]
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         getSize: function getSize(current) {
             return this.getRectangle(current).getSize();
@@ -179,7 +179,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
 
         /**
          * @param [current=false]
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         getCenter: function getCenter(current) {
             return this.getRectangle(current).getCenter();
@@ -188,7 +188,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
         /**
          * Pans the animated rectangle to a given center.
          *
-         * @param {Seadragon.Point} center
+         * @param {Malakh.Point} center
          * @param {boolean} [immediately=false]
          */
         panTo: function panTo(center, immediately, /* string INTERNAL */ animationTimeConfigParameter) {
@@ -198,13 +198,13 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
                 animationTimeConfigParameter);
 
             this.isAnimating = true;
-            this.$container.trigger('seadragon:force_redraw');
+            this.$container.trigger('malakh:force_redraw');
             return this;
         },
 
         /**
          * Pans the animated rectangle by a given <code>delta</code> vector.
-         * @param {Seadragon.Point} delta
+         * @param {Malakh.Point} delta
          * @param {boolean} [immediately=false]
          */
         panBy: function panBy(delta, immediately, /* string INTERNAL */ animationTimeConfigParameter) {
@@ -213,7 +213,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
 
         /**
          * Updates the state of all rectangle springs. In case of a change, triggers
-         * a <code>seadragon:forceredraw.seadragon</code> event on the container.
+         * a <code>malakh:forceredraw.malakh</code> event on the container.
          *
          * @return {boolean} Did anything change?
          */
@@ -230,7 +230,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
                 this.springs.width.currentValue !== bounds.width ||
                 this.springs.height.currentValue !== bounds.height;
             if (anythingChanged) {
-                this.$container.trigger('seadragon:force_redraw');
+                this.$container.trigger('malakh:force_redraw');
             }
             return anythingChanged;
         },
@@ -238,7 +238,7 @@ $.extend(Seadragon.AnimatedRectangle.prototype,
         /**
          * Animates a rectangle to a new one.
          *
-         * @param {Seadragon.Rectangle} bounds
+         * @param {Malakh.Rectangle} bounds
          * @param {boolean} [immediately=false]
          */
         fitBounds: function fitBounds(bounds, immediately) {

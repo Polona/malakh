@@ -1,29 +1,29 @@
 {
-    "name": "seadragon",
-    "title": "Seadragon",
-    "description": "",
-    "version": "0.10.0-pre",
-    "author": {
-        "name": "Michał Gołębiowski <michal.golebiowski@laboratorium.ee>",
-        "url": ""
-    },
-    "repository": {
-        "type": "git",
-        "url": "ssh://git@defilada.laboratorium.ee:7999/sd/seadragon.git"
-    },
-    "licenses": [
-        {
-            "type": "New BSD",
-            "url": "license.txt"
-        }
-    ],
-    "devDependencies": {
-        "grunt": "0.4.5",
-        "grunt-contrib-jshint": "0.10.0",
-        "grunt-contrib-uglify": "0.4.0"
-    },
-    "keywords": [
-        "seadragon",
-        "deep zoom"
-    ]
+  "name": "malakh",
+  "title": "Malakh",
+  "description": "",
+  "version": "0.10.0-pre",
+  "author": {
+    "name": "Michał Gołębiowski <michal.golebiowski@laboratorium.ee>",
+    "url": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Polona/malakh.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "LICENSE.md"
+    }
+  ],
+  "devDependencies": {
+    "grunt": "0.4.5",
+    "grunt-contrib-jshint": "0.10.0",
+    "grunt-contrib-uglify": "0.5.1"
+  },
+  "keywords": [
+    "malakh",
+    "deep zoom"
+  ]
 }

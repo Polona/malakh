@@ -1,7 +1,7 @@
-var seadragonProxy = Object.create(Seadragon.prototype);
+var malakhProxy = Object.create(Malakh.prototype);
 
-// We're making seadragon fields accessible from any Seadragon class via this.field
-// instead of this.seadragon.field. But we still reflect all changes onto this.seadragon.field
+// We're making malakh fields accessible from any Malakh class via this.field
+// instead of this.malakh.field. But we still reflect all changes onto this.malakh.field
 utils.forEach([
     // constructors: classes
     'AnimatedRectangle', 'DziImage', 'SingleImage', 'Spring', 'Tile', 'TiledImage',
@@ -18,12 +18,12 @@ utils.forEach([
     'config', '$container', '$canvas', 'canvasContext', 'tiledImages',
 ],
     function (field) {
-        Object.defineProperty(seadragonProxy, field, {
+        Object.defineProperty(malakhProxy, field, {
             get: function () {
-                return this.seadragon[field];
+                return this.malakh[field];
             },
             set: function (value) {
-                this.seadragon[field] = value;
+                this.malakh[field] = value;
             }
         });
     }

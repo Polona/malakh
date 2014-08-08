@@ -22,9 +22,9 @@
 
     "globals": {
         "requestAnimationFrame": false,
-        "Seadragon": true,
-        "seadragonProxy": true,
-        "seadragonCustom": true,
+        "Malakh": true,
+        "malakhProxy": true,
+        "malakhCustom": true,
         "utils": true
     }
 }

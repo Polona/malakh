@@ -1,7 +1,7 @@
 /**
- * Constructs a <code>Seadragon.Markers</code> instance.
+ * Constructs a <code>Malakh.Markers</code> instance.
  *
- * @class <p>Each marker is represented by a DOM object and a Seadragon.Rectangle instance
+ * @class <p>Each marker is represented by a DOM object and a Malakh.Rectangle instance
  * to which it's scaled. The rectangle represents element's position in points, not pixels;
  * thus it's updated when canvas moves.
  *
@@ -12,9 +12,9 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  */
-Seadragon.Markers = function Markers(/* seadragon */) {
+Malakh.Markers = function Markers(/* malakh */) {
     this.ensureArguments(arguments, 'Markers');
 
     var that = this;
@@ -30,10 +30,10 @@ Seadragon.Markers = function Markers(/* seadragon */) {
 
     /**
      * Adds a single marker representing given object enclosed in a given rectangle. Rectangle is represented
-     * in Seadragon points, relative to the virtual canvas on which everything is drawn.
+     * in Malakh points, relative to the virtual canvas on which everything is drawn.
      *
      * @param {HTMLElement} object An HTML element being marked.
-     * @param {Seadragon.Rectangle} rectangle The rectangle representing object's position on the virtual canvas.
+     * @param {Malakh.Rectangle} rectangle The rectangle representing object's position on the virtual canvas.
      */
     this.addMarker = function addMarker(object, rectangle) {
         markers.push({object: object, rectangle: rectangle});
@@ -57,7 +57,7 @@ Seadragon.Markers = function Markers(/* seadragon */) {
      */
     function fixPositions() {
         utils.forEach(markers, function (pair) {
-            var pixelRectangle = that.seadragon.viewport.pixelRectangleFromPointRectangle(pair.rectangle, true);
+            var pixelRectangle = that.malakh.viewport.pixelRectangleFromPointRectangle(pair.rectangle, true);
             var object = pair.object;
             object.css({
                 left: pixelRectangle.x,
@@ -70,8 +70,8 @@ Seadragon.Markers = function Markers(/* seadragon */) {
     }
 
     function bindEvents() {
-        that.$container.on('seadragon:animation.seadragon', fixPositions);
+        that.$container.on('malakh:animation.malakh', fixPositions);
     }
 };
 
-Seadragon.Markers.prototype = Object.create(seadragonProxy);
+Malakh.Markers.prototype = Object.create(malakhProxy);

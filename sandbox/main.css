@@ -15,7 +15,7 @@ body {
     background-color: #2d2a2b;
 }
 
-.seadragon_container {
+.malakh_container {
     overflow: hidden;
     right: 0;
     top: 0;
@@ -23,7 +23,7 @@ body {
     height: 100%;
 }
 
-#seadragon_container_container {
+#malakh_container_container {
     position: fixed;
     padding-left: 130px;
 }

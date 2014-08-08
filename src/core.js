@@ -1,33 +1,33 @@
 /**
- * Constructs a Seadragon instance.
+ * Constructs a Malakh instance.
  *
- * @class Represents the whole Seadragon.
+ * @class Represents the whole Malakh.
  *
- * @param {jQuery|string} containerSelectorOrElement  The jQuery object which will serve as the Seadragon container
+ * @param {jQuery|string} containerSelectorOrElement  The jQuery object which will serve as the Malakh container
  *                                                    or selector pointing to that object.
  * @param {Object} configOverrides  Overrides for default configuration options.
  */
-Seadragon = function (containerSelectorOrElement, configOverrides) {
+Malakh = function (containerSelectorOrElement, configOverrides) {
     var $canvas, canvasContext;
-    var seadragon = this;
-    this.seadragon = this; // needed for prototype methods
+    var malakh = this;
+    this.malakh = this; // needed for prototype methods
 
     /**
      * Constructors wrappers. Allows invoking:
      *     <code>var rectangle = this.Rectangle(2, 3, 50, 23);</code>
      * instead of:
-     *     <code>var rectangle = new Seadragon.Rectangle(this.seadragon, 2, 3, 50, 23);</code>
+     *     <code>var rectangle = new Malakh.Rectangle(this.malakh, 2, 3, 50, 23);</code>
      * etc.
      */
     utils.forEach(['AnimatedRectangle', 'CanvasLayersManager', 'Controller', 'Drawer',
         'DziImage', 'ImageLoader', 'LayoutManager', 'Magnifier', 'Markers', 'Picker',
         'SingleImage', 'Spring', 'Tile', 'TiledImage', 'Viewport'],
         function (name) {
-            seadragon[name] = function () {
+            malakh[name] = function () {
                 var args = [].slice.call(arguments, 0);
-                // Passing seadragon as the first parameter; null is needed for `bind` to work.
-                args.unshift(null, seadragon);
-                var constructor = Seadragon[name];
+                // Passing malakh as the first parameter; null is needed for `bind` to work.
+                args.unshift(null, malakh);
+                var constructor = Malakh[name];
                 var FactoryConstructor = constructor.bind.apply(constructor, args);
                 return new FactoryConstructor();
             };
@@ -37,7 +37,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
 
     // TODO correct jsDoc for config parameters, now it doesn't get generated.
     /**
-     * Configuration options of this Seadragon instance.
+     * Configuration options of this Malakh instance.
      * @type Object
      */
     this.config = {
@@ -256,7 +256,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
 
     Object.defineProperties(this,
         /**
-         * @lends Seadragon#
+         * @lends Malakh#
          */
         {
             $canvas: {
@@ -295,39 +295,39 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
     this.viewport = this.Viewport();
     this.canvasLayersManager = this.CanvasLayersManager();
 
-    if (Seadragon.Magnifier) {
+    if (Malakh.Magnifier) {
         /**
-         * @type Seadragon.Magnifier
+         * @type Malakh.Magnifier
          */
         this.magnifier = this.Magnifier([0, 0]);
     }
-    if (Seadragon.Picker) {
+    if (Malakh.Picker) {
         /**
-         * @type Seadragon.Picker
+         * @type Malakh.Picker
          */
         this.picker = this.Picker();
     }
-    if (Seadragon.Markers) {
+    if (Malakh.Markers) {
         /**
-         * @type Seadragon.Markers
+         * @type Malakh.Markers
          */
         this.markers = this.Markers();
     }
     /**
-     * A <code>Seadragon.Drawer</code> instance, handles all the drawing.
-     * @type Seadragon.Drawer
+     * A <code>Malakh.Drawer</code> instance, handles all the drawing.
+     * @type Malakh.Drawer
      */
     this.drawer = this.Drawer();
-    if (Seadragon.LayoutManager) {
+    if (Malakh.LayoutManager) {
         /**
-         * A <code>Seadragon.LayoutManager</code> instance, contains helper layout methods.
-         * @type Seadragon.LayoutManager
+         * A <code>Malakh.LayoutManager</code> instance, contains helper layout methods.
+         * @type Malakh.LayoutManager
          */
         this.layoutManager = this.LayoutManager();
     }
     /**
-     * The main Seadragon controller.
-     * @type Seadragon.Controller
+     * The main Malakh controller.
+     * @type Malakh.Controller
      */
     this.controller = this.Controller();
 
@@ -369,7 +369,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
         ._defineProxyForAllFields('layoutManager');
 
 
-    // Those values are handled using ES5 getters/setters but since they need Seadragon
+    // Those values are handled using ES5 getters/setters but since they need Malakh
     // initialized for their setters to work, they're defined at the end of the constructor.
     var configProxies = {
         blockZoom: this.config.blockZoom || false,
@@ -386,8 +386,8 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
             set: function (value) {
                 configProxies[name] = value;
                 if (forceIfTrue == null || configProxies[name] === forceIfTrue) {
-                    seadragon.$container.trigger('seadragon:force_redraw');
-                    seadragon.viewport.applyConstraints();
+                    malakh.$container.trigger('malakh:force_redraw');
+                    malakh.viewport.applyConstraints();
                 }
             },
             enumerable: true,
@@ -422,7 +422,7 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
 
     Object.defineProperties(this.config,
         /**
-         * @lends Seadragon#config
+         * @lends Malakh#config
          */
         {
             /**
@@ -435,10 +435,10 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
                 },
                 set: function (value) {
                     configProxies.blockZoom = value;
-                    if (configProxies.blockZoom && seadragon.config.wheelToPanWhenZoomBlocked) {
-                        seadragon.enableWheelToPan();
+                    if (configProxies.blockZoom && malakh.config.wheelToPanWhenZoomBlocked) {
+                        malakh.enableWheelToPan();
                     } else {
-                        seadragon.disableWheelToPan();
+                        malakh.disableWheelToPan();
                     }
                 },
                 enumerable: true,
@@ -451,23 +451,23 @@ Seadragon = function (containerSelectorOrElement, configOverrides) {
 (function () {
     var NativeError = Error;
     /**
-     * Constructs a <code>Seadragon.Error</code> instance.
+     * Constructs a <code>Malakh.Error</code> instance.
      *
-     * @class A Seadragon <code>Error</code> wrapper.
+     * @class A Malakh <code>Error</code> wrapper.
      *
      * @param {string} [message]
      */
-    Seadragon.Error = function Error(message) {
+    Malakh.Error = function Error(message) {
         var error = new NativeError(message);
-        error.constructor = Seadragon.Error;
+        error.constructor = Malakh.Error;
         return error;
     };
-    Seadragon.Error.prototype = Object.create(Error.prototype);
+    Malakh.Error.prototype = Object.create(Error.prototype);
 })();
 
-$.extend(Seadragon.prototype,
+$.extend(Malakh.prototype,
     /**
-     * @lends Seadragon.prototype
+     * @lends Malakh.prototype
      */
     {
         /**
@@ -482,29 +482,29 @@ $.extend(Seadragon.prototype,
             expectedArguments = expectedArguments || [];
             var firstArg = args[0];
 
-            if (!(firstArg instanceof Seadragon) ||
-                args.length < expectedArguments.length + 1) { // +1 because of the `seadragon` parameter
+            if (!(firstArg instanceof Malakh) ||
+                args.length < expectedArguments.length + 1) { // +1 because of the `malakh` parameter
 
                 className = className || 'ClassName';
 
                 var names = expectedArguments.join(', ');
                 var errorString = 'Incorrect paremeters! Use:\n' +
-                    '    var obj = seadragon.' + className + '(' + names + ')\n';
+                    '    var obj = malakh.' + className + '(' + names + ')\n';
 
-                expectedArguments.unshift('seadragon');
-                var namesWithSeadragon = expectedArguments.join(', ');
+                expectedArguments.unshift('malakh');
+                var namesWithMalakh = expectedArguments.join(', ');
                 errorString += 'or:\n' +
-                    '    new Seadragon.' + className + '(' + namesWithSeadragon + ')\n';
+                    '    new Malakh.' + className + '(' + namesWithMalakh + ')\n';
 
                 console.log('Received arguments:', [].slice.call(args));
                 this.fail(errorString);
             }
 
             /**
-             * Main Seadragon instance.
-             * @type Seadragon
+             * Main Malakh instance.
+             * @type Malakh
              */
-            this.seadragon = firstArg;
+            this.malakh = firstArg;
             return this;
         },
 
@@ -525,7 +525,7 @@ $.extend(Seadragon.prototype,
             });
             if (missingOption) {
                 console.log('Received options:', options);
-                this.fail('Seadragon.' + className + ' needs a JSON parameter with at least the ' +
+                this.fail('Malakh.' + className + ' needs a JSON parameter with at least the ' +
                     'following fields: ' + expectedOptionsArray.join(', ') + '.');
             }
             return this;
@@ -540,7 +540,7 @@ $.extend(Seadragon.prototype,
             return this;
         },
         /**
-         * Displays an error message on Seadragon canvas and throws a new <code>Seadragon.Error</code>.
+         * Displays an error message on Malakh canvas and throws a new <code>Malakh.Error</code>.
          * @param {string} [errorText]
          */
         fail: function fail(errorText) {
@@ -575,7 +575,7 @@ $.extend(Seadragon.prototype,
                     )
                 );
 
-            throw new Seadragon.Error(errorText);
+            throw new Malakh.Error(errorText);
         },
     }
 );

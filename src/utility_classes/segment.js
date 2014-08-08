@@ -1,10 +1,10 @@
 /**
  * Constructs a segment <code>[(x_1, y_1), (x_2, y_2)]</code>. Use cases are as follows:
  * <ul>
- *     <li><code>new Seadragon.Segment()</code> (gives segment <code>[(0, 0), (0, 0)])</code></li>
- *     <li><code>new Seadragon.Segment({x1: x1, y1: y1, x2: x2, y2: y2})</code></li>
- *     <li><code>new Seadragon.Segment(x1, y1, x2, y2)</code></code></li>
- *     <li><code>new Seadragon.Segment([x1, y1, x2, y2])</code></code></li>
+ *     <li><code>new Malakh.Segment()</code> (gives segment <code>[(0, 0), (0, 0)])</code></li>
+ *     <li><code>new Malakh.Segment({x1: x1, y1: y1, x2: x2, y2: y2})</code></li>
+ *     <li><code>new Malakh.Segment(x1, y1, x2, y2)</code></code></li>
+ *     <li><code>new Malakh.Segment([x1, y1, x2, y2])</code></code></li>
  * </ul>
  *
  * @class <p>Represents a Segment <code>[(x_1, y_1), (x_2, y_2)]</code> on a 2-dimensional plane.
@@ -15,7 +15,7 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  */
-Seadragon.Segment = function Segment() {
+Malakh.Segment = function Segment() {
     var arguments0 = arguments[0];
     if (arguments0 == null) {
         /**
@@ -55,19 +55,19 @@ Seadragon.Segment = function Segment() {
     }
 };
 
-$.extend(Seadragon.Segment.prototype,
+$.extend(Malakh.Segment.prototype,
     /**
-     * @lends Seadragon.Segment.prototype
+     * @lends Malakh.Segment.prototype
      */
     {
         /**
          * Checks if another segment is equal to the current one.
          *
-         * @param {Seadragon.Segment} segment
+         * @param {Malakh.Segment} segment
          * @return {boolean}
          */
         equals: function equals(segment) {
-            return segment instanceof Seadragon.Segment &&
+            return segment instanceof Malakh.Segment &&
                 this.x1 === segment.x1 && segment.y1 === segment.y1 &&
                 this.x2 === segment.x2 && segment.y2 === segment.y2;
         },

@@ -10,28 +10,28 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
- * @param {Seadragon.Point} [center=(0,0)]
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
+ * @param {Malakh.Point} [center=(0,0)]
  */
-Seadragon.Magnifier = function Magnifier(seadragon, center) {
+Malakh.Magnifier = function Magnifier(malakh, center) {
     this.ensureArguments(arguments, 'Magnifier', ['center']);
-    if (!(center instanceof Seadragon.Point)) {
-        center = new Seadragon.Point(center);
+    if (!(center instanceof Malakh.Point)) {
+        center = new Malakh.Point(center);
     }
     this.center = center;
 };
 
-Seadragon.Magnifier.prototype = Object.create(seadragonProxy);
+Malakh.Magnifier.prototype = Object.create(malakhProxy);
 
-$.extend(Seadragon.Magnifier.prototype,
+$.extend(Malakh.Magnifier.prototype,
     /**
-     * @lends Seadragon.Magnifier.prototype
+     * @lends Malakh.Magnifier.prototype
      */
     {
         /**
-         * Pans the magnifier by a given vector represented by a <code>Seadragon.Point</code> instance.
+         * Pans the magnifier by a given vector represented by a <code>Malakh.Point</code> instance.
          *
-         * @param {Seadragon.Point} delta
+         * @param {Malakh.Point} delta
          */
         panBy: function panBy(delta) {
             this.center.x += delta.x;
@@ -42,7 +42,7 @@ $.extend(Seadragon.Magnifier.prototype,
         /**
          * Pans the magnifier so that its new center matches a given one.
          *
-         * @param {Seadragon.Point} newCenter New center point of the magnifier
+         * @param {Malakh.Point} newCenter New center point of the magnifier
          */
         panTo: function panTo(newCenter) {
             this.center.x = newCenter.x;
@@ -60,11 +60,11 @@ $.extend(Seadragon.Magnifier.prototype,
          * doesn't intersect a circle! This operation is used very often so quick
          * checking is important.
          *
-         * @param {Seadragon.Rectangle} rectangle
+         * @param {Malakh.Rectangle} rectangle
          * @return {boolean}
          */
         intersectsRectangle: function intersectsRectangle(rectangle) {
-            return rectangle.intersectsRectangle(new Seadragon.Rectangle(
+            return rectangle.intersectsRectangle(new Malakh.Rectangle(
                 this.center.x - this.config.magnifierRadius / this.config.magnifierZoom,
                 this.center.y - this.config.magnifierRadius / this.config.magnifierZoom,
                 2 * this.config.magnifierRadius / this.config.magnifierZoom,

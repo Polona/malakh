@@ -1,5 +1,5 @@
 /*!
- * Seadragon v@VERSION
+ * Malakh v@VERSION
  *
  * Publisher: 2013 Laboratorium EE
  * Author: Michał Gołębiowski <michal.golebiowski@laboratorium.ee>
@@ -8,8 +8,8 @@
  * Date: @DATE
  */
 
-var Seadragon;
+var Malakh;
 
-(function seadragonWrapper($, undefined) {
+(function malakhWrapper($, undefined) {
     'use strict';
 

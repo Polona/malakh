@@ -1,14 +1,14 @@
-/* global Seadragon: false, dziNamesArray: false */
-var seadragon;
+/* global Malakh: false, dziNamesArray: false */
+var malakh;
 
-function seadragonCustom(containerSelectorOrElement, configOverrides) {
+function malakhCustom(containerSelectorOrElement, configOverrides) {
     'use strict';
 
     var buttonColors = {
         false: '#cd5c5c',
         true: '#2e8b57',
     };
-    var dziPrefix = 'seadragon_data/';
+    var dziPrefix = 'malakh_data/';
     var initialAnimationTime, initialMouseAnimationTime;
 
     var animationsOff = false;
@@ -18,24 +18,24 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
 
     var dziDataArray;
 
-    // Seadragon initialization:
-    seadragon = new Seadragon(containerSelectorOrElement,
+    // Malakh initialization:
+    malakh = new Malakh(containerSelectorOrElement,
         $.extend({backgroundColor: '#2d2a2b'}, configOverrides));
-    initialAnimationTime = seadragon.config.animationTime;
-    initialMouseAnimationTime = seadragon.config.mouseAnimationTime;
+    initialAnimationTime = malakh.config.animationTime;
+    initialMouseAnimationTime = malakh.config.mouseAnimationTime;
 
     function openNorblinDZIsInARow() {
         dziDataArray = [];
         dziNamesArray.forEach(function (dziName, index) {
             dziDataArray[index] = {
                 imageDataUrl: dziPrefix + dziName + '.dzi',
-                bounds: new Seadragon.Rectangle(1000000, 1000000, 1000, 1000),
+                bounds: new Malakh.Rectangle(1000000, 1000000, 1000, 1000),
             };
         });
-        seadragon.openDziArray(dziDataArray);
-        seadragon.alignRows(6000, 0, Infinity, true);
-        seadragon.viewport.zoomTo(0.1, true);
-        seadragon.viewport.panTo(new Seadragon.Point(7000, 3000), true);
+        malakh.openDziArray(dziDataArray);
+        malakh.alignRows(6000, 0, Infinity, true);
+        malakh.viewport.zoomTo(0.1, true);
+        malakh.viewport.panTo(new Malakh.Point(7000, 3000), true);
     }
 
     function openSomeNorblinDZIsInARow() {
@@ -43,17 +43,17 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
         dziNamesArray.forEach(function (dziName, index) {
             dziDataArray[index] = {
                 imageDataUrl: dziPrefix + dziName + '.dzi',
-                bounds: new Seadragon.Rectangle(1000000, 1000000, 1000, 1000),
+                bounds: new Malakh.Rectangle(1000000, 1000000, 1000, 1000),
             };
         });
-        seadragon.openDziArray(dziDataArray.slice(0, 27));
-        seadragon.alignRows(6000, 0, Infinity, true);
-        seadragon.viewport.zoomTo(0.1, true);
-        seadragon.viewport.panTo(new Seadragon.Point(7000, 3000), true);
+        malakh.openDziArray(dziDataArray.slice(0, 27));
+        malakh.alignRows(6000, 0, Infinity, true);
+        malakh.viewport.zoomTo(0.1, true);
+        malakh.viewport.panTo(new Malakh.Point(7000, 3000), true);
     }
 
     function openOneTestDZIFromAcademica() {
-        seadragon
+        malakh
             .openDzi({
                 imageDataUrl: 'http://127.0.0.1:8107/resource/image/280189/?DeepZoom=279868.tif.dzi',
                 tilesUrl: 'http://127.0.0.1:8107/resource/image/280189/?DeepZoom=279868.tif_files/',
@@ -72,10 +72,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             }
             animationsOff = !animationsOff;
             if (animationsOff) {
-                seadragon.config.animationTime = seadragon.config.mouseAnimationTime = 0;
+                malakh.config.animationTime = malakh.config.mouseAnimationTime = 0;
             } else {
-                seadragon.config.animationTime = initialAnimationTime;
-                seadragon.config.mouseAnimationTime = initialMouseAnimationTime;
+                malakh.config.animationTime = initialAnimationTime;
+                malakh.config.mouseAnimationTime = initialMouseAnimationTime;
             }
             $(this).css('background-color', buttonColors[animationsOff]);
         }
@@ -86,8 +86,8 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
-            seadragon.config.centerWhenZoomedOut = !seadragon.config.centerWhenZoomedOut;
-            $(this).css('background-color', buttonColors[!seadragon.config.centerWhenZoomedOut]);
+            malakh.config.centerWhenZoomedOut = !malakh.config.centerWhenZoomedOut;
+            $(this).css('background-color', buttonColors[!malakh.config.centerWhenZoomedOut]);
         }
     });
 
@@ -96,8 +96,8 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
-            seadragon.config.blockZoom = !seadragon.config.blockZoom;
-            $(this).css('background-color', buttonColors[seadragon.config.blockZoom]);
+            malakh.config.blockZoom = !malakh.config.blockZoom;
+            $(this).css('background-color', buttonColors[malakh.config.blockZoom]);
         }
     });
 
@@ -106,23 +106,23 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
-            seadragon.config.debugTileBorders = !seadragon.config.debugTileBorders;
-            $(this).css('background-color', buttonColors[seadragon.config.debugTileBorders]);
+            malakh.config.debugTileBorders = !malakh.config.debugTileBorders;
+            $(this).css('background-color', buttonColors[malakh.config.debugTileBorders]);
         }
     });
 
     var $magnifier = $('#magnifier');
-    if (Seadragon.Magnifier) {
+    if (Malakh.Magnifier) {
         $magnifier.on({
             click: function (evt) {
                 if (evt.which !== 1) { // Only left-click is supported.
                     return;
                 }
-                if (seadragon.config.enablePicker) {
+                if (malakh.config.enablePicker) {
                     $('#picker').trigger(evt); // turn off the picker
                 }
-                seadragon.toggleMagnifier();
-                $(this).css('background-color', buttonColors[seadragon.config.enableMagnifier]);
+                malakh.toggleMagnifier();
+                $(this).css('background-color', buttonColors[malakh.config.enableMagnifier]);
             }
         });
     } else {
@@ -130,17 +130,17 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
     }
 
     var $picker = $('#picker');
-    if (Seadragon.Picker) {
+    if (Malakh.Picker) {
         $picker.on({
             click: function (evt) {
                 if (evt.which !== 1) { // Only left-click is supported.
                     return;
                 }
-                if (seadragon.config.enableMagnifier) {
+                if (malakh.config.enableMagnifier) {
                     $('#magnifier').trigger(evt); // turn off the magnifier
                 }
-                seadragon.togglePicker();
-                $(this).css('background-color', buttonColors[seadragon.config.enablePicker]);
+                malakh.togglePicker();
+                $(this).css('background-color', buttonColors[malakh.config.enablePicker]);
             }
         });
     } else {
@@ -156,10 +156,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainToImage2 || constrainToImage16) {
                 return;
             }
-            if (seadragon.config.enablePicker) {
+            if (malakh.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
-            seadragon.alignRows(6000, 100, Infinity);
+            malakh.alignRows(6000, 100, Infinity);
         }
     });
 
@@ -171,10 +171,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainToImage2 || constrainToImage16) {
                 return;
             }
-            if (seadragon.config.enablePicker) {
+            if (malakh.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
-            seadragon.alignColumns(6000, 100, Infinity);
+            malakh.alignColumns(6000, 100, Infinity);
         }
     });
 
@@ -186,10 +186,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainToImage2 || constrainToImage16) {
                 return;
             }
-            if (seadragon.config.enablePicker) {
+            if (malakh.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
-            seadragon.alignRows(6000, 100, 50000);
+            malakh.alignRows(6000, 100, 50000);
         }
     });
 
@@ -201,10 +201,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainToImage2 || constrainToImage16) {
                 return;
             }
-            if (seadragon.config.enablePicker) {
+            if (malakh.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
-            seadragon.alignColumns(6000, 100, 50000);
+            malakh.alignColumns(6000, 100, 50000);
         }
     });
 
@@ -216,10 +216,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainToImage16) {
                 return;
             }
-            if (seadragon.config.enablePicker) {
+            if (malakh.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
-            seadragon.fitImage(2);
+            malakh.fitImage(2);
         }
     });
 
@@ -231,10 +231,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (constrainToImage2) {
                 return;
             }
-            if (seadragon.config.enablePicker) {
+            if (malakh.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
-            seadragon.fitImage(16);
+            malakh.fitImage(16);
         }
     });
 
@@ -243,7 +243,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
-            if (seadragon.config.enablePicker) {
+            if (malakh.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
             constrainToImage2 = !constrainToImage2;
@@ -251,10 +251,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             constrainToImage16 = false;
             $('#constrain_to_image_16').css('background-color', buttonColors[false]);
             if (constrainToImage2) {
-                seadragon.constrainToImage(2);
-                seadragon.fitImage(2);
+                malakh.constrainToImage(2);
+                malakh.fitImage(2);
             } else {
-                seadragon.config.constrainViewport = false;
+                malakh.config.constrainViewport = false;
             }
         }
     });
@@ -264,7 +264,7 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
-            if (seadragon.config.enablePicker) {
+            if (malakh.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
             constrainToImage16 = !constrainToImage16;
@@ -272,10 +272,10 @@ function seadragonCustom(containerSelectorOrElement, configOverrides) {
             constrainToImage2 = false;
             $('#constrain_to_image_2').css('background-color', buttonColors[false]);
             if (constrainToImage16) {
-                seadragon.constrainToImage(16);
-                seadragon.fitImage(16);
+                malakh.constrainToImage(16);
+                malakh.fitImage(16);
             } else {
-                seadragon.config.constrainViewport = false;
+                malakh.config.constrainViewport = false;
             }
         }
     });

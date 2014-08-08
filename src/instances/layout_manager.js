@@ -3,9 +3,9 @@
  *
  * @class Contains methods for common layout schemes like putting images in rows or columns.
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  */
-Seadragon.LayoutManager = function LayoutManager(/* seadragon */) {
+Malakh.LayoutManager = function LayoutManager(/* malakh */) {
     this.ensureArguments(arguments, 'LayoutManager');
 
 
@@ -24,9 +24,9 @@ Seadragon.LayoutManager = function LayoutManager(/* seadragon */) {
                                                            maxRowWidthOrColumnHeight, immediately) {
         var width, height, widthSum, heightSum, newBounds;
 
-        var seadragon = this.seadragon,
-            controller = seadragon.controller,
-            tiledImages = seadragon.tiledImages;
+        var malakh = this.malakh,
+            controller = malakh.controller,
+            tiledImages = malakh.tiledImages;
 
         // Setting default values if parameters were not provided.
         heightOrWidth = heightOrWidth || 500; // it has to be >0
@@ -70,7 +70,7 @@ Seadragon.LayoutManager = function LayoutManager(/* seadragon */) {
             }
 
             // Set bounds.
-            newBounds = new Seadragon.Rectangle(widthSum, heightSum, width, height);
+            newBounds = new Malakh.Rectangle(widthSum, heightSum, width, height);
 
             // Compute parameters after placing an image.
             if (alingInRows) {
@@ -126,20 +126,20 @@ Seadragon.LayoutManager = function LayoutManager(/* seadragon */) {
      */
     this.fitImage = function fitImage(whichImage, options) {
         var boundsRectangle,
-            seadragon = this.seadragon,
-            tiledImage = seadragon.tiledImages[whichImage];
+            malakh = this.malakh,
+            tiledImage = malakh.tiledImages[whichImage];
 
         options = options || {};
         options.visibility = options.visibility || 1; // visibility 0 doesn't make sense
 
 
-        if (!(tiledImage instanceof Seadragon.TiledImage)) {
+        if (!(tiledImage instanceof Malakh.TiledImage)) {
             console.error('No image with number ' + whichImage);
             return this;
         }
         boundsRectangle = tiledImage.animatedBounds.getRectangle(options.current);
         boundsRectangle.scaleAroundCenter(1 / options.visibility);
-        seadragon.viewport.fitBounds(boundsRectangle, options.immediately);
+        malakh.viewport.fitBounds(boundsRectangle, options.immediately);
         return this;
     };
 
@@ -158,17 +158,17 @@ Seadragon.LayoutManager = function LayoutManager(/* seadragon */) {
     this.showOnlyImage = function showOnlyImage(whichImage, options) {
         var tiledImage;
 
-        var seadragon = this.seadragon,
-            tiledImages = seadragon.tiledImages,
-            controller = seadragon.controller,
-            layoutManager = seadragon.layoutManager,
-            $container = seadragon.$container;
+        var malakh = this.malakh,
+            tiledImages = malakh.tiledImages,
+            controller = malakh.controller,
+            layoutManager = malakh.layoutManager,
+            $container = malakh.$container;
 
         options = options || {};
         tiledImage = tiledImages[whichImage];
 
         var tiledImageCallbacks = controller.tiledImagesCallbacks[whichImage];
-        if (!(tiledImage instanceof Seadragon.TiledImage) && !(tiledImageCallbacks instanceof Array)) {
+        if (!(tiledImage instanceof Malakh.TiledImage) && !(tiledImageCallbacks instanceof Array)) {
             console.error('No Tiled Image shown or registered at number: ' + whichImage + '!');
             return this;
         }
@@ -182,7 +182,7 @@ Seadragon.LayoutManager = function LayoutManager(/* seadragon */) {
         controller.showImage(whichImage, options.immediately);
 
         if (!options.dontFitImage) {
-            if (tiledImage instanceof Seadragon.TiledImage) {
+            if (tiledImage instanceof Malakh.TiledImage) {
                 getFitImageFunction(whichImage).call(this);
             } else {
                 tiledImageCallbacks.push(getFitImageFunction(whichImage));
@@ -203,7 +203,7 @@ Seadragon.LayoutManager = function LayoutManager(/* seadragon */) {
             controller.constrainToImage(whichImage);
         }
 
-        $container.trigger('seadragon:force_align');
+        $container.trigger('malakh:force_align');
 
         return this;
     };
@@ -215,14 +215,14 @@ Seadragon.LayoutManager = function LayoutManager(/* seadragon */) {
      * @param {boolean} [immediately=false]
      */
     this.alignCentersAndHeights = function alignCenterAndHeight(height, immediately) {
-        var seadragon = this.seadragon,
-            controller = seadragon.controller;
+        var malakh = this.malakh,
+            controller = malakh.controller;
         if (controller.isLoading()) {
             setTimeout(utils.bindThis(this.alignCentersAndHeights, this), 100, height, immediately);
             return this;
         }
 
-        var tiledImages = seadragon.tiledImages;
+        var tiledImages = malakh.tiledImages;
 
         height = height || 500; // it has to be >0
 
@@ -236,8 +236,8 @@ Seadragon.LayoutManager = function LayoutManager(/* seadragon */) {
             var tiledImage = tiledImages[i];
             // We pass width as 0 because TiledImage#fitBounds corrects it anyway
             // and we adjust x & y so that (0, 0) is in the center of the returned rectangle.
-            var newBounds = new Seadragon.Rectangle(0, -height / 2, 0, height);
-            if (tiledImage instanceof Seadragon.TiledImage) {
+            var newBounds = new Malakh.Rectangle(0, -height / 2, 0, height);
+            if (tiledImage instanceof Malakh.TiledImage) {
                 // Center in (0, 0), common height, width counted from height & aspect ratio.
                 tiledImage.fitBounds(newBounds, immediately);
             } else {
@@ -251,4 +251,4 @@ Seadragon.LayoutManager = function LayoutManager(/* seadragon */) {
     };
 };
 
-Seadragon.LayoutManager.prototype = Object.create(seadragonProxy);
+Malakh.LayoutManager.prototype = Object.create(malakhProxy);

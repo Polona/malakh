@@ -3,7 +3,7 @@
  *
  * @class Handles all the drawing when invoked by the controller.
  *
- * <p> See <code>Seadragon.Viewport</code> description for information about conventions around parameter
+ * <p> See <code>Malakh.Viewport</code> description for information about conventions around parameter
  * named <code>current</code> and names <strong>point</strong> and <strong>pixel</strong>.
  *
  * <ul>
@@ -12,11 +12,11 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @see Seadragon.Viewport
+ * @see Malakh.Viewport
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  */
-Seadragon.Drawer = function Drawer(/* seadragon */) {
+Malakh.Drawer = function Drawer(/* malakh */) {
     this.ensureArguments(arguments, 'Drawer');
 
     var that = this;
@@ -39,7 +39,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
      * 'Registers' a new tiled image at a given index. We assume
      * <code>tiledImage = controller.tiledImages[index]</code>.
      *
-     * @param {Seadragon.TiledImage} tiledImage
+     * @param {Malakh.TiledImage} tiledImage
      * @param {number} index
      */
     this.registerTiledImage = function registerTiledImage(tiledImage, index) {
@@ -72,7 +72,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
      */
     function getNumTiles(whichImage, level) {
         if (!cacheNumTiles[whichImage][level]) {
-            cacheNumTiles[whichImage][level] = that.seadragon.tiledImages[whichImage].getNumTiles(level);
+            cacheNumTiles[whichImage][level] = that.malakh.tiledImages[whichImage].getNumTiles(level);
         }
 
         return cacheNumTiles[whichImage][level];
@@ -90,7 +90,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
     function getPixelOnImageSizeMax(whichImage, level) {
         if (!cachePixelOnImageSizeMax[whichImage][level]) {
             cachePixelOnImageSizeMax[whichImage][level] =
-                that.seadragon.tiledImages[whichImage].getPixelOnImageSize(level);
+                that.malakh.tiledImages[whichImage].getPixelOnImageSize(level);
         }
 
         return cachePixelOnImageSizeMax[whichImage][level];
@@ -107,7 +107,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
      * @param {number} time Current time. It's passed as a parameter so that we don't compute time individually
      *                      for each tile.
      * @param {boolean} [current=false]
-     * @return {Seadragon.Tile}
+     * @return {Malakh.Tile}
      * @private
      */
     function getTile(whichImage, level, x, y, time, current) {
@@ -115,7 +115,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
         var boundsAlreadyUpdated = false;
 
         tileMatrix = tilesMatrix[whichImage];
-        tiledImage = that.seadragon.tiledImages[whichImage];
+        tiledImage = that.malakh.tiledImages[whichImage];
 
         if (!tileMatrix[level]) {
             tileMatrix[level] = [];
@@ -157,13 +157,13 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
     /**
      * Loads the tile's image file.
      *
-     * @param {Seadragon.Tile} tile A tile for which we load an image file.
+     * @param {Malakh.Tile} tile A tile for which we load an image file.
      * @param {number} time Current time. It's passed as a parameter because we compute it once
      *                      per one #update invocation.
      * @private
      */
     function loadTile(tile, time) {
-        that.seadragon.imageLoader.loadImage(tile, utils.bind(onTileLoad, null, tile, time));
+        that.malakh.imageLoader.loadImage(tile, utils.bind(onTileLoad, null, tile, time));
     }
 
     /**
@@ -172,7 +172,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
      * given <code>that.config.imageCacheSize</code> length, one of existing tiles is removed from the table.
      * This is determined by tiles' levels and times they were "touched" for the last time.
      *
-     * @param {Seadragon.Tile} tile
+     * @param {Malakh.Tile} tile
      * @param {number} time
      * @param {Image} image
      * @private
@@ -228,7 +228,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
         }
 
         tilesLoaded[insertionIndex] = tile;
-        that.$container.trigger('seadragon:force_redraw');
+        that.$container.trigger('malakh:force_redraw');
     }
 
     /**
@@ -344,11 +344,11 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
      * to the <code>interestingPoint</code>, if one exists (if it doesn't and visibility is the same,
      * <code>prevBestTile</code> is returned).
      *
-     * @param {Seadragon.Tile} prevBestTile The best tile so far.
-     * @param {Seadragon.Tile} tile A tile that "tries" to be better than <code>prevBestTile</code>.
-     * @param {Seadragon.Point} [interestingPoint] The point near which we prefer to draw tiles. Usually
+     * @param {Malakh.Tile} prevBestTile The best tile so far.
+     * @param {Malakh.Tile} tile A tile that "tries" to be better than <code>prevBestTile</code>.
+     * @param {Malakh.Point} [interestingPoint] The point near which we prefer to draw tiles. Usually
      *                                             either the middle of the viewport or current mouse position.
-     * @return {Seadragon.Tile} The "better" tile.
+     * @return {Malakh.Tile} The "better" tile.
      * @private
      */
     function compareTiles(prevBestTile, tile, interestingPoint) {
@@ -358,7 +358,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
         if (tile.visibility > prevBestTile.visibility) {
             return tile;
         } else if (tile.visibility === prevBestTile.visibility) {
-            if (interestingPoint instanceof Seadragon.Point) {
+            if (interestingPoint instanceof Malakh.Point) {
                 var tileDistance = interestingPoint.distanceTo(tile.targetCenter);
                 var prevBestTileDistance = interestingPoint.distanceTo(prevBestTile.targetCenter);
                 if (tileDistance < prevBestTileDistance) {
@@ -378,8 +378,8 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
      * @private
      */
     function showOrHideImage(whichImage, hide, immediately) {
-        var tiledImage = that.seadragon.tiledImages[whichImage];
-        if (!(tiledImage instanceof Seadragon.TiledImage)) {
+        var tiledImage = that.malakh.tiledImages[whichImage];
+        if (!(tiledImage instanceof Malakh.TiledImage)) {
             console.error('Can\'t ' + (hide ? 'hide' : 'show') +
                 ' TiledImage of number ' + whichImage + '; there is no such TiledImage.');
             return;
@@ -408,7 +408,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
             tiledImage.blending = true;
         }
 
-        that.$container.trigger('seadragon:force_align'); // we need to recalculate max levels
+        that.$container.trigger('malakh:force_align'); // we need to recalculate max levels
     }
 
     /**
@@ -445,18 +445,18 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
         var tiledImage, tile, zeroSizeMax, deltaTime, opacity;
         var i, j, x, y, level; // indexes for loops
 
-        var triggerForceAlign = false; // if true at the end of the method, trigger 'seadragon:forcealign'
+        var triggerForceAlign = false; // if true at the end of the method, trigger 'malakh:forcealign'
 
-        // Caching this.seadragon.[a-zA-Z]* instances.
+        // Caching this.malakh.[a-zA-Z]* instances.
         // Note: we avoid using ES5 getters here for performance reasons.
-        var seadragon = this.seadragon,
-            viewport = seadragon.viewport,
-            magnifier = seadragon.magnifier,
-            canvasContext = seadragon.canvasContext,
-            canvasLayersManager = seadragon.canvasLayersManager,
-            tiledImages = seadragon.tiledImages,
-            $container = seadragon.$container,
-            config = seadragon.config;
+        var malakh = this.malakh,
+            viewport = malakh.viewport,
+            magnifier = malakh.magnifier,
+            canvasContext = malakh.canvasContext,
+            canvasLayersManager = malakh.canvasLayersManager,
+            tiledImages = malakh.tiledImages,
+            $container = malakh.$container,
+            config = malakh.config;
 
         if (midUpdate) {
             // We don't want to run two updates at the same time but we do want to indicate
@@ -507,7 +507,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
 
         // Drawing all images.
         utils.forEach(tiledImages, function (tiledImage, whichImage) {
-            if (!(tiledImage instanceof Seadragon.TiledImage) || tiledImage.isHidden()) {
+            if (!(tiledImage instanceof Malakh.TiledImage) || tiledImage.isHidden()) {
                 return;
             }
 
@@ -524,10 +524,10 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
             }
 
             // Restrain bounds of viewport relative to image.
-            viewportTLs[whichImage] = new Seadragon.Point(
+            viewportTLs[whichImage] = new Malakh.Point(
                 Math.max(viewportTL.x, tiledImageTL.x),
                 Math.max(viewportTL.y, tiledImageTL.y));
-            viewportBRs[whichImage] = new Seadragon.Point(
+            viewportBRs[whichImage] = new Malakh.Point(
                 Math.min(viewportBR.x, tiledImageBR.x),
                 Math.min(viewportBR.y, tiledImageBR.y));
 
@@ -650,7 +650,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
                     var sizeCurrent = viewport.deltaPixelsFromPoints(boundsSize, true);
 
                     var drawOnMagnifier = config.enableMagnifier && magnifier &&
-                        magnifier.intersectsRectangle(new Seadragon.Rectangle(
+                        magnifier.intersectsRectangle(new Malakh.Rectangle(
                             positionCurrent.x, positionCurrent.y, sizeCurrent.x, sizeCurrent.y));
 
                     // Calculate distance from center of viewport --
@@ -731,7 +731,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
         canvasLayersManager.draw();
 
         if (triggerForceAlign) {
-            $container.trigger('seadragon:force_align');
+            $container.trigger('malakh:force_align');
         }
         midUpdate = false;
         return updateAgain;
@@ -740,7 +740,7 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
 
     /**
      * Resets drawer state: clears all tiles, sets <code>lastResetTime</code> to now and
-     * triggers the <code>seadragon:forceredraw.seadragon</code> event.
+     * triggers the <code>malakh:forceredraw.malakh</code> event.
      * Restores drawer to its initial state.
      */
     this.reset = function reset() {
@@ -758,11 +758,11 @@ Seadragon.Drawer = function Drawer(/* seadragon */) {
         lastResetTime = 0;
         midUpdate = false;
 
-        this.$container.trigger('seadragon:force_redraw');
+        this.$container.trigger('malakh:force_redraw');
         return this;
     };
 
     this.reset(); // initialize fields
 };
 
-Seadragon.Drawer.prototype = Object.create(seadragonProxy);
+Malakh.Drawer.prototype = Object.create(malakhProxy);

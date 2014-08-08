@@ -1,7 +1,7 @@
 /**
- * Constructs a <code>Seadragon.Tile</code> instance.
+ * Constructs a <code>Malakh.Tile</code> instance.
  *
- * @class <p>Represents a single tile used by Seadragon. The tile knows about it's image path,
+ * @class <p>Represents a single tile used by Malakh. The tile knows about it's image path,
  * its position (i.e. it's column & row), the corresponding level and a few other parameters.
  *
  * <ul>
@@ -10,16 +10,16 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  *
  * @param {Object} options An object containing all given options.
  * @param {number} options.level Sets <code>this.level</code>.
  * @param {number} options.x Sets <code>this.x</code>.
  * @param {number} options.y Sets <code>this.y</code>.
- * @param {Seadragon.Rectangle} options.bounds Sets <code>this.bounds</code>.
+ * @param {Malakh.Rectangle} options.bounds Sets <code>this.bounds</code>.
  * @param {string} options.url Sets <code>this.url</code>.
  */
-Seadragon.Tile = function Tile(seadragon, options) {
+Malakh.Tile = function Tile(malakh, options) {
     this.ensureArguments(arguments, 'Tile', [options]);
     this.ensureOptions(options, 'Tile', ['level', 'x', 'y', 'bounds', 'url']);
 
@@ -46,7 +46,7 @@ Seadragon.Tile = function Tile(seadragon, options) {
     this.y = options.y;
     /**
      * A rectangle representing tile's position and size in normalized coordinates on the virtual plane.
-     * @type Seadragon.Rectangle
+     * @type Malakh.Rectangle
      */
     this.bounds = options.bounds;
 
@@ -78,18 +78,18 @@ Seadragon.Tile = function Tile(seadragon, options) {
     // Drawing
     /**
      * Current position of the tile on the screen in pixels.
-     * @type Seadragon.Point
+     * @type Malakh.Point
      */
     this.position = null;
     /**
      * Current size of the tile on the screen in pixels.
-     * @type Seadragon.Point
+     * @type Malakh.Point
      */
     this.size = null;
     /**
      * Support subpixel precision when drawing on canvas.
      * @type boolean
-     * @see Seadragon.TiledImage#subpixelTileParameters
+     * @see Malakh.TiledImage#subpixelTileParameters
      */
     this.subpixelTileParameters = (options.subpixelTileParameters != null) ?
         options.subpixelTileParameters :
@@ -108,7 +108,7 @@ Seadragon.Tile = function Tile(seadragon, options) {
     /**
      * Planned (at the end of an animation) coordinates of the center of the tile;
      * used for computing tile loading order.
-     * @type Seadragon.Point
+     * @type Malakh.Point
      */
     this.targetCenter = null;
     /**
@@ -133,11 +133,11 @@ Seadragon.Tile = function Tile(seadragon, options) {
     this.lastTouchTime = 0;
 };
 
-Seadragon.Tile.prototype = Object.create(seadragonProxy);
+Malakh.Tile.prototype = Object.create(malakhProxy);
 
-$.extend(Seadragon.Tile.prototype,
+$.extend(Malakh.Tile.prototype,
     /**
-     * @lends Seadragon.Tile.prototype
+     * @lends Malakh.Tile.prototype
      */
     {
         /**
@@ -154,7 +154,7 @@ $.extend(Seadragon.Tile.prototype,
          * around <code>mousePosition</code>.
          *
          * @param {number} [zoom=1]
-         * @param {Seadragon.Point} [mousePosition]
+         * @param {Malakh.Point} [mousePosition]
          */
         draw: function draw(zoom, mousePosition) {
             if (!this.loaded) {

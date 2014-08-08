@@ -1,10 +1,10 @@
 /**
  * Constructs a rectangle. Use cases are as follows:
  * <ul>
- *     <li><code>new Seadragon.Rectangle()</code> (gives rectangle <code>[0, 0, 0 x 0])</code></li>
- *     <li><code>new Seadragon.Rectangle({x: x, y: y, width: width, height: height})</code></li>
- *     <li><code>new Seadragon.Rectangle(x, y, width, height)</code></li>
- *     <li><code>new Seadragon.Rectangle([x, y, width, height])</code></li>
+ *     <li><code>new Malakh.Rectangle()</code> (gives rectangle <code>[0, 0, 0 x 0])</code></li>
+ *     <li><code>new Malakh.Rectangle({x: x, y: y, width: width, height: height})</code></li>
+ *     <li><code>new Malakh.Rectangle(x, y, width, height)</code></li>
+ *     <li><code>new Malakh.Rectangle([x, y, width, height])</code></li>
  * </ul>
  *
  * @class <p>Represents a rectangle on a 2-dimensional plane.
@@ -15,7 +15,7 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  */
-Seadragon.Rectangle = function Rectangle() {
+Malakh.Rectangle = function Rectangle() {
     var arguments0 = arguments[0];
     if (arguments0 == null) {
         /**
@@ -55,9 +55,9 @@ Seadragon.Rectangle = function Rectangle() {
     }
 };
 
-$.extend(Seadragon.Rectangle.prototype,
+$.extend(Malakh.Rectangle.prototype,
     /**
-     * @lends Seadragon.Rectangle.prototype
+     * @lends Malakh.Rectangle.prototype
      */
     {
         /**
@@ -72,47 +72,47 @@ $.extend(Seadragon.Rectangle.prototype,
         /**
          * Returns a point representing the top left corner of the rectangle.
          *
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         getTopLeft: function getTopLeft() {
-            return new Seadragon.Point(this.x, this.y);
+            return new Malakh.Point(this.x, this.y);
         },
 
         /**
          * Returns a point representing the bottom right corner of the rectangle.
          *
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         getBottomRight: function getBottomRight() {
-            return new Seadragon.Point(this.x + this.width, this.y + this.height);
+            return new Malakh.Point(this.x + this.width, this.y + this.height);
         },
 
         /**
          * Returns a point representing the center of the rectangle.
          *
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         getCenter: function getCenter() {
-            return new Seadragon.Point(this.x + this.width / 2, this.y + this.height / 2);
+            return new Malakh.Point(this.x + this.width / 2, this.y + this.height / 2);
         },
 
         /**
          * Returns a point representing Rectangle size; that is: <code>(width, height)</code>.
          *
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         getSize: function getSize() {
-            return new Seadragon.Point(this.width, this.height);
+            return new Malakh.Point(this.width, this.height);
         },
 
         /**
          * Checks if another rectangle is equal to the current one.
          *
-         * @param {Seadragon.Rectangle} rectangle
+         * @param {Malakh.Rectangle} rectangle
          * @return {boolean}
          */
         equals: function equals(rectangle) {
-            return rectangle instanceof Seadragon.Rectangle &&
+            return rectangle instanceof Malakh.Rectangle &&
                 this.x === rectangle.x && this.y === rectangle.y &&
                 this.width === rectangle.width && this.height === rectangle.height;
         },
@@ -120,7 +120,7 @@ $.extend(Seadragon.Rectangle.prototype,
         /**
          * Pans the rectangle by a given delta.
          *
-         * @param {Seadragon.Point} delta
+         * @param {Malakh.Point} delta
          */
         panBy: function panBy(delta) {
             var oldCenter = this.getCenter();
@@ -130,7 +130,7 @@ $.extend(Seadragon.Rectangle.prototype,
         /**
          * Pans the rectangle so that it's center matches a given point.
          *
-         * @param {Seadragon.Point} center
+         * @param {Malakh.Point} center
          */
         panTo: function panTo(center) {
             this.x = center.x - this.width / 2;
@@ -156,7 +156,7 @@ $.extend(Seadragon.Rectangle.prototype,
         /**
          * Checks if the rectangle contains a given point.
          *
-         * @param {Seadragon.Point} point
+         * @param {Malakh.Point} point
          * @return {boolean}
          */
         containsPoint: function containsPoint(point) {
@@ -168,7 +168,7 @@ $.extend(Seadragon.Rectangle.prototype,
          * Checks if the rectangle intersects a horizontal/vertical segment.
          * WARNING: it gives incorrect results for other kinds of segments!
          *
-         * @param {Seadragon.Segment} segment
+         * @param {Malakh.Segment} segment
          * @param {boolean} horizontal Do we check for a horizontal intersection?
          * @return {boolean}
          */
@@ -179,8 +179,8 @@ $.extend(Seadragon.Rectangle.prototype,
             // important axis.
             var segmentStart, segmentEnd, rectangleStart, rectangleEnd;
 
-            if (!(segment instanceof Seadragon.Segment)) {
-                console.error('Function intersetsSegment expects a Seadragon.Segment instance as a parameter');
+            if (!(segment instanceof Malakh.Segment)) {
+                console.error('Function intersetsSegment expects a Malakh.Segment instance as a parameter');
                 return false;
             }
 
@@ -213,7 +213,7 @@ $.extend(Seadragon.Rectangle.prototype,
         /**
          * Checks if the rectangle intersects another rectangle.
          *
-         * @param {Seadragon.Rectangle} rectangle
+         * @param {Malakh.Rectangle} rectangle
          * @return {boolean}
          */
         intersectsRectangle: function intersectsRectangle(rectangle) {
@@ -225,10 +225,10 @@ $.extend(Seadragon.Rectangle.prototype,
             // Does rectangle's center lie inside the rectangle?
             return rectangle.containsPoint(this.getCenter()) ||
                 // Does one of rectangle edges intersect the circle?
-                this.intersectsSegment(new Seadragon.Segment(left, top, right, top), true) || // top edge
-                this.intersectsSegment(new Seadragon.Segment(right, top, right, bottom), false) || // right edge
-                this.intersectsSegment(new Seadragon.Segment(right, bottom, left, bottom), true) || // bottom edge
-                this.intersectsSegment(new Seadragon.Segment(left, bottom, left, top), false); // left edge
+                this.intersectsSegment(new Malakh.Segment(left, top, right, top), true) || // top edge
+                this.intersectsSegment(new Malakh.Segment(right, top, right, bottom), false) || // right edge
+                this.intersectsSegment(new Malakh.Segment(right, bottom, left, bottom), true) || // bottom edge
+                this.intersectsSegment(new Malakh.Segment(left, bottom, left, top), false); // left edge
         },
 
         /**

@@ -11,7 +11,7 @@
  *         has smaller dimensions, there is only one tile.</li>
  * </ul>
  *
- * <p>See <code>Seadragon.Viewport</code> description for information about conventions around parameter
+ * <p>See <code>Malakh.Viewport</code> description for information about conventions around parameter
  * named <code>current</code> and names <strong>point</strong> and <strong>pixel</strong>.
  *
  * <ul>
@@ -20,21 +20,21 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @see Seadragon.Viewport
+ * @see Malakh.Viewport
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  *
  * @param {Object} options  An object containing all given options.
  * @param {number} options.width  Sets <code>this.width</code>.
  * @param {number} options.height  Sets <code>this.height</code>.
  * @param {number} options.tileSize  Sets <code>this.tileSize</code>.
  * @param {number} [options.tileOverlap=0]  Sets <code>this.tileOverlap</code>.
- * @param {Seadragon.Rectangle} [options.bounds=new Seadragon.Rectangle(0, 0, options.width, options.height)]
+ * @param {Malakh.Rectangle} [options.bounds=new Malakh.Rectangle(0, 0, options.width, options.height)]
  *                              Sets the initial value of <code>this.boundsSprings</code>.
  * @param {number} [options.minLevel=this.config.minLevelToDraw]  Sets <code>this.minLevel</code>.
  * @param {number} [options.maxLevel=maximum image level]  Sets <code>this.maxLevel</code>.
  */
-Seadragon.TiledImage = function TiledImage(seadragon, options) {
+Malakh.TiledImage = function TiledImage(malakh, options) {
     this.ensureArguments(arguments, 'TiledImage', [options]);
     this.ensureOptions(options, 'TiledImage', ['width', 'height', 'tileSize', 'tileOverlap']);
 
@@ -52,8 +52,8 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
     /**
      * Minimum level to be drawn.
      * @type number
-     * @see Seadragon#config
-     * @default Seadragon#config.minLevelToDraw
+     * @see Malakh#config
+     * @default Malakh#config.minLevelToDraw
      */
     this.minLevel = (options.minLevel != null) ? options.minLevel : this.config.minLevelToDraw;
     /**
@@ -77,7 +77,7 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
     /**
      * Support subpixel precision when drawing on canvas.
      * @type boolean
-     * @see Seadragon#config.subpixelTileParameters
+     * @see Malakh#config.subpixelTileParameters
      */
     this.subpixelTileParameters = this.config.subpixelTileParameters;
     if (!this.tileOverlap) {
@@ -86,17 +86,17 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
         this.subpixelTileParameters = false;
     }
 
-    // Bounds are coordinates of a Seadragon Image on the virtual plane containing all the images.
+    // Bounds are coordinates of a Malakh Image on the virtual plane containing all the images.
     if (!options.bounds) {
-        options.bounds = new Seadragon.Rectangle(0, 0, options.width, options.height);
+        options.bounds = new Malakh.Rectangle(0, 0, options.width, options.height);
     }
     // Correct aspect ratio.
     options.bounds.width = options.bounds.height * options.width / options.height;
 
     /**
      * Animated bounds of the image. They represent position and shape of the image on the virtual
-     * Seadragon plane.
-     * @type Seadragon.AnimatedRectangle
+     * Malakh plane.
+     * @type Malakh.AnimatedRectangle
      */
     this.animatedBounds = this.AnimatedRectangle(options.bounds);
 
@@ -127,11 +127,11 @@ Seadragon.TiledImage = function TiledImage(seadragon, options) {
     this.opacity = 1;
 };
 
-Seadragon.TiledImage.prototype = Object.create(seadragonProxy);
+Malakh.TiledImage.prototype = Object.create(malakhProxy);
 
-$.extend(Seadragon.TiledImage.prototype,
+$.extend(Malakh.TiledImage.prototype,
     /**
-     * @lends Seadragon.TiledImage.prototype
+     * @lends Malakh.TiledImage.prototype
      */
     {
         /**
@@ -225,14 +225,14 @@ $.extend(Seadragon.TiledImage.prototype,
          * Returns number of tiles in both dimensions at the current level.
          *
          * @param {number} level
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         getNumTiles: function getNumTiles(level) {
             var scaledLevel = this.getScaledLevel(level);
             var x = Math.ceil(scaledLevel * this.width / this.tileSize);
             var y = Math.ceil(scaledLevel * this.height / this.tileSize);
 
-            return new Seadragon.Point(x, y);
+            return new Malakh.Point(x, y);
         },
 
         /**
@@ -240,26 +240,26 @@ $.extend(Seadragon.TiledImage.prototype,
          *
          * @param {number} level
          * @param {boolean} [current=false]
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         getScaledDimensions: function getScaledDimensions(level, current) {
             var bounds = this.animatedBounds.getRectangle(current);
-            return new Seadragon.Point(bounds.width, bounds.height).multiply(this.getScaledLevel(level));
+            return new Malakh.Point(bounds.width, bounds.height).multiply(this.getScaledLevel(level));
         },
 
         /**
          * Returns a tile containing a given point.
          *
          * @param {number} level
-         * @param {Seadragon.Point} point
+         * @param {Malakh.Point} point
          * @param {boolean} [current=false]
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         getTileAtPoint: function getTileAtPoint(level, point, current) {
             var scale = this.getWidthScale(current);
             var bounds = this.animatedBounds.getRectangle(current);
 
-            point = point.minus(new Seadragon.Point(bounds.x, bounds.y));
+            point = point.minus(new Malakh.Point(bounds.x, bounds.y));
             point.x /= scale;
             point.y /= scale;
             var pixel = point.multiply(this.getScaledLevel(level));
@@ -267,7 +267,7 @@ $.extend(Seadragon.TiledImage.prototype,
             var tx = Math.floor(pixel.x / this.tileSize);
             var ty = Math.floor(pixel.y / this.tileSize);
 
-            return new Seadragon.Point(tx, ty);
+            return new Malakh.Point(tx, ty);
         },
 
         /**
@@ -277,7 +277,7 @@ $.extend(Seadragon.TiledImage.prototype,
          * @param {number} x
          * @param {number} y
          * @param {boolean} [current=false]
-         * @return {Seadragon.Rectangle}
+         * @return {Malakh.Rectangle}
          */
         getTileBounds: function getTileBounds(level, x, y, current) {
             var scale, bounds, px, py, sx, sy, scaledLevel;
@@ -312,7 +312,7 @@ $.extend(Seadragon.TiledImage.prototype,
             sx *= scale;
             sy *= scale;
 
-            return new Seadragon.Rectangle(px, py, sx, sy);
+            return new Malakh.Rectangle(px, py, sx, sy);
         },
 
         /**
@@ -338,12 +338,12 @@ $.extend(Seadragon.TiledImage.prototype,
         },
 
         /**
-         * @see Seadragon.AnimatedRectangle#fitBounds
+         * @see Malakh.AnimatedRectangle#fitBounds
          *
          * TODO write here sth about triggering?
          * TODO write here about keeping aspect ratio
          *
-         * @param {Seadragon.Rectangle} bounds
+         * @param {Malakh.Rectangle} bounds
          * @param {boolean} [immediately=false]
          * @param {boolean} [preferWidthPerfectMatch=false]  If true, adjust height, not width, to match aspect ratio.
          */
@@ -360,7 +360,7 @@ $.extend(Seadragon.TiledImage.prototype,
             bounds.panTo(boundsCenter); // keep the planned center intact
 
             this.animatedBounds.fitBounds(bounds, immediately);
-            this.$container.trigger('seadragon:force_align');
+            this.$container.trigger('malakh:force_align');
             return this;
         },
     }

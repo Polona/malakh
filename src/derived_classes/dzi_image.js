@@ -9,9 +9,9 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @extends Seadragon.TiledImage
+ * @extends Malakh.TiledImage
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  *
  * @param {Object} options An object containing all given options.
  * @param {number} options.width Sets <code>this.width</code>.
@@ -20,16 +20,16 @@
  * @param {number} options.tilesUrl Sets <code>this.tilesUrl</code>.
  * @param {number} options.tileFormat Sets <code>this.tileFormat</code>.
  * @param {number} [options.tileOverlap=0] Sets <code>this.tileOverlap</code>.
- * @param {Seadragon.Rectangle} [options.bounds=new Seadragon.Rectangle(0, 0, options.width, options.height)]
+ * @param {Malakh.Rectangle} [options.bounds=new Malakh.Rectangle(0, 0, options.width, options.height)]
  *                              Sets <code>this.bounds</code>.
  * @param {number} [options.minLevel] Sets this.minLevel.
  * @param {number} [options.maxLevel] Sets this.maxLevel.
  */
-Seadragon.DziImage = function DziImage(seadragon, options) {
+Malakh.DziImage = function DziImage(malakh, options) {
     this.ensureArguments(arguments, 'DziImage', ['options']);
     this.ensureOptions(options, 'DziImage', ['width', 'height', 'tileSize', 'tilesUrl', 'fileFormat']);
 
-    Seadragon.TiledImage.call(this, this.seadragon, {
+    Malakh.TiledImage.call(this, this.malakh, {
         width: options.width,
         height: options.height,
         tileSize: options.tileSize,
@@ -53,11 +53,11 @@ Seadragon.DziImage = function DziImage(seadragon, options) {
     this.fileFormat = options.fileFormat;
 };
 
-Seadragon.DziImage.prototype = Object.create(Seadragon.TiledImage.prototype);
+Malakh.DziImage.prototype = Object.create(Malakh.TiledImage.prototype);
 
-$.extend(Seadragon.DziImage.prototype,
+$.extend(Malakh.DziImage.prototype,
     /**
-     * @lends Seadragon.DziImage.prototype
+     * @lends Malakh.DziImage.prototype
      */
     {
         /**

@@ -1,15 +1,15 @@
-Seadragon - Laboratorium EE version
+Malakh - deep zoom viewer
 ==================================================
 
 TODO project description.
 
-How to build your own Seadragon
+How to build your own Malakh
 ----------------------------
 
-First, clone a copy of the main Seadragon git repo by running:
+First, clone a copy of the main Malakh git repo by running:
 
 ```bash
-git clone ssh://git@defilada.laboratorium.ee:7999/sd/seadragon.git
+git clone https://github.com/Polona/malakh.git
 ```
 
 Install the grunt-cli package so that you will have the correct version of grunt available from any project that needs it. This should be done as a global install:
@@ -21,7 +21,7 @@ npm install -g grunt-cli
 Enter the jquery directory and install the Node dependencies, this time *without* specifying a global install:
 
 ```bash
-cd seadragon && npm install
+cd malakh && npm install
 ```
 
 Make sure you have `grunt` installed by testing:
@@ -30,13 +30,13 @@ Make sure you have `grunt` installed by testing:
 grunt --version
 ```
 
-Then, to get a complete, minified (w/ Uglify.js), linted (w/ JSHint) version of Seadragon, type the following:
+Then, to get a complete, minified (w/ Uglify.js), linted (w/ JSHint) version of Malakh, type the following:
 
 ```bash
 grunt
 ```
 
-The built version of Seadragon will be put in the `dist/` subdirectory, along with the minified copy and associated map file.
+The built version of Malakh will be put in the `dist/` subdirectory, along with the minified copy and associated map file.
 
 
 ### Modules

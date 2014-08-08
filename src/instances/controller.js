@@ -1,10 +1,10 @@
 /**
  * Constructs a controller.
  *
- * @class <p>Manages all of Seadragon parts. It receives events and passes them along to the viewport,
- * Seadragon images and tells drawer when to update the current view. This is the 'core' Seadragon part.
+ * @class <p>Manages all of Malakh parts. It receives events and passes them along to the viewport,
+ * Malakh images and tells drawer when to update the current view. This is the 'core' Malakh part.
  *
- * <p>See <code>Seadragon.Viewport</code> description for information about conventions around parameters
+ * <p>See <code>Malakh.Viewport</code> description for information about conventions around parameters
  * named <code>current</code> and <code>immediately</code> and names <strong>point</strong> and <strong>pixel</strong>.
  *
  * <ul>
@@ -13,11 +13,11 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @see Seadragon.Viewport
+ * @see Malakh.Viewport
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  */
-Seadragon.Controller = function Controller(seadragon) {
+Malakh.Controller = function Controller(malakh) {
     this.ensureArguments(arguments, 'Controller');
 
     var that = this,
@@ -40,7 +40,7 @@ Seadragon.Controller = function Controller(seadragon) {
          * where the image is scheduled to be loaded.
          *
          * @type Array.<Function>
-         * @memberof Seadragon.Controller#
+         * @memberof Malakh.Controller#
          */
         tiledImagesCallbacks: {
             get: function () {
@@ -50,7 +50,7 @@ Seadragon.Controller = function Controller(seadragon) {
         },
     });
 
-    if (Seadragon.Magnifier) {
+    if (Malakh.Magnifier) {
         /**
          * Shows the magnifier.
          */
@@ -58,13 +58,13 @@ Seadragon.Controller = function Controller(seadragon) {
             if (that.config.enableMagnifier) { // already enabled
                 return this;
             }
-            $(document).trigger('mouseup.seadragon'); // To stop canvas dragging etc.
+            $(document).trigger('mouseup.malakh'); // To stop canvas dragging etc.
 
             that.config.enableMagnifier = true;
             document.body.style.cursor = 'none';
 
-            that.$canvas.on('mousemove.seadragon', moveMagnifier);
-            that.$canvas.trigger('mousemove.seadragon');
+            that.$canvas.on('mousemove.malakh', moveMagnifier);
+            that.$canvas.trigger('mousemove.malakh');
 
             return this;
         };
@@ -76,7 +76,7 @@ Seadragon.Controller = function Controller(seadragon) {
             if (!that.config.enableMagnifier) { // already disabled
                 return this;
             }
-            that.$canvas.off('mousemove.seadragon', moveMagnifier);
+            that.$canvas.off('mousemove.malakh', moveMagnifier);
 
             that.config.enableMagnifier = false;
             document.body.style.cursor = '';
@@ -104,7 +104,7 @@ Seadragon.Controller = function Controller(seadragon) {
         };
     }
 
-    if (Seadragon.Picker) {
+    if (Malakh.Picker) {
         /**
          * Shows the picker.
          */
@@ -149,14 +149,14 @@ Seadragon.Controller = function Controller(seadragon) {
     }
 
     /**
-     * Returns mouse position extracted from <code>event</code> relative to the Seadragon canvas.
+     * Returns mouse position extracted from <code>event</code> relative to the Malakh canvas.
      *
      * @param {jQuery.Event} evt Mouse event.
-     * @return {Seadragon.Point}
+     * @return {Malakh.Point}
      */
     this.getMousePosition = function getMousePosition(evt) {
         var offset = that.$container.offset();
-        return new Seadragon.Point(evt.pageX - offset.left, evt.pageY - offset.top);
+        return new Malakh.Point(evt.pageX - offset.left, evt.pageY - offset.top);
     };
 
     function wheelToZoom(evt) {
@@ -166,9 +166,9 @@ Seadragon.Controller = function Controller(seadragon) {
             return;
         }
 
-        var seadragon = that.seadragon,
-            viewport = seadragon.viewport,
-            config = seadragon.config;
+        var malakh = that.malakh,
+            viewport = malakh.viewport,
+            config = malakh.config;
 
         if (!config.blockZoom) {
             if (evt.deltaY) { // deltaY can be 0 if we're scrolling horizontally
@@ -181,7 +181,7 @@ Seadragon.Controller = function Controller(seadragon) {
             }
         }
 
-        seadragon.$container.trigger('seadragon:user_action');
+        malakh.$container.trigger('malakh:user_action');
     }
 
     function wheelToPan(evt) {
@@ -189,8 +189,8 @@ Seadragon.Controller = function Controller(seadragon) {
         evt.stopPropagation();
 
         var scale, deltaX, deltaY,
-            seadragon = that.seadragon,
-            viewport = seadragon.viewport;
+            malakh = that.malakh,
+            viewport = malakh.viewport;
 
         switch (evt.deltaMode) {
             case 0: // deltas in pixels
@@ -200,22 +200,22 @@ Seadragon.Controller = function Controller(seadragon) {
                 scale = 14; // default line-height, I guess
                 break;
             case 2: // deltas in pages
-                scale = parseFloat(seadragon.$container.css('height'));
+                scale = parseFloat(malakh.$container.css('height'));
                 break;
             default:
-                that.fail('SeadragonManagerView#toggleBlockZoom: deltaMode not recognized', evt.deltaMode, evt);
+                that.fail('MalakhManagerView#toggleBlockZoom: deltaMode not recognized', evt.deltaMode, evt);
         }
-        scale *= seadragon.config.wheelToPanScale; // panning using wheel can have different speed than zooming
+        scale *= malakh.config.wheelToPanScale; // panning using wheel can have different speed than zooming
         deltaX = scale * evt.deltaX;
         deltaY = scale * evt.deltaY;
 
         viewport.panBy(
-            viewport.deltaPointsFromPixels(new Seadragon.Point(deltaX, deltaY)),
+            viewport.deltaPointsFromPixels(new Malakh.Point(deltaX, deltaY)),
             false, {
                 animationTimeConfigParameter: 'mouseAnimationTime', // panning by mouse should be slower
             });
 
-        seadragon.$container.trigger('seadragon:user_action');
+        malakh.$container.trigger('malakh:user_action');
     }
 
     /**
@@ -231,17 +231,17 @@ Seadragon.Controller = function Controller(seadragon) {
 
     /**
      * Pan from remembered <code>lastPosition</code> to provided <code>position</code>. When using mouse,
-     * <code>position</code> is the usual mouse position relative to Seadragon canvas. When using touch,
+     * <code>position</code> is the usual mouse position relative to Malakh canvas. When using touch,
      * it's a center of gravity of all current touch points.
      *
-     * @param {Seadragon.Point} position
+     * @param {Malakh.Point} position
      * @param {boolean} [immediately=false]
      * @private
      */
     function panToNewPosition(position, immediately) {
-        var seadragon = that.seadragon,
-            viewport = seadragon.viewport,
-            blockMovement = seadragon.config.blockMovement;
+        var malakh = that.malakh,
+            viewport = malakh.viewport,
+            blockMovement = malakh.config.blockMovement;
 
         var delta = lastPosition.minus(position);
         lastPosition = position;
@@ -263,7 +263,7 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function dragCanvas(evt) {
         panToNewPosition(that.getMousePosition(evt));
-        seadragon.$container.trigger('seadragon:user_action');
+        malakh.$container.trigger('malakh:user_action');
     }
 
     /**
@@ -275,9 +275,9 @@ Seadragon.Controller = function Controller(seadragon) {
     function onTouchMove(evt) {
         evt.preventDefault();
 
-        var seadragon = that.seadragon,
-            viewport = seadragon.viewport,
-            blockZoom = seadragon.config.blockZoom;
+        var malakh = that.malakh,
+            viewport = malakh.viewport,
+            blockZoom = malakh.config.blockZoom;
 
         var touchStretch;
         var targetTouches = evt.originalEvent.targetTouches;
@@ -295,14 +295,14 @@ Seadragon.Controller = function Controller(seadragon) {
             lastTouchStretch = touchStretch;
         }
 
-        seadragon.$container.trigger('seadragon:user_action');
+        malakh.$container.trigger('malakh:user_action');
     }
 
     /**
      * Returns the center of gravity of all current touch points.
      *
      * @param {TouchList} touches
-     * @returns {Seadragon.Point}
+     * @returns {Malakh.Point}
      * @private
      */
     function getTouchCenter(touches) {
@@ -314,7 +314,7 @@ Seadragon.Controller = function Controller(seadragon) {
         }
         touchesX /= touchesLength;
         touchesY /= touchesLength;
-        return new Seadragon.Point(touchesX, touchesY);
+        return new Malakh.Point(touchesX, touchesY);
     }
 
     /**
@@ -326,11 +326,11 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function touchPointsNumberChanged(evt) {
         evt.preventDefault();
-        if (Seadragon.Magnifier) {
+        if (Malakh.Magnifier) {
             that.disableMagnifier(); // TODO handle magnifier in touch mode, too?
         }
 
-        $(document).off('touchmove.seadragon', onTouchMove); // we'll register it again
+        $(document).off('touchmove.malakh', onTouchMove); // we'll register it again
 
         var targetTouches = evt.originalEvent.targetTouches;
         var targetTouchesLength = targetTouches.length;
@@ -342,59 +342,59 @@ Seadragon.Controller = function Controller(seadragon) {
                 // pinch-to-zoom will be handled using it.
                 lastTouchStretch = getLastTouchStretch(targetTouches[0]);
             }
-            $(document).on('touchmove.seadragon', onTouchMove);
+            $(document).on('touchmove.malakh', onTouchMove);
         }
 
         that.restoreUpdating();
-        seadragon.$container.trigger('seadragon:user_action');
+        malakh.$container.trigger('malakh:user_action');
     }
 
     function bindEvents() {
         that.$canvas.on({
-            'mouseenter.seadragon': function () {
+            'mouseenter.malakh': function () {
                 if (that.config.enableMagnifier) {
                     that.restoreUpdating();
                 }
             },
 
-            'mouseleave.seadragon': function () {
+            'mouseleave.malakh': function () {
                 if (that.config.enableMagnifier) { // We have to redraw to hide magnifier.
                     that.restoreUpdating();
                 }
             },
 
-            'mousedown.seadragon': function (evt) {
+            'mousedown.malakh': function (evt) {
                 if (evt.which !== 1 || that.config.enableMagnifier) { // Only left-click is supported.
                     return;
                 }
                 lastPosition = that.getMousePosition(evt);
-                $(document).on('mousemove.seadragon', dragCanvas);
+                $(document).on('mousemove.malakh', dragCanvas);
             },
 
-            'wheel.seadragon': wheelToZoom,
+            'wheel.malakh': wheelToZoom,
 
-            'touchstart.seadragon': touchPointsNumberChanged,
-            'touchend.seadragon': touchPointsNumberChanged,
+            'touchstart.malakh': touchPointsNumberChanged,
+            'touchend.malakh': touchPointsNumberChanged,
         });
 
         that.$container.on({
-            'seadragon:force_align.seadragon': function () {
+            'malakh:force_align.malakh': function () {
                 forceAlign = true;
                 recalculateMaxLevel();
                 that.restoreUpdating();
             },
 
-            'seadragon:force_redraw.seadragon': function () {
+            'malakh:force_redraw.malakh': function () {
                 that.restoreUpdating();
             }
         });
 
         $(document).on({
-            'mouseup.seadragon': function () {
-                $(document).off('mousemove.seadragon', dragCanvas);
+            'mouseup.malakh': function () {
+                $(document).off('mousemove.malakh', dragCanvas);
             },
         });
-        $(window).on('resize.seadragon', that.restoreUpdating);
+        $(window).on('resize.malakh', that.restoreUpdating);
     }
 
     /**
@@ -406,8 +406,8 @@ Seadragon.Controller = function Controller(seadragon) {
         }
         wheelToPanEnabled = true;
         that.$canvas
-            .off('wheel.seadragon', wheelToZoom)
-            .on('wheel.seadragon', wheelToPan);
+            .off('wheel.malakh', wheelToZoom)
+            .on('wheel.malakh', wheelToPan);
         return this;
     };
 
@@ -420,8 +420,8 @@ Seadragon.Controller = function Controller(seadragon) {
         }
         wheelToPanEnabled = false;
         that.$canvas
-            .off('wheel.seadragon', wheelToPan)
-            .on('wheel.seadragon', wheelToZoom);
+            .off('wheel.malakh', wheelToPan)
+            .on('wheel.malakh', wheelToZoom);
         return this;
     };
 
@@ -451,7 +451,7 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     function moveMagnifier(evt) {
         var position = that.getMousePosition(evt);
-        that.seadragon.magnifier.panTo(position);
+        that.malakh.magnifier.panTo(position);
         that.restoreUpdating();
     }
 
@@ -460,18 +460,18 @@ Seadragon.Controller = function Controller(seadragon) {
      * maximum of all <code>tiledImage.maxLevel<code>s - their levels all scaled so that
      * they match "virtual" levels with regards to their representation on canvas.
      *
-     * @see Seadragon.TiledImage#getTiledImageLevel
+     * @see Malakh.TiledImage#getTiledImageLevel
      * @private
      */
     function recalculateMaxLevel() {
-        var seadragon = that.seadragon,
-            tiledImages = seadragon.tiledImages,
-            viewport = seadragon.viewport;
+        var malakh = that.malakh,
+            tiledImages = malakh.tiledImages,
+            viewport = malakh.viewport;
 
         var viewportMaxLevel = 0, minTiledImageWidthScale = Infinity;
         for (var i = 0; i < tiledImages.length; i++) {
             var tiledImage = tiledImages[i];
-            if (tiledImage instanceof Seadragon.TiledImage && tiledImage.opacity > 0) { // tiled image has been loaded
+            if (tiledImage instanceof Malakh.TiledImage && tiledImage.opacity > 0) { // tiled image has been loaded
                 viewportMaxLevel = Math.max(
                     viewportMaxLevel,
                     tiledImage.getViewportLevel(tiledImage.maxLevel)
@@ -497,7 +497,7 @@ Seadragon.Controller = function Controller(seadragon) {
     /**
      * Registers a new open image.
      *
-     * @param {Seadragon.TiledImage} tiledImage
+     * @param {Malakh.TiledImage} tiledImage
      * @param {number} index  Index in the <code>this.tiledImages</code> table where <code>tiledImage</code> is put.
      * @private
      */
@@ -517,10 +517,10 @@ Seadragon.Controller = function Controller(seadragon) {
         tiledImagesToHandle--;
 
         that.$container
-            .trigger('seadragon:loaded_tiled_image')
-            .trigger('seadragon:showed_tiled_image');
+            .trigger('malakh:loaded_tiled_image')
+            .trigger('malakh:showed_tiled_image');
         if (tiledImagesToHandle === 0) {
-            that.$container.trigger('seadragon:loaded_all_tiled_images');
+            that.$container.trigger('malakh:loaded_all_tiled_images');
         }
 
         var callbacks = tiledImagesCallbacks[index];
@@ -560,7 +560,7 @@ Seadragon.Controller = function Controller(seadragon) {
     };
 
     /**
-     * Updates bounds of a Seadragon image; usually used during aligning (so not too often).
+     * Updates bounds of a Malakh image; usually used during aligning (so not too often).
      *
      * @param {number} whichImage  Image index of <code>tiledImage</code> in <code>this.tiledImages</code> table.
      * @param {boolean} decreaseCounter  If provided, decreases the counted number of
@@ -570,7 +570,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @private
      */
     function updateTiledImageBounds(whichImage, decreaseCounter) {
-        var tiledImage = that.seadragon.tiledImages[whichImage];
+        var tiledImage = that.malakh.tiledImages[whichImage];
         forceAlign = tiledImage.animatedBounds.update() || forceAlign;
         that.restoreUpdating();
         if (decreaseCounter) {
@@ -624,22 +624,22 @@ Seadragon.Controller = function Controller(seadragon) {
      * @private
      */
     function update() {
-        // Caching this.seadragon.[a-zA-Z]* instances.
+        // Caching this.malakh.[a-zA-Z]* instances.
         // Note: we avoid using ES5 getters here for performance reasons.
-        var seadragon = that.seadragon,
-            $container = seadragon.$container,
-            $canvas = seadragon.$canvas,
-            viewport = seadragon.viewport,
-            tiledImages = seadragon.tiledImages,
-            drawer = seadragon.drawer;
+        var malakh = that.malakh,
+            $container = malakh.$container,
+            $canvas = malakh.$canvas,
+            viewport = malakh.viewport,
+            tiledImages = malakh.tiledImages,
+            drawer = malakh.drawer;
 
         var containerCss = $container.css(['width', 'height']);
-        var newContainerSize = new Seadragon.Point(parseFloat(containerCss.width), parseFloat(containerCss.height));
+        var newContainerSize = new Malakh.Point(parseFloat(containerCss.width), parseFloat(containerCss.height));
 
         if (!newContainerSize.equals(containerSize)) {
             // Maintain image position:
             forceRedraw = true; // canvas needs it
-            containerSize = newContainerSize; // TODO maybe keep it as a Seadragon parameter?
+            containerSize = newContainerSize; // TODO maybe keep it as a Malakh parameter?
             viewport.resize(newContainerSize);
 
             // Resize canvas.
@@ -648,7 +648,7 @@ Seadragon.Controller = function Controller(seadragon) {
                 .attr('height', newContainerSize.y);
 
             // Let the world know we resized.
-            $container.trigger('seadragon:resize');
+            $container.trigger('malakh:resize');
         }
 
         // animating => viewport moved, aligning images or loading/blending tiles.
@@ -657,7 +657,7 @@ Seadragon.Controller = function Controller(seadragon) {
             forceAlign = false;
             setTimeout(function () { // Making it more asynchronous.
                 utils.forEach(tiledImages, function (tiledImage, whichImage) {
-                    if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
+                    if (tiledImage instanceof Malakh.TiledImage) { // tiled image has been loaded
                         scheduleUpdateTiledImageBounds(whichImage);
                     }
                 });
@@ -674,14 +674,14 @@ Seadragon.Controller = function Controller(seadragon) {
         if (!animated && animating) {
             // We weren't animating, and now we did ==> animation start.
             $container
-                .trigger('seadragon:animation_start')
-                .trigger('seadragon:animation');
+                .trigger('malakh:animation_start')
+                .trigger('malakh:animation');
         } else if (animating) {
             // We're in the middle of animating.
-            $container.trigger('seadragon:animation');
+            $container.trigger('malakh:animation');
         } else if (animated) {
             // We were animating, and now we're not anymore ==> animation finish.
-            $container.trigger('seadragon:animation_end');
+            $container.trigger('malakh:animation_end');
         }
 
         // For the next update check.
@@ -696,14 +696,14 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {Object} options An object containing all given options.
      * @param {Document} options.data An object representing a DZI file.
      * @param {string} options.imageDataUrl See <a href="#createFromDzi">
-     *                                      <code>Seadragon.DziImage.createFromDzi</code></a>.
-     * @param {string} [options.tilesUrl] See <a href="#createFromDzi"><code>Seadragon.DziImage.createFromDzi</code></a>
+     *                                      <code>Malakh.DziImage.createFromDzi</code></a>.
+     * @param {string} [options.tilesUrl] See <a href="#createFromDzi"><code>Malakh.DziImage.createFromDzi</code></a>
      * @param {Document} [options.bounds] Bounds in which an image must fit. If not given, we assume the rectangle
      *                                    <code>[0, 0, width x height]</code> where <code>width</code> and
      *                                    <code>height</code> are taken from DZI.
-     * @return {Seadragon.DziImage}
+     * @return {Malakh.DziImage}
      *
-     * @memberof Seadragon.Controller~
+     * @memberof Malakh.Controller~
      * @private
      */
     function processDzi(options) {
@@ -735,7 +735,7 @@ Seadragon.Controller = function Controller(seadragon) {
         var tilesUrl = options.tilesUrl || options.imageDataUrl.replace(/\.dzi$/, '_files/');
 
         if (!options.bounds) {
-            options.bounds = new Seadragon.Rectangle(0, 0, width, height); // default bounds copied from DZI
+            options.bounds = new Malakh.Rectangle(0, 0, width, height); // default bounds copied from DZI
         }
 
         return that.DziImage({
@@ -757,8 +757,8 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {string} options.imageDataUrl  The URL/path to the DZI file.
      * @param {string} [options.tilesUrl]  The URL/path to the tiles directory; by default it's the same
      *                                     as <code>imageDataUrl<code> with '.dzi' changed to '_files'.
-     * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
-     *                                                Seadragon plane.
+     * @param {Malakh.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
+     *                                                Malakh plane.
      * @param {number} [options.index]  If specified, an image is loaded into
      *                                  <code>controller.tiledImages[index]</code>.
      *                                  Otherwise it's put at the end of the table.
@@ -783,14 +783,14 @@ Seadragon.Controller = function Controller(seadragon) {
         return this;
     };
 
-    if (Seadragon.SingleImage) {
+    if (Malakh.SingleImage) {
         /**
          * Creates a TiledImage instance from the single image file (e.g. JPG or PNG).
          *
          * @param {Object} options  An object containing all given options.
          * @param {string} options.imageDataUrl  The URL/path to the image file.
-         * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the
-         *                                                virtual Seadragon plane.
+         * @param {Malakh.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the
+         *                                                virtual Malakh plane.
          * @param {number} [options.index]  If specified, an image is loaded into
          *                                  <code>controller.tiledImages[index]</code>.
          *                                  Otherwise it's put at the end of the table.
@@ -837,8 +837,8 @@ Seadragon.Controller = function Controller(seadragon) {
     function openTiledImage(kind) {
         /* jshint validthis: true */ // this is used only with bind(this)
         var options, methodName,
-            seadragon = this.seadragon,
-            tiledImages = seadragon.tiledImages;
+            malakh = this.malakh,
+            tiledImages = malakh.tiledImages;
 
         switch (kind) {
             case 'dzi':
@@ -909,8 +909,8 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {number} [options.index]  If specified, an image is loaded into
      *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
      *                                  the table.
-     * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
-     *                                                Seadragon plane.
+     * @param {Malakh.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
+     *                                                Malakh plane.
      * @also
      *
      * Opens Deep Zoom Image (DZI).
@@ -922,8 +922,8 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {number} [options.index]  If specified, an image is loaded into
      *                                  <code>controller.tiledImages[index]</code>. Otherwise it's put at the end of
      *                                  the table.
-     * @param {Seadragon.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
-     *                                                Seadragon plane.
+     * @param {Malakh.Rectangle} [options.bounds]  Bounds representing position and shape of the image on the virtual
+     *                                                Malakh plane.
      */
     this.openDzi = function openDzi() {
         var args = [].slice.call(arguments);
@@ -954,9 +954,9 @@ Seadragon.Controller = function Controller(seadragon) {
         return this;
     };
 
-    if (Seadragon.SingleImage) {
+    if (Malakh.SingleImage) {
         /**
-         * Opens a single JPG/PNG image in Seadragon.
+         * Opens a single JPG/PNG image in Malakh.
          *
          * @param {string} imageUrl  The URL/path to the image file.
          * @param {Object} [options]  An object containing all given options.
@@ -966,7 +966,7 @@ Seadragon.Controller = function Controller(seadragon) {
          *
          * @also
          *
-         * Opens a single JPG/PNG image in Seadragon.
+         * Opens a single JPG/PNG image in Malakh.
          *
          * @param {Object} options  An object containing all given options.
          * @param {string} options.imageUrl  The URL/path to the image file.
@@ -991,25 +991,25 @@ Seadragon.Controller = function Controller(seadragon) {
      */
     this.constrainToImage = function constrainToImage(whichImage, dontForceConstraints) {
         var tiledImage,
-            seadragon = this.seadragon,
-            viewport = seadragon.viewport,
-            $container = seadragon.$container,
-            tiledImages = seadragon.tiledImages,
-            config = seadragon.config;
+            malakh = this.malakh,
+            viewport = malakh.viewport,
+            $container = malakh.$container,
+            tiledImages = malakh.tiledImages,
+            config = malakh.config;
 
         function getFunctionConstrainingToImage(dontForceConstraints) {
             return function () {
-                viewport.constraintBounds = new Seadragon.Rectangle(
+                viewport.constraintBounds = new Malakh.Rectangle(
                     this.animatedBounds.getRectangle());
                 if (!dontForceConstraints) {
                     config.constrainViewport = true;
                 }
-                $container.trigger('seadragon:constraint_bounds_set');
+                $container.trigger('malakh:constraint_bounds_set');
             };
         }
 
         tiledImage = tiledImages[whichImage];
-        if (tiledImage instanceof Seadragon.TiledImage) { // tiled image has been loaded
+        if (tiledImage instanceof Malakh.TiledImage) { // tiled image has been loaded
             getFunctionConstrainingToImage(dontForceConstraints).call(tiledImage);
         } else { // register a callback
             tiledImagesCallbacks[whichImage].push(
@@ -1028,7 +1028,7 @@ Seadragon.Controller = function Controller(seadragon) {
     this.showImage = function showImage(whichImage, immediately) {
         var tiledImage = that.tiledImages[whichImage];
 
-        if (!(tiledImage instanceof Seadragon.TiledImage)) {
+        if (!(tiledImage instanceof Malakh.TiledImage)) {
             // Image not loaded yet, loading it will show it automatically.
             var options = tiledImagesOptions[whichImage];
             if (options) { // if options missing, opening probably already started
@@ -1039,7 +1039,7 @@ Seadragon.Controller = function Controller(seadragon) {
         }
 
         this.drawer.showImage(whichImage, immediately);
-        this.$container.trigger('seadragon:showed_tiled_image');
+        this.$container.trigger('malakh:showed_tiled_image');
         return this.restoreUpdating();
     };
 
@@ -1052,7 +1052,7 @@ Seadragon.Controller = function Controller(seadragon) {
     this.hideImage = function hideImage(whichImage, immediately) {
         var tiledImage = that.tiledImages[whichImage];
 
-        if (!(tiledImage instanceof Seadragon.TiledImage)) {
+        if (!(tiledImage instanceof Malakh.TiledImage)) {
             // Image not loaded yet, register a callback.
             var tiledImageCallbacks = this.tiledImagesCallbacks[whichImage];
             if (tiledImageCallbacks.length) { // no callbacks present => the hidden state is the default
@@ -1062,7 +1062,7 @@ Seadragon.Controller = function Controller(seadragon) {
         }
 
         this.drawer.hideImage(whichImage, immediately);
-        this.$container.trigger('seadragon:hidden_tiled_image');
+        this.$container.trigger('malakh:hidden_tiled_image');
         return this.restoreUpdating();
     };
 
@@ -1073,7 +1073,7 @@ Seadragon.Controller = function Controller(seadragon) {
      * @param {number} whichImage We force-load the <code>this.tiledImages[whichImage]</code> image.
      */
     this.loadImageWithoutShowing = function loadImageWithoutShowing(whichImage) {
-        if (!(this.tiledImages[whichImage] instanceof Seadragon.TiledImage)) {
+        if (!(this.tiledImages[whichImage] instanceof Malakh.TiledImage)) {
             this.tiledImagesCallbacks[whichImage].push(utils.bind(this.hideImage, this, whichImage, true));
             this.showImage(whichImage, true); // it'll get hidden immediately anyway
         }
@@ -1092,7 +1092,7 @@ Seadragon.Controller = function Controller(seadragon) {
     };
 
     /**
-     * Initializes the Seadragon controller.
+     * Initializes the Malakh controller.
      */
     this.init = function init() {
         that.tiledImages = [];
@@ -1120,12 +1120,12 @@ Seadragon.Controller = function Controller(seadragon) {
     };
 
     /**
-     * Destroys the Seadragon module, de-registers events and clears Seadragon HTML container.
-     * The Seadragon object is useless after invoking this method and should NOT be used any more.
-     * When there's a need to re-initialize Seadragon, a new <code>Controller</code> object should be created.
+     * Destroys the Malakh module, de-registers events and clears Malakh HTML container.
+     * The Malakh object is useless after invoking this method and should NOT be used any more.
+     * When there's a need to re-initialize Malakh, a new <code>Controller</code> object should be created.
      */
     this.destroy = function destroy() {
-        $(window, document, this.$container).off('.seadragon');
+        $(window, document, this.$container).off('.malakh');
         this.$container.empty();
         return this;
     };
@@ -1135,10 +1135,10 @@ Seadragon.Controller = function Controller(seadragon) {
      *
      * @param {number} whichImage We get bounds of the <code>this.tiledImages[whichImage]</code> image
      * @param {boolean} [current=false]
-     * @return {Seadragon.Rectangle}
+     * @return {Malakh.Rectangle}
      */
     this.tiledImageBoundsInPoints = function tiledImageBoundsInPoints(whichImage, current) {
-        return this.seadragon.tiledImages[whichImage].animatedBounds.getRectangle(current);
+        return this.malakh.tiledImages[whichImage].animatedBounds.getRectangle(current);
     };
 
     /**
@@ -1146,14 +1146,14 @@ Seadragon.Controller = function Controller(seadragon) {
      *
      * @param {number} whichImage We get bounds of the <code>this.tiledImages[whichImage]</code> image
      * @param {boolean} [current=false]
-     * @return {Seadragon.Rectangle}
+     * @return {Malakh.Rectangle}
      */
     this.tiledImageBoundsInPixels = function tiledImageBoundsInPixels(whichImage, current) {
         var pointBounds = this.tiledImageBoundsInPoints(whichImage, current);
-        return this.seadragon.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
+        return this.malakh.viewport.pixelRectangleFromPointRectangle(pointBounds, current);
     };
 
     this.init();
 };
 
-Seadragon.Controller.prototype = Object.create(seadragonProxy);
+Malakh.Controller.prototype = Object.create(malakhProxy);

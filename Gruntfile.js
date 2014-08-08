@@ -5,9 +5,9 @@ module.exports = function (grunt) {
     'use strict';
 
     var distpaths = [
-            'dist/seadragon.js',
-            'dist/seadragon.min.map',
-            'dist/seadragon.min.js'
+            'dist/malakh.js',
+            'dist/malakh.min.js',
+            'dist/malakh.min.js.map',
         ],
         readOptionalJSON = function (filepath) {
             var data = {};
@@ -26,7 +26,7 @@ module.exports = function (grunt) {
         dst: readOptionalJSON('dist/.destination.json'),
         build: {
             all: {
-                dest: 'dist/seadragon.js',
+                dest: 'dist/malakh.js',
                 src: [
                     'src/_intro.js',
                     'src/utils.js',
@@ -36,7 +36,7 @@ module.exports = function (grunt) {
                     {flag: 'polyfill_wheel', src: 'src/polyfills/jquery.wheel.js'},
 
                     'src/core.js',
-                    'src/seadragon_proxy.js',
+                    'src/malakh_proxy.js',
 
                     'src/utility_classes/point.js',
                     'src/utility_classes/segment.js',
@@ -66,7 +66,7 @@ module.exports = function (grunt) {
 
         jshint: {
             dist: {
-                src: ['dist/seadragon.js'],
+                src: ['dist/malakh.js'],
                 options: srcHintOptions,
             },
             grunt: {
@@ -81,13 +81,21 @@ module.exports = function (grunt) {
         },
 
         uglify: {
+            options: {
+                compress: {
+                    screw_ie8: true,
+                },
+                mangle: {
+                    screw_ie8: true,
+                },
+            },
             all: {
                 files: {
-                    'dist/seadragon.min.js': [ 'dist/seadragon.js' ],
+                    'dist/malakh.min.js': [ 'dist/malakh.js' ],
                 },
                 options: {
-                    banner: '/*! Seadragon v<%= pkg.version %> | (c) 2013 Laboratorium EE */',
-                    sourceMap: 'dist/seadragon.min.map',
+                    banner: '/*! Malakh v<%= pkg.version %> | (c) 2013 Laboratorium EE */',
+                    sourceMap: true,
                 },
             }
         }
@@ -123,7 +131,7 @@ module.exports = function (grunt) {
         });
     });
 
-    // Special concat/build task to handle various Seadragon build requirements.
+    // Special concat/build task to handle various Malakh build requirements.
     grunt.registerMultiTask(
         'build',
         'Concatenate source (include/exclude modules with +/- flags), embed date/version',

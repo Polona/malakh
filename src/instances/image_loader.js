@@ -11,9 +11,9 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  */
-Seadragon.ImageLoader = function ImageLoader(/* seadragon */) {
+Malakh.ImageLoader = function ImageLoader(/* malakh */) {
     this.ensureArguments(arguments, 'ImageLoader');
 
     /**
@@ -24,11 +24,11 @@ Seadragon.ImageLoader = function ImageLoader(/* seadragon */) {
     this.downloading = 0;
 };
 
-Seadragon.ImageLoader.prototype = Object.create(seadragonProxy);
+Malakh.ImageLoader.prototype = Object.create(malakhProxy);
 
-$.extend(Seadragon.ImageLoader.prototype,
+$.extend(Malakh.ImageLoader.prototype,
     /**
-     * @lends Seadragon.ImageLoader.prototype
+     * @lends Malakh.ImageLoader.prototype
      */
     {
         /**

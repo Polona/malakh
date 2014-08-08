@@ -1,10 +1,10 @@
 /**
  * Constructs a point. Use cases are as follows:
  * <ul>
- *     <li><code>new Seadragon.Point()</code> (gives point <code>(0, 0)</code>)</li>
- *     <li><code>new Seadragon.Point({x: x, y: y})</code></li>
- *     <li><code>new Seadragon.Point(x, y)</code></code></li>
- *     <li><code>new Seadragon.Point([x, y])</code></code></li>
+ *     <li><code>new Malakh.Point()</code> (gives point <code>(0, 0)</code>)</li>
+ *     <li><code>new Malakh.Point({x: x, y: y})</code></li>
+ *     <li><code>new Malakh.Point(x, y)</code></code></li>
+ *     <li><code>new Malakh.Point([x, y])</code></code></li>
  * </ul>
  *
  * @class <p>Represents a point on a 2-dimensional plane.
@@ -15,7 +15,7 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  */
-Seadragon.Point = function Point() {
+Malakh.Point = function Point() {
     var arguments0 = arguments[0];
     if (arguments0 == null) {
         /**
@@ -39,73 +39,73 @@ Seadragon.Point = function Point() {
     }
 };
 
-$.extend(Seadragon.Point.prototype,
+$.extend(Malakh.Point.prototype,
     /**
-     * @lends Seadragon.Point.prototype
+     * @lends Malakh.Point.prototype
      */
     {
         /**
          * Returns a sum by current point and another one.
          *
-         * @param {Seadragon.Point} point
-         * @return {Seadragon.Point}
+         * @param {Malakh.Point} point
+         * @return {Malakh.Point}
          */
         plus: function plus(point) {
-            return new Seadragon.Point(this.x + point.x, this.y + point.y);
+            return new Malakh.Point(this.x + point.x, this.y + point.y);
         },
 
         /**
          * Returns a difference by current point and another one.
          *
-         * @param {Seadragon.Point} point
-         * @return {Seadragon.Point}
+         * @param {Malakh.Point} point
+         * @return {Malakh.Point}
          */
         minus: function minus(point) {
-            return new Seadragon.Point(this.x - point.x, this.y - point.y);
+            return new Malakh.Point(this.x - point.x, this.y - point.y);
         },
 
         /**
          * Returns the current point multiplied by a given factor.
          *
          * @param {number} factor
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         multiply: function multiply(factor) {
-            return new Seadragon.Point(this.x * factor, this.y * factor);
+            return new Malakh.Point(this.x * factor, this.y * factor);
         },
 
         /**
          * Returns the current point divided by a given factor.
          *
          * @param {number} factor
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         divide: function divide(factor) {
-            return new Seadragon.Point(this.x / factor, this.y / factor);
+            return new Malakh.Point(this.x / factor, this.y / factor);
         },
 
         /**
          * Returns a negated point (i.e. replaces <code>x</code> by <code>-x</code> etc.).
          *
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         negate: function negate() {
-            return new Seadragon.Point(-this.x, -this.y);
+            return new Malakh.Point(-this.x, -this.y);
         },
 
         /**
          * Returns an inverted point (i.e. replaces <code>x</code> by <code>1/x</code> etc.).
          *
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         invert: function invert() {
-            return new Seadragon.Point(1 / this.x, 1 / this.y);
+            return new Malakh.Point(1 / this.x, 1 / this.y);
         },
 
         /**
          * Calculates a distance to another point.
          *
-         * @param {Seadragon.Point} point
+         * @param {Malakh.Point} point
          * @return {number}
          */
         distanceTo: function distanceTo(point) {
@@ -126,29 +126,29 @@ $.extend(Seadragon.Point.prototype,
          * Applies a function to both of point fields.
          *
          * @param {function} func
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         apply: function apply(func) {
-            return new Seadragon.Point(func(this.x), func(this.y));
+            return new Malakh.Point(func(this.x), func(this.y));
         },
 
         /**
          * Returns the current point with both of fields rounded to integers.
          *
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         round: function round() {
-            return new Seadragon.Point(Math.round(this.x), Math.round(this.y));
+            return new Malakh.Point(Math.round(this.x), Math.round(this.y));
         },
 
         /**
          * Checks if another point is equal to the current one.
          *
-         * @param {Seadragon.Point} point
+         * @param {Malakh.Point} point
          * @return {boolean}
          */
         equals: function equals(point) {
-            return point instanceof Seadragon.Point && this.x === point.x && this.y === point.y;
+            return point instanceof Malakh.Point && this.x === point.x && this.y === point.y;
         },
 
         /**

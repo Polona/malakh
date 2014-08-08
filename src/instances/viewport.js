@@ -1,8 +1,8 @@
 /**
  * Constructs a viewport.
  *
- * @class <p>Represents the visible part of the virtual plane containing all Seadragon images.
- * Supports animations by extending <code>Seadragon.AnimatedRectangle</code>.
+ * @class <p>Represents the visible part of the virtual plane containing all Malakh images.
+ * Supports animations by extending <code>Malakh.AnimatedRectangle</code>.
  *
  * <p>All methods of this class adhere to two conventions:
  * <ul>
@@ -17,7 +17,7 @@
  * under it not to move).
  *
  * <p>Here and in other parts of code the convention is: <strong>point</strong> means the position
- * on the virtual plane containing all Seadragon images, whereas <strong>pixel</strong> is the usual
+ * on the virtual plane containing all Malakh images, whereas <strong>pixel</strong> is the usual
  * pixel on the screen. E.g. when user zooms or drags the canvas <strong>pixels</strong> move but
  * <strong>points</strong> stay the same.
  *
@@ -27,35 +27,35 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @extends Seadragon.AnimatedRectangle
+ * @extends Malakh.AnimatedRectangle
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  */
-Seadragon.Viewport = function Viewport(/* seadragon */) {
+Malakh.Viewport = function Viewport(/* malakh */) {
     this.ensureArguments(arguments, 'Viewport');
 
     var containerDimensions = this.$container.css(['width', 'height']);
     var containerWidth = parseFloat(containerDimensions.width);
     var containerHeight = parseFloat(containerDimensions.height);
-    Seadragon.AnimatedRectangle.call(this, this.seadragon,
-        new Seadragon.Rectangle(0, 0, containerWidth, containerHeight));
+    Malakh.AnimatedRectangle.call(this, this.malakh,
+        new Malakh.Rectangle(0, 0, containerWidth, containerHeight));
 
     /**
      * <code>$container</code> size, cached for performance reasons. NOTE: needs to be manually
      * updated on each <code>$container</code> resize by invoking the <code>resize</code> method!
-     * <code>Seadragon.Controller</code> invokes it automatically on window resize event.
+     * <code>Malakh.Controller</code> invokes it automatically on window resize event.
      *
-     * @type Seadragon.Point
+     * @type Malakh.Point
      */
-    this.containerSize = new Seadragon.Point(containerWidth, containerHeight);
+    this.containerSize = new Malakh.Point(containerWidth, containerHeight);
     /**
      * Viewport can be constrained in a particular rectangle so that a user can't pan or zoom
      * beyond its visibility. It's done by setting <code>this.config.constrainViewport</code>
      * to true and then this parameter is used for constraining. If this parameter is not an instance
-     * of <code>Seadragon.Rectangle</code>, viewport is not constrained regardless of
+     * of <code>Malakh.Rectangle</code>, viewport is not constrained regardless of
      * <code>this.config.constrainViewport</code> setting.
      *
-     * @type Seadragon.Rectangle
+     * @type Malakh.Rectangle
      */
     this.constraintBounds = undefined;
 
@@ -76,7 +76,7 @@ Seadragon.Viewport = function Viewport(/* seadragon */) {
     this._maxZoom = Infinity;
     Object.defineProperties(this,
         /**
-         * @lends Seadragon.Viewport#
+         * @lends Malakh.Viewport#
          */
         {
             /**
@@ -85,14 +85,14 @@ Seadragon.Viewport = function Viewport(/* seadragon */) {
              */
             minZoom: {
                 get: function () {
-                    if (!this.config.constrainViewport || !(this.constraintBounds instanceof Seadragon.Rectangle)) {
+                    if (!this.config.constrainViewport || !(this.constraintBounds instanceof Malakh.Rectangle)) {
                         return -Infinity;
                     }
                     this.applyConstraints(true, null, true);
                     return this._minZoom;
                 },
                 set: function () {
-                    console.error('Field Seadragon.Viewport#minZoom is not settable');
+                    console.error('Field Malakh.Viewport#minZoom is not settable');
                 },
                 enumerable: true,
             },
@@ -102,14 +102,14 @@ Seadragon.Viewport = function Viewport(/* seadragon */) {
              */
             maxZoom: {
                 get: function () {
-                    if (!this.config.constrainViewport || !(this.constraintBounds instanceof Seadragon.Rectangle)) {
+                    if (!this.config.constrainViewport || !(this.constraintBounds instanceof Malakh.Rectangle)) {
                         return Infinity;
                     }
                     this.applyConstraints(true, null, true);
                     return this._maxZoom;
                 },
                 set: function () {
-                    console.error('Field Seadragon.Viewport#maxZoom is not settable');
+                    console.error('Field Malakh.Viewport#maxZoom is not settable');
                 },
                 enumerable: true,
             },
@@ -117,12 +117,12 @@ Seadragon.Viewport = function Viewport(/* seadragon */) {
     );
 };
 
-Seadragon.Viewport.prototype = Object.create(Seadragon.AnimatedRectangle.prototype);
-var parentPrototype = Object.getPrototypeOf(Seadragon.Viewport.prototype);
+Malakh.Viewport.prototype = Object.create(Malakh.AnimatedRectangle.prototype);
+var parentPrototype = Object.getPrototypeOf(Malakh.Viewport.prototype);
 
-$.extend(Seadragon.Viewport.prototype,
+$.extend(Malakh.Viewport.prototype,
     /**
-     * @lends Seadragon.Viewport.prototype
+     * @lends Malakh.Viewport.prototype
      */
     {
         /**
@@ -141,18 +141,18 @@ $.extend(Seadragon.Viewport.prototype,
          *
          * @param {number} zoom
          * @param {boolean} [immediately=false]
-         * @param {Seadragon.Point} [refPoint]
+         * @param {Malakh.Point} [refPoint]
          */
         zoomTo: function zoomTo(zoom, immediately, refPoint, /* boolean INTERNAL */ dontApplyConstraints) {
-            if (!(refPoint instanceof Seadragon.Point)) {
+            if (!(refPoint instanceof Malakh.Point)) {
                 refPoint = this.getCenter();
             }
 
             var aspect = this.getAspectRatio();
 
             var oldBounds = this.getRectangle();
-            var distanceToTopLeft = refPoint.minus(new Seadragon.Point(oldBounds.x, oldBounds.y));
-            var refPointRelativeDimensions = new Seadragon.Point(
+            var distanceToTopLeft = refPoint.minus(new Malakh.Point(oldBounds.x, oldBounds.y));
+            var refPointRelativeDimensions = new Malakh.Point(
                 distanceToTopLeft.x / oldBounds.width,
                 distanceToTopLeft.y / oldBounds.height);
 
@@ -166,7 +166,7 @@ $.extend(Seadragon.Viewport.prototype,
             if (!dontApplyConstraints) {
                 this.applyConstraints(immediately, refPoint);
             }
-            this.$container.trigger('seadragon:force_redraw');
+            this.$container.trigger('malakh:force_redraw');
             return this;
         },
 
@@ -177,7 +177,7 @@ $.extend(Seadragon.Viewport.prototype,
          *
          * @param {number} factor
          * @param {boolean} [immediately=false]
-         * @param {Seadragon.Point} [refPoint]
+         * @param {Malakh.Point} [refPoint]
          */
         zoomBy: function zoomBy(factor, immediately, refPoint, /* boolean INTERNAL */ dontApplyConstraints) {
             return this.zoomTo(this.getZoom() * factor, immediately, refPoint, dontApplyConstraints);
@@ -186,7 +186,7 @@ $.extend(Seadragon.Viewport.prototype,
         /**
          * Pans the viewport so that its center moves to a given <code>center</code> parameter.
          *
-         * @param {Seadragon.Point} center
+         * @param {Malakh.Point} center
          * @param {boolean} [immediately=false]
          */
         panTo: function panTo(center, immediately, /* Object INTERNAL */ options) {
@@ -195,14 +195,14 @@ $.extend(Seadragon.Viewport.prototype,
             if (!options.dontApplyConstraints) {
                 this.applyConstraints(false);
             }
-            this.$container.trigger('seadragon:force_redraw');
+            this.$container.trigger('malakh:force_redraw');
             return this;
         },
 
         /**
          * Pans the viewport my a given vector.
          *
-         * @param {Seadragon.Point} delta A vector by which we pan the viewport.
+         * @param {Malakh.Point} delta A vector by which we pan the viewport.
          * @param {boolean} [immediately=false]
          */
         panBy: function panBy(delta, immediately, /* Object INTERNAL */ options) {
@@ -214,11 +214,11 @@ $.extend(Seadragon.Viewport.prototype,
          * fits into the viewport and centers it.
          *
          * Note: this method it's a little different from it's equivalent in
-         * <code>Seadragon.AnimatedRectangle</code> as we can't change the viewport's aspect ratio.
+         * <code>Malakh.AnimatedRectangle</code> as we can't change the viewport's aspect ratio.
          *
-         * @see Seadragon.AnimatedRectangle#fitBounds
+         * @see Malakh.AnimatedRectangle#fitBounds
          *
-         * @param {Seadragon.Rectangle} bounds
+         * @param {Malakh.Rectangle} bounds
          * @param {boolean} [immediately=false]
          */
         fitBounds: function fitBounds(bounds, immediately) {
@@ -226,7 +226,7 @@ $.extend(Seadragon.Viewport.prototype,
             var center = bounds.getCenter();
 
             // Resize bounds to match viewport's aspect ratio, maintaining center.
-            var newBounds = new Seadragon.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+            var newBounds = new Malakh.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
             if (newBounds.getAspectRatio() >= aspect) {
                 // Width is bigger relative to viewport, resize height.
                 newBounds.height = bounds.width / aspect;
@@ -239,7 +239,7 @@ $.extend(Seadragon.Viewport.prototype,
 
             parentPrototype.fitBounds.call(this, newBounds, immediately);
 
-            this.$container.trigger('seadragon:force_align');
+            this.$container.trigger('malakh:force_align');
             return this;
         },
 
@@ -249,7 +249,7 @@ $.extend(Seadragon.Viewport.prototype,
          * @param {boolean} [immediately=false]
          */
         fitConstraintBounds: function fitConstraintBounds(immediately) {
-            if (!(this.constraintBounds instanceof Seadragon.Rectangle)) {
+            if (!(this.constraintBounds instanceof Malakh.Rectangle)) {
                 console.error('Can\'t fit the viewport to constraintBounds because they\'re not set.');
                 return this;
             }
@@ -259,12 +259,12 @@ $.extend(Seadragon.Viewport.prototype,
         /**
          * Invoked on window resize.
          *
-         * @param {Seadragon.Point} newContainerSize point: <code>(container width, container height)</code>.
+         * @param {Malakh.Point} newContainerSize point: <code>(container width, container height)</code>.
          */
         resize: function resize(newContainerSize) {
             var zoom = this.getZoom();
             // Update container size, but make a copy first.
-            this.containerSize = new Seadragon.Point(newContainerSize.x, newContainerSize.y); // TODO a Seadragon field?
+            this.containerSize = new Malakh.Point(newContainerSize.x, newContainerSize.y); // TODO a Malakh field?
             this.springs.width.resetTo(this.containerSize.x / zoom);
             this.springs.height.resetTo(this.springs.width.get() * this.containerSize.y / this.containerSize.x);
             return this.applyConstraints(true);
@@ -283,13 +283,13 @@ $.extend(Seadragon.Viewport.prototype,
          * method anyway.
          *
          * @param {boolean} [immediately=false]
-         * @param {Seadragon.Point} [refPoint]
+         * @param {Malakh.Point} [refPoint]
          */
         applyConstraints: function applyConstraints(immediately, refPoint, /* boolean INTERNAL */ setMinMaxZoom) {
             if (!this.config.constrainViewport) {
                 return this;
             }
-            if (!(this.constraintBounds instanceof Seadragon.Rectangle)) { // TODO a Seadragon field?
+            if (!(this.constraintBounds instanceof Malakh.Rectangle)) { // TODO a Malakh field?
                 console.error('Can\'t apply constraints because constraintBounds is not set.');
                 return this;
             }
@@ -298,7 +298,7 @@ $.extend(Seadragon.Viewport.prototype,
                 adjustmentNeeded = false,
                 whatToScale = 'height',
 
-                config = this.seadragon.config,
+                config = this.malakh.config,
 
                 cR = this.constraintBounds, // rectangle of constraints
                 vR = this.getRectangle(), // viewport rectangle
@@ -409,9 +409,9 @@ $.extend(Seadragon.Viewport.prototype,
          * Converts a point-vector (i.e. a vector indicating distance between two points) to a pixel-vector
          * (analogous).
          *
-         * @param {Seadragon.Point} deltaPoints
+         * @param {Malakh.Point} deltaPoints
          * @param {boolean} [current=false]
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         deltaPixelsFromPoints: function deltaPixelsFromPoints(deltaPoints, current) {
             return deltaPoints.multiply(this.getZoom(current));
@@ -422,9 +422,9 @@ $.extend(Seadragon.Viewport.prototype,
          * viewport top-left corner's pixel coordinates are always <code>(0, 0)</code> but points don't
          * exhibit this behaviour.
          *
-         * @param {Seadragon.Point} deltaPixels
+         * @param {Malakh.Point} deltaPixels
          * @param {boolean} [current=false]
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         deltaPointsFromPixels: function deltaPointsFromPixels(deltaPixels, current) {
             return deltaPixels.divide(this.getZoom(current));
@@ -434,9 +434,9 @@ $.extend(Seadragon.Viewport.prototype,
          * Converts a point to a pixel. Note that viewport top-left corner's pixel coordinates are always
          * <code>(0, 0)</code>.
          *
-         * @param {Seadragon.Point} point
+         * @param {Malakh.Point} point
          * @param {boolean} [current=false]
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         pixelFromPoint: function pixelFromPoint(point, current) {
             var bounds, zoom;
@@ -448,9 +448,9 @@ $.extend(Seadragon.Viewport.prototype,
         /**
          * Converts a pixel to a point.
          *
-         * @param {Seadragon.Point} pixel
+         * @param {Malakh.Point} pixel
          * @param {boolean} [current=false]
-         * @return {Seadragon.Point}
+         * @return {Malakh.Point}
          */
         pointFromPixel: function pointFromPixel(pixel, current) {
             var bounds = this.getRectangle(current);
@@ -462,9 +462,9 @@ $.extend(Seadragon.Viewport.prototype,
          * Converts rectangle's <code>(topLeftX, topLeftY, width, height)</code> coordinates from ones
          * described in pixels to those described in points.
          *
-         * @param {Seadragon.Rectangle} rectangle
+         * @param {Malakh.Rectangle} rectangle
          * @param {boolean} [current=false]
-         * @return {Seadragon.Rectangle}
+         * @return {Malakh.Rectangle}
          */
         pointRectangleFromPixelRectangle: function pointRectangleFromPixelRectangle(rectangle, current) {
             var topLeft = rectangle.getTopLeft();
@@ -473,7 +473,7 @@ $.extend(Seadragon.Viewport.prototype,
             var newTopLeft = this.pointFromPixel(topLeft, current);
             var newSize = this.deltaPointsFromPixels(size, current);
 
-            return new Seadragon.Rectangle(newTopLeft.x, newTopLeft.y, newSize.x, newSize.y);
+            return new Malakh.Rectangle(newTopLeft.x, newTopLeft.y, newSize.x, newSize.y);
         },
 
         /**
@@ -481,9 +481,9 @@ $.extend(Seadragon.Viewport.prototype,
          *
          * @see #pointRectangleFromPixelRectangle
          *
-         * @param {Seadragon.Rectangle} rectangle
+         * @param {Malakh.Rectangle} rectangle
          * @param {boolean} [current=false]
-         * @return {Seadragon.Rectangle}
+         * @return {Malakh.Rectangle}
          */
         pixelRectangleFromPointRectangle: function pixelRectangleFromPointRectangle(rectangle, current) {
             var topLeft = rectangle.getTopLeft();
@@ -492,7 +492,7 @@ $.extend(Seadragon.Viewport.prototype,
             var newTopLeft = this.pixelFromPoint(topLeft, current);
             var newSize = this.deltaPixelsFromPoints(size, current);
 
-            return new Seadragon.Rectangle(newTopLeft.x, newTopLeft.y, newSize.x, newSize.y);
+            return new Malakh.Rectangle(newTopLeft.x, newTopLeft.y, newSize.x, newSize.y);
         },
     }
 );

@@ -2,7 +2,7 @@
  * Constructs the <code>Picker</code> instance.
  *
  * @class <p>Allows to mark rectangular areas on the virtual plane. These areas
- * can be later memorized using <code>Seadragon.Markers</code> instance.
+ * can be later memorized using <code>Malakh.Markers</code> instance.
  *
  * <ul>
  *     <li>Author: <a href="mailto:michal.golebiowski@laboratorium.ee">Michał Z. Gołębiowski</a>
@@ -10,9 +10,9 @@
  *     <li>License: New BSD (see the license.txt file for copyright information)</li>
  * <ul>
  *
- * @param {Seadragon} seadragon  Sets <code>this.seadragon</code>.
+ * @param {Malakh} malakh  Sets <code>this.malakh</code>.
  */
-Seadragon.Picker = function Picker(/* seadragon */) {
+Malakh.Picker = function Picker(/* malakh */) {
     this.ensureArguments(arguments, 'Picker');
 
     var that = this,
@@ -54,7 +54,7 @@ Seadragon.Picker = function Picker(/* seadragon */) {
      */
     this.show = function show() {
         that.$container.append($pickerOverlay);
-        $(document).on('mouseup.seadragon', onMouseUp);
+        $(document).on('mouseup.malakh', onMouseUp);
         return this;
     };
 
@@ -63,7 +63,7 @@ Seadragon.Picker = function Picker(/* seadragon */) {
      */
     this.hide = function hide() {
         $(document).off({
-            'mouseup.seadragon': onMouseUp,
+            'mouseup.malakh': onMouseUp,
         });
         $pickerArea.hide();
         $pickerOverlay.detach();
@@ -74,19 +74,19 @@ Seadragon.Picker = function Picker(/* seadragon */) {
      * Returns current mouse position relative to the canvas top left corner.
      *
      * @param {jQuery.Event} evt An event from which we gather mouse position.
-     * @return {Seadragon.Point}
+     * @return {Malakh.Point}
      * @private
      */
     function getMousePosition(evt) {
         var offset = that.$container.offset();
-        return new Seadragon.Point(evt.pageX - offset.left, evt.pageY - offset.top);
+        return new Malakh.Point(evt.pageX - offset.left, evt.pageY - offset.top);
     }
 
     /**
      * Checks if the position (mouseX, mouseY) is over the border of the rectangle
      * of a given bounds.
      *
-     * @param {Seadragon.Rectangle} bounds
+     * @param {Malakh.Rectangle} bounds
      * @param {number} mouseX
      * @param {number} mouseY
      * @return {string} String representing canonical cursor name corresponding to its current position over
@@ -198,7 +198,7 @@ Seadragon.Picker = function Picker(/* seadragon */) {
         }
 
         $pickerOverlay.on({
-            'mousemove.seadragon': function (evt) {
+            'mousemove.malakh': function (evt) {
                 var mousePosition = getMousePosition(evt);
                 var cursorType = '';
 
@@ -247,7 +247,7 @@ Seadragon.Picker = function Picker(/* seadragon */) {
 
     function getPickerAreaRectangle() {
         var pickerAreaCss = $pickerArea.css(['left', 'top', 'width', 'height']);
-        return new Seadragon.Rectangle(
+        return new Malakh.Rectangle(
             parseFloat(pickerAreaCss.left),
             parseFloat(pickerAreaCss.top),
             parseFloat(pickerAreaCss.width),
@@ -263,7 +263,7 @@ Seadragon.Picker = function Picker(/* seadragon */) {
      */
     function bindPickerMouseMove() {
         $pickerOverlay.on({
-            'mousemove.seadragon': function (evt) {
+            'mousemove.malakh': function (evt) {
                 var mousePosition = getMousePosition(evt);
                 if (drawingArea) {
                     return;
@@ -283,10 +283,10 @@ Seadragon.Picker = function Picker(/* seadragon */) {
 
     function onMouseUp(evt) {
         if (drawingArea) {
-            $pickerOverlay.off('mousemove.seadragon');
+            $pickerOverlay.off('mousemove.malakh');
             bindPickerMouseMove();
 
-            var areaBounds = that.seadragon.viewport.pointRectangleFromPixelRectangle(getPickerAreaRectangle());
+            var areaBounds = that.malakh.viewport.pointRectangleFromPixelRectangle(getPickerAreaRectangle());
 
             // Prints coordinates of the selected area (so far it's not used anywhere).
             console.log('areaBounds: [' + areaBounds.x + ', ' + areaBounds.y +
@@ -301,7 +301,7 @@ Seadragon.Picker = function Picker(/* seadragon */) {
                 $pickerArea.hide();
             }
 
-            var mouseMoveEvent = $.Event('mousemove.seadragon');
+            var mouseMoveEvent = $.Event('mousemove.malakh');
             mouseMoveEvent.pageX = evt.pageX;
             mouseMoveEvent.pageY = evt.pageY;
             $pickerOverlay.trigger(mouseMoveEvent);
@@ -313,8 +313,8 @@ Seadragon.Picker = function Picker(/* seadragon */) {
         bindPickerMouseMove();
 
         $pickerOverlay.on({
-            'mousedown.seadragon': function (evt) {
-                evt.stopPropagation(); // don't propagate events to the Seadragon canvas
+            'mousedown.malakh': function (evt) {
+                evt.stopPropagation(); // don't propagate events to the Malakh canvas
 
                 if (evt.which !== 1) { // Only left-click is supported.
                     return;
@@ -402,4 +402,4 @@ Seadragon.Picker = function Picker(/* seadragon */) {
     }
 };
 
-Seadragon.Picker.prototype = Object.create(seadragonProxy);
+Malakh.Picker.prototype = Object.create(malakhProxy);
