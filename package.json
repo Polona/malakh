@@ -1,8 +1,8 @@
 {
   "name": "malakh",
   "title": "Malakh",
-  "description": "",
-  "version": "0.10.0-beta.1",
+  "description": "Research and development project requested by the National Library of Poland made by Laboratorium EE",
+  "version": "0.10.0-beta.2",
   "author": {
     "name": "Michał Gołębiowski <michal.golebiowski@laboratorium.ee>",
     "url": ""

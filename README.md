@@ -1,7 +1,7 @@
 Malakh - deep zoom viewer
 ==================================================
 
-TODO project description.
+Research and development project requested by the National Library of Poland made by Laboratorium EE.
 
 How to build your own Malakh
 ----------------------------
