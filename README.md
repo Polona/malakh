@@ -18,7 +18,7 @@ Install the grunt-cli package so that you will have the correct version of grunt
 npm install -g grunt-cli
 ```
 
-Enter the jquery directory and install the Node dependencies, this time *without* specifying a global install:
+Enter the `malakh` directory and install the Node dependencies, this time *without* specifying a global install:
 
 ```bash
 cd malakh && npm install
