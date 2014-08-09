@@ -27,6 +27,13 @@
     "prepublish": "grunt",
     "test": "grunt"
   },
+  "files": [
+      "dist",
+      "LICENSE.md",
+      "sandbox",
+      "src",
+      "utils"
+  ],
   "keywords": [
     "malakh",
     "deep zoom"
