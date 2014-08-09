@@ -24,7 +24,7 @@
     "grunt-contrib-uglify": "0.5.1"
   },
   "scripts": {
-    "build": "grunt",
+    "prepublish": "grunt",
     "test": "grunt"
   },
   "keywords": [
