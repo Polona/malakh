@@ -368,8 +368,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    // Default grunt
     grunt.registerTask('default', ['build:*:*', 'jshint', 'uglify', 'dist:*']);
+
+    grunt.registerTask('test', ['default']);
 
     // Short list as a high frequency watch task
     grunt.registerTask('dev', ['build:*:*', 'jshint']);
