@@ -1,10 +1,8 @@
-Malakh - deep zoom viewer
-==================================================
+# Malakh - deep zoom viewer
 
 Research and development project requested by the National Library of Poland made by Laboratorium EE.
 
-How to build your own Malakh
-----------------------------
+## How to build your own Malakh
 
 First, clone a copy of the main Malakh git repo by running:
 
@@ -12,16 +10,20 @@ First, clone a copy of the main Malakh git repo by running:
 git clone https://github.com/Polona/malakh.git
 ```
 
-Install the grunt-cli package so that you will have the correct version of grunt available from any project that needs it. This should be done as a global install:
-
-```bash
-npm install -g grunt-cli
-```
-
-Enter the `malakh` directory and install the Node dependencies, this time *without* specifying a global install:
+Enter the `malakh` directory and install the Node dependencies:
 
 ```bash
 cd malakh && npm install
+```
+
+The built version of Malakh will be put in the `dist/` subdirectory, along with the minified copy and an associated map file.
+
+### Customizing own Malakh version
+
+If you want to build your own, modified version, the above process may last too long. In that case, install the `grunt-cli` package, this time globally, to have the `grunt` binary available:
+
+```bash
+npm install -g grunt-cli
 ```
 
 Make sure you have `grunt` installed by testing:
@@ -30,14 +32,16 @@ Make sure you have `grunt` installed by testing:
 grunt --version
 ```
 
-Then, to get a complete, minified (w/ Uglify.js), linted (w/ JSHint) version of Malakh, type the following:
+Then, to get a complete, minified, linted version of Malakh, type the following:
 
 ```bash
 grunt
 ```
 
-The built version of Malakh will be put in the `dist/` subdirectory, along with the minified copy and associated map file.
-
+If you don't want to build minified files (e.g. during development), run:
+```bash
+grunt dev
+```
 
 ### Modules
 
@@ -46,7 +50,6 @@ Special builds can be created that optionally exclude or include any of the foll
 - magnifier
 - picker
 - markers
-
 
 Make sure all Node dependencies are installed and all Git submodules are checked out:
 
@@ -69,6 +72,5 @@ Exclude **all** optional modules:
 ```bash
 grunt custom:-magnifier,-picker,-markers
 ```
-
 
 Note: dependencies will be handled internally, by the build process.
