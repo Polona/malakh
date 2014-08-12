@@ -383,7 +383,10 @@ module.exports = function (grunt) {
         'dist:*',
     ]);
 
-    grunt.registerTask('test', ['default']);
+    grunt.registerTask('test', [
+        'build:*:*',
+        'lint',
+    ]);
 
     // Short list as a high frequency watch task
     grunt.registerTask('dev', ['build:*:*', 'jshint']);
