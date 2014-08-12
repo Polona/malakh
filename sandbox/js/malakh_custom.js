@@ -1,4 +1,6 @@
-/* global Malakh: false, dziNamesArray: false */
+/* global dziNamesArray: false */
+/* eslint-disable no-unused-vars */
+
 var malakh;
 
 function malakhCustom(containerSelectorOrElement, configOverrides) {
@@ -78,7 +80,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
                 malakh.config.mouseAnimationTime = initialMouseAnimationTime;
             }
             $(this).css('background-color', buttonColors[animationsOff]);
-        }
+        },
     });
 
     $('#dont_center').on({
@@ -88,7 +90,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             }
             malakh.config.centerWhenZoomedOut = !malakh.config.centerWhenZoomedOut;
             $(this).css('background-color', buttonColors[!malakh.config.centerWhenZoomedOut]);
-        }
+        },
     });
 
     $('#zoom_off').on({
@@ -98,7 +100,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             }
             malakh.config.blockZoom = !malakh.config.blockZoom;
             $(this).css('background-color', buttonColors[malakh.config.blockZoom]);
-        }
+        },
     });
 
     $('#tile_borders').on({
@@ -108,7 +110,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             }
             malakh.config.debugTileBorders = !malakh.config.debugTileBorders;
             $(this).css('background-color', buttonColors[malakh.config.debugTileBorders]);
-        }
+        },
     });
 
     var $magnifier = $('#magnifier');
@@ -123,7 +125,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
                 }
                 malakh.toggleMagnifier();
                 $(this).css('background-color', buttonColors[malakh.config.enableMagnifier]);
-            }
+            },
         });
     } else {
         $magnifier.hide();
@@ -141,7 +143,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
                 }
                 malakh.togglePicker();
                 $(this).css('background-color', buttonColors[malakh.config.enablePicker]);
-            }
+            },
         });
     } else {
         $picker.hide();
@@ -160,7 +162,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
                 $('#picker').trigger(evt); // turn off the picker
             }
             malakh.alignRows(6000, 100, Infinity);
-        }
+        },
     });
 
     $('#align_column').on({
@@ -175,7 +177,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
                 $('#picker').trigger(evt); // turn off the picker
             }
             malakh.alignColumns(6000, 100, Infinity);
-        }
+        },
     });
 
     $('#align_rows').on({
@@ -190,7 +192,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
                 $('#picker').trigger(evt); // turn off the picker
             }
             malakh.alignRows(6000, 100, 50000);
-        }
+        },
     });
 
     $('#align_columns').on({
@@ -205,7 +207,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
                 $('#picker').trigger(evt); // turn off the picker
             }
             malakh.alignColumns(6000, 100, 50000);
-        }
+        },
     });
 
     $('#fit_image_2').on({
@@ -220,7 +222,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
                 $('#picker').trigger(evt); // turn off the picker
             }
             malakh.fitImage(2);
-        }
+        },
     });
 
     $('#fit_image_16').on({
@@ -235,7 +237,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
                 $('#picker').trigger(evt); // turn off the picker
             }
             malakh.fitImage(16);
-        }
+        },
     });
 
     $('#constrain_to_image_2').on({
@@ -249,14 +251,14 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             constrainToImage2 = !constrainToImage2;
             $(this).css('background-color', buttonColors[constrainToImage2]);
             constrainToImage16 = false;
-            $('#constrain_to_image_16').css('background-color', buttonColors[false]);
+            $('#constrain_to_image_16').css('background-color', buttonColors.false);
             if (constrainToImage2) {
                 malakh.constrainToImage(2);
                 malakh.fitImage(2);
             } else {
                 malakh.config.constrainViewport = false;
             }
-        }
+        },
     });
 
     $('#constrain_to_image_16').on({
@@ -270,13 +272,15 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             constrainToImage16 = !constrainToImage16;
             $(this).css('background-color', buttonColors[constrainToImage16]);
             constrainToImage2 = false;
-            $('#constrain_to_image_2').css('background-color', buttonColors[false]);
+            $('#constrain_to_image_2').css('background-color', buttonColors.false);
             if (constrainToImage16) {
                 malakh.constrainToImage(16);
                 malakh.fitImage(16);
             } else {
                 malakh.config.constrainViewport = false;
             }
-        }
+        },
     });
 }
+
+/* eslint-enable no-unused-vars */

@@ -1,3 +1,5 @@
+/* global malakhProxy: true */
+
 var malakhProxy = Object.create(Malakh.prototype);
 
 // We're making malakh fields accessible from any Malakh class via this.field
@@ -24,7 +26,7 @@ utils.forEach([
             },
             set: function (value) {
                 this.malakh[field] = value;
-            }
+            },
         });
     }
 );

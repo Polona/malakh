@@ -1,3 +1,5 @@
+/* global Malakh: true */
+
 /**
  * Constructs a Malakh instance.
  *

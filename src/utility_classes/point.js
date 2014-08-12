@@ -158,6 +158,6 @@ $.extend(Malakh.Point.prototype,
          */
         toString: function toString() {
             return '(' + this.x + ', ' + this.y + ')';
-        }
+        },
     }
 );

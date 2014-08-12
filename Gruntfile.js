@@ -1,8 +1,9 @@
-/* jshint strict: true */
-/* global module: false, process: false, require: false, Buffer: false */
+// Build process inspired by jQuery configuration.
+
+'use strict';
 
 module.exports = function (grunt) {
-    'use strict';
+    require('time-grunt')(grunt);
 
     var distpaths = [
             'dist/malakh.js',
@@ -13,13 +14,9 @@ module.exports = function (grunt) {
             var data = {};
             try {
                 data = grunt.file.readJSON(filepath);
-            } catch (e) {
-            }
+            } catch (e) {}
             return data;
-        },
-        srcHintOptions = readOptionalJSON('.jshintrc');
-
-    srcHintOptions.strict = true; // this is disabled for non-concatenated files so that IDEs don't complain
+        };
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -60,24 +57,34 @@ module.exports = function (grunt) {
                     'src/instances/controller.js',
 
                     'src/_outro.js',
-                ]
+                ],
             },
         },
 
-        jshint: {
-            dist: {
-                src: ['dist/malakh.js'],
-                options: srcHintOptions,
+        eslint: {
+            all: {
+                src: [
+                    '*.js',
+                    'src/**/*.js',
+                    '!src/_*.js',
+                    'sandbox/js/**/*.js',
+                    '!sandbox/js/vendor/*.js',
+                ],
             },
-            grunt: {
-                src: ['Gruntfile.js'],
-                options: srcHintOptions,
-            }
         },
 
-        watch: {
-            files: ['<%= jshint.grunt.src %>', 'src/**/*.js'],
-            tasks: 'dev',
+        jscs: {
+            all: {
+                src: '<%= eslint.all.src %>',
+                options: {
+                    config: '.jscsrc',
+                },
+            },
+        },
+
+        lint: {
+            files: '<%= eslint.all.src %>',
+            tasks: ['lint'],
         },
 
         uglify: {
@@ -91,14 +98,14 @@ module.exports = function (grunt) {
             },
             all: {
                 files: {
-                    'dist/malakh.min.js': [ 'dist/malakh.js' ],
+                    'dist/malakh.min.js': ['dist/malakh.js'],
                 },
                 options: {
                     banner: '/*! Malakh v<%= pkg.version %> | (c) 2013 Laboratorium EE */',
                     sourceMap: true,
                 },
-            }
-        }
+            },
+        },
     });
 
     // Special 'alias' task to make custom build creation less grawlix-y
@@ -119,7 +126,7 @@ module.exports = function (grunt) {
 
         grunt.util.spawn({
             cmd: 'grunt',
-            args: ['build:*:*:' + modules, 'uglify', 'dist']
+            args: ['build:*:*:' + modules, 'uglify', 'dist'],
         }, function (err, result) {
             if (err) {
                 grunt.verbose.error();
@@ -156,10 +163,8 @@ module.exports = function (grunt) {
                     // explicit or inherited strong exclusion
                     if (excluded[needsFlag] || modules['-' + flag]) {
                         excluded[flag] = true;
-                    }
-                    // explicit inclusion overrides weak exclusion
-                    else if (excluded[needsFlag] === false &&
-                        (modules[flag] || modules[ '+' + flag])) {
+                    } else if (excluded[needsFlag] === false && (modules[flag] || modules['+' + flag])) {
+                        // explicit inclusion overrides weak exclusion
 
                         delete excluded[needsFlag];
 
@@ -200,7 +205,7 @@ module.exports = function (grunt) {
 
                     // check for dependencies
                     if (filepath.needs) {
-                        deps[ flag ] = filepath.needs;
+                        deps[flag] = filepath.needs;
                         filepath.needs.forEach(function (needsFlag) {
                             excluder(flag, needsFlag);
                         });
@@ -245,9 +250,9 @@ module.exports = function (grunt) {
                     // Additionally, only display modules that have been specified
                     // by the user
                     if (explicit && specified) {
-                        grunt.log.writetableln([ 27, 30 ], [
+                        grunt.log.writetableln([27, 30], [
                             message,
-                            ('(' + filepath.src + ')').grey
+                            ('(' + filepath.src + ')').grey,
                         ]);
                     }
 
@@ -264,7 +269,7 @@ module.exports = function (grunt) {
             compiled = compiled.replace(/@VERSION/g, version)
                 .replace('@DATE', function () {
                     // YYYY-MM-DD
-                    return ( new Date() ).toISOString().replace(/T.*/, '');
+                    return (new Date()).toISOString().replace(/T.*/, '');
                 });
 
             // Write concatenated source to file
@@ -341,7 +346,7 @@ module.exports = function (grunt) {
                 if (map) {
                     text = text.replace(/(^\/\*[\w\W]*?)\s*\*\/|$/,
                         function (_, comment) {
-                            return ( comment || '\n/*' ) + map + '\n*/';
+                            return (comment || '\n/*') + map + '\n*/';
                         });
                 }
                 fs.writeFileSync(filename, text, 'utf-8');
@@ -364,11 +369,19 @@ module.exports = function (grunt) {
         return !nonascii;
     });
 
-    // Load grunt tasks from NPM packages
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
+    require('load-grunt-tasks')(grunt);
 
-    grunt.registerTask('default', ['build:*:*', 'jshint', 'uglify', 'dist:*']);
+    grunt.registerTask('lint', [
+        'eslint',
+        'jscs',
+    ]);
+
+    grunt.registerTask('default', [
+        'build:*:*',
+        'lint',
+        'uglify',
+        'dist:*',
+    ]);
 
     grunt.registerTask('test', ['default']);
 

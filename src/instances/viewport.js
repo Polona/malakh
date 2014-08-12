@@ -347,7 +347,7 @@ $.extend(Malakh.Viewport.prototype,
 
             var parameterPairs = [
                 {start: 'x', length: 'width'},
-                {start: 'y', length: 'height'}
+                {start: 'y', length: 'height'},
             ];
             for (var i = 0; i < 2; i++) {
                 var pair = parameterPairs[i];
@@ -361,18 +361,16 @@ $.extend(Malakh.Viewport.prototype,
                         // marginFactor === 0 is required because otherwise implementation would be inconsistent.
                         adjustmentNeeded = true;
                         vR[start] = cR[start] + cR[length] / 2 - vR[length] / 2;
-                    } else {
-                        // Just don't allow going too far outside of the container.
-                        if (vR[start] > cR[start]) {
-                            adjustmentNeeded = true;
-                            vR[start] = cR[start];
-                        } else if (vR[start] + vR[length] < cR[start] + cR[length]) {
-                            adjustmentNeeded = true;
-                            vR[start] = cR[start] + cR[length] - vR[length];
-                        }
+                    } else if (vR[start] > cR[start]) {
+                        // Just don't allow going too far outside of the container from the start side...
+                        adjustmentNeeded = true;
+                        vR[start] = cR[start];
+                    } else if (vR[start] + vR[length] < cR[start] + cR[length]) {
+                        // ...and from the end side.
+                        adjustmentNeeded = true;
+                        vR[start] = cR[start] + cR[length] - vR[length];
                     }
-                }
-                else if ((vR[start] < cR[start] &&
+                } else if ((vR[start] < cR[start] &&
                     vR[start] + vR[length] < cR[start] + cR[length]) ||
                     (vR[start] > cR[start] &&
                         vR[start] + vR[length] > cR[start] + cR[length])) {
@@ -397,7 +395,7 @@ $.extend(Malakh.Viewport.prototype,
                 // causes a jumping effect (and very visible one at that).
                 this.panTo(vR.getCenter(), immediately, {
                     dontApplyConstraints: true,
-                    animationTimeConfigParameter: 'mouseAnimationTime'
+                    animationTimeConfigParameter: 'mouseAnimationTime',
                 });
             }
 

@@ -93,9 +93,8 @@ $.extend(Malakh.Spring.prototype,
         get: function get(current) {
             if (current) {
                 return this.currentValue;
-            } else {
-                return this.targetValue;
             }
+            return this.targetValue;
         },
 
         /**

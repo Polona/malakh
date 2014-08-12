@@ -1,0 +1,14 @@
+{
+    "env": {
+        "browser": true
+    },
+
+    "globals": {
+        "$": false,
+        "jQuery": false,
+
+        "Malakh": false,
+        "malakhProxy": false,
+        "utils": false
+    }
+}

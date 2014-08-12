@@ -25,7 +25,6 @@ Malakh.Drawer = function Drawer(/* malakh */) {
     var cachePixelOnImageSizeMax; // 1d dictionary [whichImage][level] --> max(point.x, point.y)
     var coverage; // 4d dictionary [whichImage][level][x][y] --> boolean
     var tilesMatrix; // 4d dictionary [whichImage][level][x][y] --> Tile
-    var tileBoundsNotChangedMatrix; // like above
 
     var tilesLoaded; // unordered list of Tiles with loaded images
     var tilesDrawnLastFrame; // unordered list of Tiles drawn last frame
@@ -294,12 +293,11 @@ Malakh.Drawer = function Drawer(/* malakh */) {
     function isCovered(whichImage, level, x, y) {
         if (x == null || y == null) {
             return providesCoverage(whichImage, level + 1);
-        } else {
-            return (providesCoverage(whichImage, level + 1, 2 * x, 2 * y) &&
-                providesCoverage(whichImage, level + 1, 2 * x, 2 * y + 1) &&
-                providesCoverage(whichImage, level + 1, 2 * x + 1, 2 * y) &&
-                providesCoverage(whichImage, level + 1, 2 * x + 1, 2 * y + 1));
         }
+        return (providesCoverage(whichImage, level + 1, 2 * x, 2 * y) &&
+            providesCoverage(whichImage, level + 1, 2 * x, 2 * y + 1) &&
+            providesCoverage(whichImage, level + 1, 2 * x + 1, 2 * y) &&
+            providesCoverage(whichImage, level + 1, 2 * x + 1, 2 * y + 1));
     }
 
     /**
@@ -392,8 +390,7 @@ Malakh.Drawer = function Drawer(/* malakh */) {
         if (immediately) {
             tiledImage.opacity = opacityTarget;
             tiledImage.blending = false;
-        }
-        else {
+        } else {
             if (!tiledImage.blending) { // Otherwise we leave it where it was before updating.
                 // We need to set values different than 1 or 0 so that code that assumes by opacity === 0 that
                 // the image is hidden won't matched the tiled image in the process of being shown.
@@ -748,7 +745,6 @@ Malakh.Drawer = function Drawer(/* malakh */) {
         cachePixelOnImageSizeMax = [];
         coverage = [];
         tilesMatrix = [];
-        tileBoundsNotChangedMatrix = [];
 
         tilesLoaded = [];
         tilesDrawnLastFrame = [];

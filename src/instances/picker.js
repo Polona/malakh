@@ -22,7 +22,7 @@ Malakh.Picker = function Picker(/* malakh */) {
     // Indicates direction in which we are resizing the rectangle at the moment.
     pickerAreaMode = {
         toRight: true, // Is the rectangle being resized to the right, keeping its left edge intact?
-        toBottom: true // Is the rectangle being resized to the bottom, keeping its top edge intact?
+        toBottom: true, // Is the rectangle being resized to the bottom, keeping its top edge intact?
     };
     drawingArea = false; // Are we drawing a rectangle at the moment?
 
@@ -33,7 +33,7 @@ Malakh.Picker = function Picker(/* malakh */) {
         top: 0,
         width: '100%',
         height: '100%',
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
     });
 
     $pickerArea = $('<div class="picker_area">').css({
@@ -43,7 +43,7 @@ Malakh.Picker = function Picker(/* malakh */) {
         left: 0,
         top: 0,
         backgroundColor: 'transparent',
-        border: '5px dashed #00d5ef'
+        border: '5px dashed #00d5ef',
     });
     $pickerOverlay.append($pickerArea);
 
@@ -240,7 +240,7 @@ Malakh.Picker = function Picker(/* malakh */) {
 
                 cursorType += '-resize';
                 $pickerOverlay.css('cursor', cursorType);
-            }
+            },
         });
     }
 
@@ -277,7 +277,7 @@ Malakh.Picker = function Picker(/* malakh */) {
                 }
 
                 $(this).css('cursor', cursorType);
-            }
+            },
         });
     }
 
@@ -314,6 +314,7 @@ Malakh.Picker = function Picker(/* malakh */) {
 
         $pickerOverlay.on({
             'mousedown.malakh': function (evt) {
+                var left, top;
                 evt.stopPropagation(); // don't propagate events to the Malakh canvas
 
                 if (evt.which !== 1) { // Only left-click is supported.
@@ -327,7 +328,7 @@ Malakh.Picker = function Picker(/* malakh */) {
                     x: parseFloat(pickerAreaCss.left),
                     y: parseFloat(pickerAreaCss.top),
                     width: parseFloat(pickerAreaCss.width),
-                    height: parseFloat(pickerAreaCss.height)
+                    height: parseFloat(pickerAreaCss.height),
                 };
 
                 var cursorType;
@@ -341,8 +342,8 @@ Malakh.Picker = function Picker(/* malakh */) {
                     case 'default':
                         // We didn't catch a handle to change size of the
                         // rectangle, we're making a new one.
-                        var left = mousePosition.x;
-                        var top = mousePosition.y;
+                        left = mousePosition.x;
+                        top = mousePosition.y;
                         $pickerArea.css({
                             left: left,
                             top: top,
@@ -397,7 +398,7 @@ Malakh.Picker = function Picker(/* malakh */) {
                             pickerAreaCssNormalized.y + pickerAreaCssNormalized.height);
                         break;
                 }
-            }
+            },
         });
     }
 };

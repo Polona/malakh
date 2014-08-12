@@ -79,6 +79,6 @@ $.extend(Malakh.Segment.prototype,
          */
         toString: function toString() {
             return '[(' + this.x1 + ', ' + this.y1 + '), ' + '(' + this.x2 + ', ' + this.y2 + ')]';
-        }
+        },
     }
 );

@@ -1,4 +1,4 @@
-var dziNamesArray = [
+this.dziNamesArray = [
     'autoportrety_2c',
     'autoportrety_1a',
     'pejzaze_1e',

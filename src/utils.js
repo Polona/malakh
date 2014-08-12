@@ -1,3 +1,5 @@
+/* global utils: true */
+
 var utils = {};
 
 (function () {

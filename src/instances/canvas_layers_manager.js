@@ -21,7 +21,7 @@ Malakh.CanvasLayersManager = function CanvasLayersManager(/* malakh */) {
      */
     this.tiles = [
         [],
-        []
+        [],
     ];
 };
 
@@ -98,7 +98,7 @@ $.extend(Malakh.CanvasLayersManager.prototype,
         reset: function reset() {
             this.tiles = [
                 [],
-                []
+                [],
             ];
             return this;
         },

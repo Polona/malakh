@@ -20,19 +20,23 @@
   "devDependencies": {
     "grunt": "0.4.5",
     "grunt-cli": "0.1.13",
-    "grunt-contrib-jshint": "0.10.0",
-    "grunt-contrib-uglify": "0.5.1"
+    "grunt-contrib-uglify": "0.5.1",
+    "grunt-eslint": "0.6.0",
+    "grunt-jscs": "0.6.2",
+    "jscs-trailing-comma": "0.3.0",
+    "load-grunt-tasks": "0.6.0",
+    "time-grunt": "0.4.0"
   },
   "scripts": {
     "prepublish": "grunt",
     "test": "grunt"
   },
   "files": [
-      "dist",
-      "LICENSE.md",
-      "sandbox",
-      "src",
-      "utils"
+    "dist",
+    "LICENSE.md",
+    "sandbox",
+    "src",
+    "utils"
   ],
   "keywords": [
     "malakh",

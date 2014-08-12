@@ -1,3 +1,5 @@
+/* eslint-disable no-shadow */
+
 /**
  * Constructs a controller.
  *
@@ -386,7 +388,7 @@ Malakh.Controller = function Controller(malakh) {
 
             'malakh:force_redraw.malakh': function () {
                 that.restoreUpdating();
-            }
+            },
         });
 
         $(document).on({
@@ -610,8 +612,7 @@ Malakh.Controller = function Controller(malakh) {
                 tiledImageBoundsUpdatesNums[whichImage]++;
             }
             setTimeout(updateTiledImageBounds, 0, whichImage, true); // invoke asynchronously
-        }
-        else if (tiledImageBoundsUpdatesNum === 1) {
+        } else if (tiledImageBoundsUpdatesNum === 1) {
             // one function instance was dispatched on tiledImage, trying in a moment
             tiledImageBoundsUpdatesNums[whichImage]++;
             setTimeout(scheduleUpdateTiledImageBounds, 100, whichImage, true);
@@ -877,8 +878,7 @@ Malakh.Controller = function Controller(malakh) {
         var shown = options.shown == null ? true : options.shown;
         if (!shown) { // register image options to show later
             tiledImagesOptions[options.index] = options;
-        }
-        else { // actually open the tiled image
+        } else { // actually open the tiled image
             // Removing options so that we don't try to open the same tiled image twice.
             tiledImagesOptions[options.index] = null;
 
@@ -1157,3 +1157,5 @@ Malakh.Controller = function Controller(malakh) {
 };
 
 Malakh.Controller.prototype = Object.create(malakhProxy);
+
+/* eslint-enable no-shadow */

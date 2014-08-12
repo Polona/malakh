@@ -1,4 +1,4 @@
-/*jshint strict: false */
+/* eslint-disable strict */
 
 (function () {
     // Accepting setTimeout/setInterval with >2 parameters
@@ -17,8 +17,7 @@
     // Avoid console errors in browsers that lack a console. (Credits: HTML5 Boilerplate)
     if (!(window.console && console.log)) {
         (function () {
-            var noop = function () {
-            };
+            var noop = function () {};
             var methods = ['assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error', 'exception',
                 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'markTimeline', 'profile', 'profileEnd',
                 'markTimeline', 'table', 'time', 'timeEnd', 'timeStamp', 'trace', 'warn'];
@@ -27,6 +26,8 @@
             while (length--) {
                 console[methods[length]] = noop;
             }
-        }());
+        })();
     }
 })();
+
+/* eslint-enable strict */

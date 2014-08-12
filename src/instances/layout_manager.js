@@ -58,8 +58,7 @@ Malakh.LayoutManager = function LayoutManager(/* malakh */) {
                     widthSum = 0;
                     heightSum += height + spaceBetweenImages;
                 }
-            }
-            else { // Align in columns.
+            } else { // Align in columns.
                 width = heightOrWidth;
                 height = heightOrWidth / tiledImage.animatedBounds.getAspectRatio();
                 if (heightSum + height > maxRowWidthOrColumnHeight) {
