@@ -35,8 +35,7 @@
     "dist",
     "LICENSE.md",
     "sandbox",
-    "src",
-    "utils"
+    "src"
   ],
   "keywords": [
     "malakh",
