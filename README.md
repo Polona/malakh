@@ -23,7 +23,9 @@ First, construct a new Malakh object:
 ```js
 var malakh = new Malakh(containerSelectorOrElement, [configOverrides]);
 ```
-for example:
+where the first argument points to a container element (or its selector) where Malakh will create its components. The container will be emptied.
+
+For example:
 ```js
 var malakh = new Malakh('#malakh_container');
 ```
