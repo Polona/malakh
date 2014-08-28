@@ -2,6 +2,48 @@
 
 Research and development project requested by the National Library of Poland made by Laboratorium EE.
 
+## How to run a viewer on your own image?
+
+### Generating DZI files
+
+First, prepare the environment:
+
+1. Get Python 2.7.
+2. Install the `libjpeg` development package with a system package manager, e.g. on OS X: `brew install libjpeg`, on Ubuntu: `sudo apt-get install libjpeg-dev`.
+3. Install the `Pillow` package: `sudo pip install Pillow` or `sudo easy_install Pillow`.
+
+Now, run:
+```bash
+./utils/deepzoom.py PATH_TO_THE_IMAGE_FILE
+```
+
+### Firing up the viewer
+
+First, construct a new Malakh object:
+```js
+var malakh = new Malakh(containerSelectorOrElement, [configOverrides]);
+```
+for example:
+```js
+var malakh = new Malakh('#malakh_container');
+```
+
+Then, open an image:
+```js
+malakh.openDzi({
+    imageDataUrl: PATH_TO_DZI,
+});
+```
+
+Malakh will automatically deduce the tiles directory path from the above. If this path is non-canonical, you can provide it as an additional argument:
+
+```js
+malakh.openDzi({
+    imageDataUrl: PATH_TO_DZI,
+    tilesUrl: PATH_TO_TILES_DIRECTORY,
+});
+```
+
 ## How to build your own Malakh
 
 First, clone a copy of the main Malakh git repo by running:
