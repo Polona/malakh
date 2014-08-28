@@ -15,7 +15,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
 
     var animationsOff = false;
 
-    var constrainToImage2 = false,
+    var constrainToImage0 = false,
         constrainToImage16 = false;
 
     var dziDataArray;
@@ -155,7 +155,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
-            if (constrainToImage2 || constrainToImage16) {
+            if (constrainToImage0 || constrainToImage16) {
                 return;
             }
             if (malakh.config.enablePicker) {
@@ -170,7 +170,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
-            if (constrainToImage2 || constrainToImage16) {
+            if (constrainToImage0 || constrainToImage16) {
                 return;
             }
             if (malakh.config.enablePicker) {
@@ -185,7 +185,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
-            if (constrainToImage2 || constrainToImage16) {
+            if (constrainToImage0 || constrainToImage16) {
                 return;
             }
             if (malakh.config.enablePicker) {
@@ -200,7 +200,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
-            if (constrainToImage2 || constrainToImage16) {
+            if (constrainToImage0 || constrainToImage16) {
                 return;
             }
             if (malakh.config.enablePicker) {
@@ -210,7 +210,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
         },
     });
 
-    $('#fit_image_2').on({
+    $('#fit_image_0').on({
         click: function (evt) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
@@ -221,7 +221,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             if (malakh.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
-            malakh.fitImage(2);
+            malakh.fitImage(0);
         },
     });
 
@@ -230,7 +230,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
             }
-            if (constrainToImage2) {
+            if (constrainToImage0) {
                 return;
             }
             if (malakh.config.enablePicker) {
@@ -240,7 +240,7 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
         },
     });
 
-    $('#constrain_to_image_2').on({
+    $('#constrain_to_image_0').on({
         click: function (evt) {
             if (evt.which !== 1) { // Only left-click is supported.
                 return;
@@ -248,13 +248,13 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             if (malakh.config.enablePicker) {
                 $('#picker').trigger(evt); // turn off the picker
             }
-            constrainToImage2 = !constrainToImage2;
-            $(this).css('background-color', buttonColors[constrainToImage2]);
+            constrainToImage0 = !constrainToImage0;
+            $(this).css('background-color', buttonColors[constrainToImage0]);
             constrainToImage16 = false;
             $('#constrain_to_image_16').css('background-color', buttonColors.false);
-            if (constrainToImage2) {
-                malakh.constrainToImage(2);
-                malakh.fitImage(2);
+            if (constrainToImage0) {
+                malakh.constrainToImage(0);
+                malakh.fitImage(0);
             } else {
                 malakh.config.constrainViewport = false;
             }
@@ -271,8 +271,8 @@ function malakhCustom(containerSelectorOrElement, configOverrides) {
             }
             constrainToImage16 = !constrainToImage16;
             $(this).css('background-color', buttonColors[constrainToImage16]);
-            constrainToImage2 = false;
-            $('#constrain_to_image_2').css('background-color', buttonColors.false);
+            constrainToImage0 = false;
+            $('#constrain_to_image_0').css('background-color', buttonColors.false);
             if (constrainToImage16) {
                 malakh.constrainToImage(16);
                 malakh.fitImage(16);
