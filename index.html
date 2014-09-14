@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Malakh by Polona</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Malakh</h1>
+        <p>Deep zoom viewer. Research and development project requested by the National Library of Poland made by Laboratorium EE</p>
+
+        <p class="view"><a href="https://github.com/Polona/malakh">View the Project on GitHub <small>Polona/malakh</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/Polona/malakh/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/Polona/malakh/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/Polona/malakh">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="malakh---deep-zoom-viewer" class="anchor" href="#malakh---deep-zoom-viewer"><span class="octicon octicon-link"></span></a>Malakh - deep zoom viewer</h1>
+
+<p>Research and development project requested by the National Library of Poland made by Laboratorium EE.</p>
+
+<h2>
+<a name="how-to-run-a-viewer-on-your-own-image" class="anchor" href="#how-to-run-a-viewer-on-your-own-image"><span class="octicon octicon-link"></span></a>How to run a viewer on your own image?</h2>
+
+<h3>
+<a name="generating-dzi-files" class="anchor" href="#generating-dzi-files"><span class="octicon octicon-link"></span></a>Generating DZI files</h3>
+
+<p>First, prepare the environment:</p>
+
+<ol>
+<li>Get Python 2.7.</li>
+<li>Install the <code>libjpeg</code> development package with a system package manager, e.g. on OS X: <code>brew install libjpeg</code>, on Ubuntu: <code>sudo apt-get install libjpeg-dev</code>.</li>
+<li>Install the <code>Pillow</code> package: <code>sudo pip install Pillow</code> or <code>sudo easy_install Pillow</code>.</li>
+</ol><p>Now, run:</p>
+
+<div class="highlight highlight-bash"><pre>./utils/deepzoom.py PATH_TO_THE_IMAGE_FILE
+</pre></div>
+
+<h3>
+<a name="firing-up-the-viewer" class="anchor" href="#firing-up-the-viewer"><span class="octicon octicon-link"></span></a>Firing up the viewer</h3>
+
+<p>First, construct a new Malakh object:</p>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">malakh</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Malakh</span><span class="p">(</span><span class="nx">containerSelectorOrElement</span><span class="p">,</span> <span class="p">[</span><span class="nx">configOverrides</span><span class="p">]);</span>
+</pre></div>
+
+<p>where the first argument points to a container element (or its selector) where Malakh will create its components. The container will be emptied.</p>
+
+<p>For example:</p>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">malakh</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Malakh</span><span class="p">(</span><span class="s1">'#malakh_container'</span><span class="p">);</span>
+</pre></div>
+
+<p>Then, open an image:</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">malakh</span><span class="p">.</span><span class="nx">openDzi</span><span class="p">({</span>
+    <span class="nx">imageDataUrl</span><span class="o">:</span> <span class="nx">PATH_TO_DZI</span><span class="p">,</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>Malakh will automatically deduce the tiles directory path from the above. If this path is non-canonical, you can provide it as an additional argument:</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">malakh</span><span class="p">.</span><span class="nx">openDzi</span><span class="p">({</span>
+    <span class="nx">imageDataUrl</span><span class="o">:</span> <span class="nx">PATH_TO_DZI</span><span class="p">,</span>
+    <span class="nx">tilesUrl</span><span class="o">:</span> <span class="nx">PATH_TO_TILES_DIRECTORY</span><span class="p">,</span>
+<span class="p">});</span>
+</pre></div>
+
+<h2>
+<a name="how-to-build-your-own-malakh" class="anchor" href="#how-to-build-your-own-malakh"><span class="octicon octicon-link"></span></a>How to build your own Malakh</h2>
+
+<p>First, clone a copy of the main Malakh git repo by running:</p>
+
+<div class="highlight highlight-bash"><pre>git clone https://github.com/Polona/malakh.git
+</pre></div>
+
+<p>Enter the <code>malakh</code> directory and install the Node dependencies:</p>
+
+<div class="highlight highlight-bash"><pre><span class="nb">cd </span>malakh <span class="o">&amp;&amp;</span> npm install
+</pre></div>
+
+<p>The built version of Malakh will be put in the <code>dist/</code> subdirectory, along with the minified copy and an associated map file.</p>
+
+<h3>
+<a name="customizing-own-malakh-version" class="anchor" href="#customizing-own-malakh-version"><span class="octicon octicon-link"></span></a>Customizing own Malakh version</h3>
+
+<p>If you want to build your own, modified version, the above process may last too long. In that case, install the <code>grunt-cli</code> package, this time globally, to have the <code>grunt</code> binary available:</p>
+
+<div class="highlight highlight-bash"><pre>npm install -g grunt-cli
+</pre></div>
+
+<p>Make sure you have <code>grunt</code> installed by testing:</p>
+
+<div class="highlight highlight-bash"><pre>grunt --version
+</pre></div>
+
+<p>Then, to get a complete, minified, linted version of Malakh, type the following:</p>
+
+<div class="highlight highlight-bash"><pre>grunt
+</pre></div>
+
+<p>If you don't want to build minified files (e.g. during development), run:</p>
+
+<div class="highlight highlight-bash"><pre>grunt dev
+</pre></div>
+
+<h3>
+<a name="modules" class="anchor" href="#modules"><span class="octicon octicon-link"></span></a>Modules</h3>
+
+<p>Special builds can be created that optionally exclude or include any of the following modules:</p>
+
+<ul>
+<li>magnifier</li>
+<li>picker</li>
+<li>markers</li>
+</ul><p>Make sure all Node dependencies are installed and all Git submodules are checked out:</p>
+
+<div class="highlight highlight-bash"><pre>npm install <span class="o">&amp;&amp;</span> grunt
+</pre></div>
+
+<p>To create a custom build, use the following special <code>grunt</code> commands:</p>
+
+<p>Exclude <strong>magnifier</strong>:</p>
+
+<div class="highlight highlight-bash"><pre>grunt custom:-magnifier
+</pre></div>
+
+<p>The same applies to other modules.</p>
+
+<p>Exclude <strong>all</strong> optional modules:</p>
+
+<div class="highlight highlight-bash"><pre>grunt custom:-magnifier,-picker,-markers
+</pre></div>
+
+<p>Note: dependencies will be handled internally, by the build process.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/Polona">Polona</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
